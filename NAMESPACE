@@ -1,2 +1,7 @@
+export("pkg_n_dep")
+
 import(ComplexHeatmap)
 import(GetoptLong)
+importFrom("grid", "unit", "gpar")
+importFrom("utils", "packageDescription", "read.table")
+
