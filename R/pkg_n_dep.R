@@ -12,7 +12,8 @@
 # pkg_n_dep("ComplexHeatmap")
 pkg_n_dep = function(pkg) {
 	if(file.exists(pkg)) {
-		x = parseNamespaceFile(pkg, package.lib = pkg)
+		x = read.dcf(paste0(pkg, "/DESCRIPTION"))
+		x = as.data.frame(x)
 	} else {
 		x = packageDescription(pkg)
 	}
@@ -65,6 +66,7 @@ pkg_n_dep = function(pkg) {
 
 
 dep = function(pkg) {
+	message(paste0("loading ", pkg))
 	cmd = qq("Rscript --no-init-file -e 'suppressPackageStartupMessages(library(\"@{pkg}\")); foo = sessionInfo(); df = rbind(data.frame(pkg = foo$basePkgs, type=rep(\"basePkgs\", length(foo$basePkgs))), data.frame(pkg = names(foo$loadedOnly), type=rep(\"loadedOnly\", length(foo$loadedOnly))), data.frame(pkg = names(foo$otherPkgs), type=rep(\"otherPkgs\", length(foo$otherPkgs)))); df = df[df[, 1] != \"@{pkg}\" ,]; print(df, row.names = FALSE)'")
     read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE)
 }
