@@ -65,7 +65,7 @@ pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 	base_pkgs = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
 		"parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
 	ht = Heatmap(m, row_split = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests))),
-		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Others"),
+		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Other packages"),
 		heatmap_legend_param = list(nrow = 1, title = ""), rect_gp = gpar(col = "#DDDDDD"),
 		clustering_distance_rows = str_dist, clustering_distance_columns = str_dist,
 		show_row_dend = FALSE, show_column_dend = FALSE,
