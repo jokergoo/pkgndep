@@ -10,7 +10,7 @@
 #
 # == example
 # pkg_n_dep("ComplexHeatmap")
-pkg_n_dep = function(pkg) {
+pkg_n_dep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 	if(file.exists(pkg)) {
 		x = read.dcf(paste0(pkg, "/DESCRIPTION"))
 		x = as.data.frame(x)
@@ -27,12 +27,22 @@ pkg_n_dep = function(pkg) {
 	imports = gsub("\\s\\(.*?\\)", "", imports)
 	imports = strsplit(imports, ",\\s*")[[1]]
 
+	suggests = x$Suggests
+	suggests = gsub("\\s\\(.*?\\)", "", suggests)
+	suggests = strsplit(suggests, ",\\s*")[[1]]
+
+	if(!"Depends" %in% fields) depends = list()
+	if(!"Imports" %in% fields) imports = list()
+	if(!"Suggests" %in% fields) suggests = list()
+
 	dep_lt = lapply(depends, dep)
 	names(dep_lt) = depends
 	imp_lt = lapply(imports, dep)
 	names(imp_lt) = imports
+	sug_lt = lapply(suggests, dep)
+	names(sug_lt) = suggests
 
-	all_pkg = c(depends, imports)
+	all_pkg = c(depends, imports, suggests)
 	all_pkg_dep = unique(unlist(c(lapply(dep_lt, function(x) x[, 1]), lapply(imp_lt, function(x) x[, 1]))))
 
 	m = matrix(NA, nrow = length(all_pkg), ncol = length(all_pkg_dep), dimnames = list(all_pkg, all_pkg_dep))
@@ -44,13 +54,17 @@ pkg_n_dep = function(pkg) {
 		y = structure(imp_lt[[nm]][, 2], names = imp_lt[[nm]][, 1])
 		m[nm, names(y)] = y
 	}
+	for(nm in names(sug_lt)) {
+		y = structure(sug_lt[[nm]][, 2], names = sug_lt[[nm]][, 1])
+		m[nm, names(y)] = y
+	}
 	str_dist = function(x, y) {
 		1 - sum(x == y, na.rm = TRUE)/length(x)
 	}
 
 	base_pkgs = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
 		"parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
-	ht = Heatmap(m, row_split = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports))),
+	ht = Heatmap(m, row_split = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests))),
 		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Others"),
 		heatmap_legend_param = list(nrow = 1, title = ""), rect_gp = gpar(col = "#DDDDDD"),
 		clustering_distance_rows = str_dist, clustering_distance_columns = str_dist,
@@ -67,6 +81,6 @@ pkg_n_dep = function(pkg) {
 
 dep = function(pkg) {
 	message(paste0("loading ", pkg))
-	cmd = qq("Rscript --no-init-file -e 'suppressPackageStartupMessages(library(\"@{pkg}\")); foo = sessionInfo(); df = rbind(data.frame(pkg = foo$basePkgs, type=rep(\"basePkgs\", length(foo$basePkgs))), data.frame(pkg = names(foo$loadedOnly), type=rep(\"loadedOnly\", length(foo$loadedOnly))), data.frame(pkg = names(foo$otherPkgs), type=rep(\"otherPkgs\", length(foo$otherPkgs)))); df = df[df[, 1] != \"@{pkg}\" ,]; print(df, row.names = FALSE)'")
+	cmd = qq("Rscript -e 'tmp_file = tempfile();sink(tmp_file); suppressPackageStartupMessages(library(\"@{pkg}\")); sink(); unlink(tmp_file); foo = sessionInfo(); df = rbind(data.frame(pkg = foo$basePkgs, type=rep(\"basePkgs\", length(foo$basePkgs))), data.frame(pkg = names(foo$loadedOnly), type=rep(\"loadedOnly\", length(foo$loadedOnly))), data.frame(pkg = names(foo$otherPkgs), type=rep(\"otherPkgs\", length(foo$otherPkgs)))); df = df[df[, 1] != \"@{pkg}\" ,]; print(df, row.names = FALSE)'")
     read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE)
 }
