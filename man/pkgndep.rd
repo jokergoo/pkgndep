@@ -1,5 +1,5 @@
-\name{pkg_n_dep}
-\alias{pkg_n_dep}
+\name{pkgndep}
+\alias{pkgndep}
 \title{
 Number of Loaded Packages
 }
@@ -7,7 +7,7 @@ Number of Loaded Packages
 Number of Loaded Packages
 }
 \usage{
-pkg_n_dep(pkg)
+pkgndep(pkg)
 }
 \arguments{
 
@@ -19,5 +19,5 @@ It tells you how many packages are loaded if only one
 package in Depends or Imports field is loaded in a fresh R session.
 }
 \examples{
-pkg_n_dep("ComplexHeatmap")
+pkgndep("ComplexHeatmap")
 }

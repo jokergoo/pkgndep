@@ -1,4 +1,4 @@
-export("pkg_n_dep")
+export("pkgndep")
 
 import(ComplexHeatmap)
 import(GetoptLong)

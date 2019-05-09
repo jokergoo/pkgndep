@@ -9,8 +9,8 @@
 # package in Depends or Imports field is loaded in a fresh R session.
 #
 # == example
-# pkg_n_dep("ComplexHeatmap")
-pkg_n_dep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
+# pkgndep("ComplexHeatmap")
+pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 	if(file.exists(pkg)) {
 		x = read.dcf(paste0(pkg, "/DESCRIPTION"))
 		x = as.data.frame(x)
@@ -43,7 +43,7 @@ pkg_n_dep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 	names(sug_lt) = suggests
 
 	all_pkg = c(depends, imports, suggests)
-	all_pkg_dep = unique(unlist(c(lapply(dep_lt, function(x) x[, 1]), lapply(imp_lt, function(x) x[, 1]))))
+	all_pkg_dep = unique(unlist(c(lapply(dep_lt, function(x) x[, 1]), lapply(imp_lt, function(x) x[, 1]), lapply(sug_lt, function(x) x[, 1]))))
 
 	m = matrix(NA, nrow = length(all_pkg), ncol = length(all_pkg_dep), dimnames = list(all_pkg, all_pkg_dep))
 	for(nm in names(dep_lt)) {
@@ -71,11 +71,12 @@ pkg_n_dep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 		show_row_dend = FALSE, show_column_dend = FALSE,
 		col = c("basePkgs" = "red", "loadedOnly" = "blue", "otherPkgs" = "darkgreen"),
 		right_annotation = rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm")),
-			annotation_name_side = "top", annotation_name_rot = 0))
+			annotation_name_side = "top", annotation_name_rot = 0),
+		row_order = order(apply(m, 1, function(x) sum(!is.na(x)))))
 	draw(ht, heatmap_legend_side = "bottom", adjust_annotation_extension = FALSE,
 		column_title = qq("In total @{ncol(m)} packages are loaded directly or indirectly"))
 
-	return(invisible(c(dep_lt, imp_lt)))
+	return(invisible(c(dep_lt, imp_lt, sug_lt)))
 }
 
 
