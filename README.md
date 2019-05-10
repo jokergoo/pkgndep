@@ -14,7 +14,7 @@ As an example, I am developing a package called
 packages](https://github.com/jokergoo/cola/blob/6d5f5a7737fd273c36ff50f35a60bf2b671ed84d/DESCRIPTION).
 The dependency heatmap looks like:
 
-![image](https://user-images.githubusercontent.com/449218/57465887-cf8c4400-727f-11e9-96c2-f9eea72a2dad.png)
+![image](https://user-images.githubusercontent.com/449218/57536476-8baf4280-7344-11e9-960d-00dd586ca8a8.png)
 
 We can see if all the packages are put in the **Imports** field, 156 packages
 will be attached when **cola** is loaded. Since some of the packages like
