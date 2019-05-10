@@ -18,7 +18,7 @@ The dependency heatmap looks like:
 
 We can see if all the packages are put in the **Imports** field, 156 packages
 will be attached when **cola** is loaded. Since some of the packages like
-**WGCNA** and **clusterProfiler** are not very frequently used in the package,
+**WGCNA** and **clusterProfiler** are not very frequently used in **cola**,
 moving them to **Suggests** field and loading them only when they need to be
 used will help to speed up the loading of **cola** and also make the loaded
 namespace clean.
