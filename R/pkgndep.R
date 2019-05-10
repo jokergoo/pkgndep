@@ -64,7 +64,16 @@ pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 
 	base_pkgs = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
 		"parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
-	ht = Heatmap(m, row_split = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests))),
+	row_split = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests)))
+
+	# a rude way to move all packages which are attached by imported packages before those by suggested packages
+	column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
+	l = row_split %in% c("Depends", "Imports")
+	l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
+	column_order_by[l2] = column_order_by[l2] + 10000
+	column_order = order(column_order_by, decreasing = TRUE)
+	
+	ht = Heatmap(m, row_split = row_split,
 		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Other packages"),
 		heatmap_legend_param = list(nrow = 1, title = ""), rect_gp = gpar(col = "#DDDDDD"),
 		clustering_distance_rows = str_dist, clustering_distance_columns = str_dist,
@@ -72,9 +81,10 @@ pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 		col = c("basePkgs" = "red", "loadedOnly" = "blue", "otherPkgs" = "darkgreen"),
 		right_annotation = rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm")),
 			annotation_name_side = "top", annotation_name_rot = 0),
-		row_order = order(apply(m, 1, function(x) sum(!is.na(x)))))
+		row_order = order(apply(m, 1, function(x) sum(!is.na(x)))),
+		column_order = column_order)
 	draw(ht, heatmap_legend_side = "bottom", adjust_annotation_extension = FALSE,
-		column_title = qq("In total @{ncol(m)} packages are loaded directly or indirectly when loading @{x$Package}"))
+		column_title = qq("In total @{ncol(m)} packages are attached directly or indirectly when loading @{x$Package} (x$Version)"))
 
 	return(invisible(c(dep_lt, imp_lt, sug_lt)))
 }

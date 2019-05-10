@@ -27,7 +27,7 @@ namespace clean.
 To use this package:
 
 ```r
-pkgndep::pkgndep("package_name")
+pkgndep::pkgndep("package-name")
 ```
 
 or
