@@ -74,7 +74,7 @@ pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 			annotation_name_side = "top", annotation_name_rot = 0),
 		row_order = order(apply(m, 1, function(x) sum(!is.na(x)))))
 	draw(ht, heatmap_legend_side = "bottom", adjust_annotation_extension = FALSE,
-		column_title = qq("In total @{ncol(m)} packages are loaded directly or indirectly"))
+		column_title = qq("In total @{ncol(m)} packages are loaded directly or indirectly when loading @{x$Package}"))
 
 	return(invisible(c(dep_lt, imp_lt, sug_lt)))
 }
