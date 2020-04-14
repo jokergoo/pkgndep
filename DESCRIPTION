@@ -6,7 +6,7 @@ Date: 2019-01-18
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 3.0.0)
-Imports: ComplexHeatmap (>= 1.99.5), GetoptLong, utils, grid
+Imports: ComplexHeatmap (>= 2.0.0), GetoptLong, utils, grid, crayon
 Description: It tells you how many packages are loaded if only one
     package in Depends or Imports field is loaded in a fresh R session.
 URL: https://github.com/jokergoo/pkgndep

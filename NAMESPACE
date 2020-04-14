@@ -2,6 +2,7 @@ export("pkgndep")
 
 import(ComplexHeatmap)
 import(GetoptLong)
+import(crayon)
 importFrom("grid", "unit", "gpar")
 importFrom("utils", "packageDescription", "read.table")
 

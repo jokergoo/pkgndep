@@ -9,8 +9,10 @@
 # package in Depends or Imports field is loaded in a fresh R session.
 #
 # == example
-# pkgndep("ComplexHeatmap")
-pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
+# x = pkgndep("ComplexHeatmap")
+# x
+# plot(x)
+pkgndep = function(pkg, verbose = TRUE) {
 	if(file.exists(pkg)) {
 		x = read.dcf(paste0(pkg, "/DESCRIPTION"))
 		x = as.data.frame(x)
@@ -18,54 +20,126 @@ pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 		x = packageDescription(pkg)
 	}
 
-	depends = x$Depends
-	depends = gsub("\\s\\(.*?\\)", "", depends)
-	depends = strsplit(depends, ",\\s*")[[1]]
-	depends = depends[depends != "R"]
+	if(is.null(x$Depends)) {
+		depends = character(0)
+	} else {
+		depends = x$Depends
+		depends = gsub("\\s*\\(.*?\\)", "", depends)
+		depends = strsplit(depends, ",\\s*")[[1]]
+		depends = depends[depends != "R"]
+	}
 
-	imports = x$Imports
-	imports = gsub("\\s\\(.*?\\)", "", imports)
-	imports = strsplit(imports, ",\\s*")[[1]]
+	if(is.null(x$Imports)) {
+		imports = character(0)
+	} else {
+		imports = x$Imports
+		imports = gsub("\\s*\\(.*?\\)", "", imports)
+		imports = strsplit(imports, ",\\s*")[[1]]
+	}
 
-	suggests = x$Suggests
-	suggests = gsub("\\s\\(.*?\\)", "", suggests)
-	suggests = strsplit(suggests, ",\\s*")[[1]]
+	if(is.null(x$Suggests)) {
+		suggests = character(0)
+	} else {
+		suggests = x$Suggests
+		suggests = gsub("\\s*\\(.*?\\)", "", suggests)
+		suggests = strsplit(suggests, ",\\s*")[[1]]
+	}
 
-	if(!"Depends" %in% fields) depends = list()
-	if(!"Imports" %in% fields) imports = list()
-	if(!"Suggests" %in% fields) suggests = list()
-
-	dep_lt = lapply(depends, dep)
+	dep_lt = lapply(depends, dep, verbose)
 	names(dep_lt) = depends
-	imp_lt = lapply(imports, dep)
+	imp_lt = lapply(imports, dep, verbose)
 	names(imp_lt) = imports
-	sug_lt = lapply(suggests, dep)
+	sug_lt = lapply(suggests, dep, verbose)
 	names(sug_lt) = suggests
 
 	all_pkg = c(depends, imports, suggests)
-	all_pkg_dep = unique(unlist(c(lapply(dep_lt, function(x) x[, 1]), lapply(imp_lt, function(x) x[, 1]), lapply(sug_lt, function(x) x[, 1]))))
+
+	if(length(all_pkg) == 0) {
+		obj = list(
+			package = x$Package,
+			version = x$Version,
+			mat = matrix(nrow = 0, ncol = 0), 
+			pkg_category = character(0),
+			pkg_available = logical(0),
+			n1 = 0,
+			n2 = 0
+		)
+
+		class(obj) = "pkgndep"
+		return(obj)
+	}
+
+	dep_lt2 = dep_lt[!sapply(dep_lt, is.null)]
+	imp_lt2 = imp_lt[!sapply(imp_lt, is.null)]
+	sug_lt2 = sug_lt[!sapply(sug_lt, is.null)]
+
+	all_pkg_dep = unique(unlist(c(lapply(dep_lt2, function(x) x[, 1]), 
+		                          lapply(imp_lt2, function(x) x[, 1]), 
+		                          lapply(sug_lt2, function(x) x[, 1]))))
 
 	m = matrix(NA, nrow = length(all_pkg), ncol = length(all_pkg_dep), dimnames = list(all_pkg, all_pkg_dep))
-	for(nm in names(dep_lt)) {
-		y = structure(dep_lt[[nm]][, 2], names = dep_lt[[nm]][, 1])
+	for(nm in names(dep_lt2)) {
+		y = structure(dep_lt2[[nm]][, 2], names = dep_lt2[[nm]][, 1])
 		m[nm, names(y)] = y
 	}
-	for(nm in names(imp_lt)) {
-		y = structure(imp_lt[[nm]][, 2], names = imp_lt[[nm]][, 1])
+	for(nm in names(imp_lt2)) {
+		y = structure(imp_lt2[[nm]][, 2], names = imp_lt2[[nm]][, 1])
 		m[nm, names(y)] = y
 	}
-	for(nm in names(sug_lt)) {
-		y = structure(sug_lt[[nm]][, 2], names = sug_lt[[nm]][, 1])
+	for(nm in names(sug_lt2)) {
+		y = structure(sug_lt2[[nm]][, 2], names = sug_lt2[[nm]][, 1])
 		m[nm, names(y)] = y
 	}
-	str_dist = function(x, y) {
-		1 - sum(x == y, na.rm = TRUE)/length(x)
+
+	pkg_category = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests)))
+	pkg_available = !sapply(c(dep_lt, imp_lt, sug_lt), is.null)
+
+	obj = list(
+		package = x$Package,
+		version = x$Version,
+		mat = m, 
+		pkg_category = pkg_category,
+		pkg_available = pkg_available,
+		n1 = sum(apply(m[pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))),
+		n2 = sum(apply(m, 2, function(x) any(!is.na(x))))
+	)
+
+	class(obj) = "pkgndep"
+	return(obj)
+}
+
+print.pkgndep = function(x, ...) {
+	qqcat("@{x$package} version @{x$version}\n")
+	qqcat("@{x$n1} namespaces loaded if only load packages in Depends and Imports\n")
+	qqcat("@{x$n2} namespaces loaded for loading all packages in Depends, Imports and Suggests\n")
+}
+
+loaded_ns = function(x, include_suggests = TRUE) {
+	if(include_suggests) {
+		sort(colnames(x$mat))
+	} else {
+		l = apply(x$m[x$pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))
+		sort(colnames(x$mat)[l])
+	}
+}
+
+unavailable_pkg = function(x) {
+	sort(rownames(x$mat)[!x$pkg_available])
+}
+
+plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8, 
+	fix_size = TRUE) {
+
+	m = x$mat
+	row_split = x$pkg_category
+
+	if(ncol(m) == 0) {
+		return(invisible(NULL))
 	}
 
 	base_pkgs = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
 		"parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
-	row_split = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests)))
-
+	
 	# a rude way to move all packages which are attached by imported packages before those by suggested packages
 	column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
 	l = row_split %in% c("Depends", "Imports")
@@ -73,25 +147,72 @@ pkgndep = function(pkg, fields = c("Depends", "Imports", "Suggests")) {
 	column_order_by[l2] = column_order_by[l2] + 10000
 	column_order = order(column_order_by, decreasing = TRUE)
 	
-	ht = Heatmap(m, row_split = row_split,
+	line_height = grobHeight(textGrob("A", gp = gpar(pkg_fontsize)))*1.1
+
+	ht = Heatmap(m, 
+		row_split = row_split,
 		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Other packages"),
-		heatmap_legend_param = list(nrow = 1, title = ""), rect_gp = gpar(col = "#DDDDDD"),
-		clustering_distance_rows = str_dist, clustering_distance_columns = str_dist,
-		show_row_dend = FALSE, show_column_dend = FALSE,
+		heatmap_legend_param = list(nrow = 1, title = "", labels_gp = gpar(fontsize = legend_fontsize)), 
+		rect_gp = gpar(col = "#DDDDDD"),
+		show_row_dend = FALSE, 
+		show_column_dend = FALSE,
 		col = c("basePkgs" = "red", "loadedOnly" = "blue", "otherPkgs" = "darkgreen"),
-		right_annotation = rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm")),
-			annotation_name_side = "top", annotation_name_rot = 0),
 		row_order = order(apply(m, 1, function(x) sum(!is.na(x)))),
-		column_order = column_order)
-	draw(ht, heatmap_legend_side = "bottom", adjust_annotation_extension = FALSE,
-		column_title = qq("In total @{ncol(m)} packages are attached directly or indirectly when loading @{x$Package} (@{x$Version})"))
+		column_order = column_order,
+		column_names_gp = gpar(fontsize = pkg_fontsize),
+		row_names_gp = gpar(fontsize = pkg_fontsize),
+		column_title_gp = gpar(fontsize = title_fontsize),
+		row_title_gp = gpar(fontsize = title_fontsize),
+		row_title_rot = 90,
+		width = if(fix_size) ncol(m)*line_height else NULL,
+		height = if(fix_size) nrow(m)*line_height else NULL
+	)
+	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm")),
+			annotation_name_side = "top", annotation_name_rot = 0, show_annotation_name = FALSE) +
+		rowAnnotation(pkg = anno_text(rownames(m), gp = gpar(fontsize = pkg_fontsize, col = ifelse(x$pkg_available, "black", "#AAAAAA"))))
+		
+	ht = draw(ht, ht_gap = unit(c(3, 1), "mm"),
+		heatmap_legend_side = "bottom", 
+		adjust_annotation_extension = FALSE,
+		column_title = qq("In total @{ncol(m)} namespaces are attached directly or indirectly when loading @{x$package} (@{x$version})"),
+		column_title_gp = gpar(fontsize = title_fontsize))
+	decorate_annotation("n_pkg", {
+		grid.text("Number of packages", y = unit(1, "npc") + ht_opt$TITLE_PADDING + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),
+			gp = gpar(fontsize = title_fontsize))
+	})
+	w = ComplexHeatmap:::width(ht)
+	h = ComplexHeatmap:::height(ht)
+	invisible(unit.c(w, h))
+}
 
-	return(invisible(c(dep_lt, imp_lt, sug_lt)))
+dep = function(pkg, verbose = TRUE) {
+	if(verbose) cat(silver("Loading"), green(pkg), silver("to a new R session... "))
+		
+	if(is.null(env$loaded_ns[[pkg]])) {
+		
+		cmd = qq("Rscript '/Users/jokergoo/project/pkgndep/inst/extdata/get_dep.R' @{pkg}")
+	    oe = try(tb <- read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE), silent = TRUE)
+	    if(inherits(oe, "try-error")) {
+	    	if(verbose) cat(red(qq("@{pkg} cannot be loaded.\n")))
+	    	return(NULL)
+	    } else {
+		    nr = nrow(tb)
+		    if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
+		}
+		env$loaded_ns[[pkg]] = tb
+	} else {
+		tb = env$loaded_ns[[pkg]]
+		nr = nrow(tb)
+		if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
+	}
+    return(tb)
 }
 
 
-dep = function(pkg) {
-	message(paste0("loading ", pkg))
-	cmd = qq("Rscript -e 'tmp_file = tempfile();sink(tmp_file); suppressPackageStartupMessages(library(\"@{pkg}\")); sink(); unlink(tmp_file); foo = sessionInfo(); df = rbind(data.frame(pkg = foo$basePkgs, type=rep(\"basePkgs\", length(foo$basePkgs))), data.frame(pkg = names(foo$loadedOnly), type=rep(\"loadedOnly\", length(foo$loadedOnly))), data.frame(pkg = names(foo$otherPkgs), type=rep(\"otherPkgs\", length(foo$otherPkgs)))); df = df[df[, 1] != \"@{pkg}\" ,]; print(df, row.names = FALSE)'")
-    read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE)
+env = new.env()
+env$loaded_ns = list()
+
+.onAttach = function(libname, pkgname) {
+    env$loaded_ns = list()
 }
+
