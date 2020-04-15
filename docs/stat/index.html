@@ -1,0 +1,3529 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title></title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table, td, th {
+  border: 1px solid black;
+}
+
+td, th {
+	padding: 2px 8px;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<p>This table shows the dependency analysis on the packages installed on my computer.</p>
+
+<p>In the following table, column <strong># Namespace</strong> is the number of namespaces loaded into the fresh R session if packages in &#39;Depends&#39; and &#39;Imports&#39; fields are loaded.
+Column <strong>also include packages in Suggests</strong> lists the number of namespaces where the packages in &#39;Suggests&#39; are also loaded.</p>
+
+<p>The table can be downloaded as <a href="dep.csv">a csv file</a>.</p>
+
+<table><thead>
+<tr>
+<th align="left">Package</th>
+<th align="right"># Namespaces</th>
+<th align="right">also load packages in Suggests</th>
+<th align="right">Heatmap</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">TCGAbiolinksGUI</td>
+<td align="right">225</td>
+<td align="right">237</td>
+<td align="right"><a href="image/TCGAbiolinksGUI.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ELMER</td>
+<td align="right">159</td>
+<td align="right">166</td>
+<td align="right"><a href="image/ELMER.png">view</a></td>
+</tr>
+<tr>
+<td align="left">TCGAbiolinks</td>
+<td align="right">120</td>
+<td align="right">182</td>
+<td align="right"><a href="image/TCGAbiolinks.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GenomicInteractions</td>
+<td align="right">107</td>
+<td align="right">111</td>
+<td align="right"><a href="image/GenomicInteractions.png">view</a></td>
+</tr>
+<tr>
+<td align="left">IlluminaHumanMethylation450kanno.ilmn12.hg19</td>
+<td align="right">107</td>
+<td align="right">107</td>
+<td align="right"><a href="image/IlluminaHumanMethylation450kanno.ilmn12.hg19.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Gviz</td>
+<td align="right">105</td>
+<td align="right">109</td>
+<td align="right"><a href="image/Gviz.png">view</a></td>
+</tr>
+<tr>
+<td align="left">biovizBase</td>
+<td align="right">102</td>
+<td align="right">102</td>
+<td align="right"><a href="image/biovizBase.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ReactomePA</td>
+<td align="right">99</td>
+<td align="right">106</td>
+<td align="right"><a href="image/ReactomePA.png">view</a></td>
+</tr>
+<tr>
+<td align="left">clusterProfiler</td>
+<td align="right">95</td>
+<td align="right">116</td>
+<td align="right"><a href="image/clusterProfiler.png">view</a></td>
+</tr>
+<tr>
+<td align="left">minfi</td>
+<td align="right">91</td>
+<td align="right">115</td>
+<td align="right"><a href="image/minfi.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DESeq2</td>
+<td align="right">88</td>
+<td align="right">90</td>
+<td align="right"><a href="image/DESeq2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">enrichplot</td>
+<td align="right">87</td>
+<td align="right">97</td>
+<td align="right"><a href="image/enrichplot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">WGCNA</td>
+<td align="right">78</td>
+<td align="right">78</td>
+<td align="right"><a href="image/WGCNA.png">view</a></td>
+</tr>
+<tr>
+<td align="left">EDASeq</td>
+<td align="right">71</td>
+<td align="right">79</td>
+<td align="right"><a href="image/EDASeq.png">view</a></td>
+</tr>
+<tr>
+<td align="left">reldist</td>
+<td align="right">63</td>
+<td align="right">63</td>
+<td align="right"><a href="image/reldist.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DOSE</td>
+<td align="right">60</td>
+<td align="right">97</td>
+<td align="right"><a href="image/DOSE.png">view</a></td>
+</tr>
+<tr>
+<td align="left">chromstaR</td>
+<td align="right">60</td>
+<td align="right">80</td>
+<td align="right"><a href="image/chromstaR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bumphunter</td>
+<td align="right">60</td>
+<td align="right">60</td>
+<td align="right"><a href="image/bumphunter.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ensembldb</td>
+<td align="right">57</td>
+<td align="right">121</td>
+<td align="right"><a href="image/ensembldb.png">view</a></td>
+</tr>
+<tr>
+<td align="left">maftools</td>
+<td align="right">57</td>
+<td align="right">80</td>
+<td align="right"><a href="image/maftools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ExperimentHub</td>
+<td align="right">57</td>
+<td align="right">61</td>
+<td align="right"><a href="image/ExperimentHub.png">view</a></td>
+</tr>
+<tr>
+<td align="left">VariantAnnotation</td>
+<td align="right">56</td>
+<td align="right">91</td>
+<td align="right"><a href="image/VariantAnnotation.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GenomicFeatures</td>
+<td align="right">54</td>
+<td align="right">68</td>
+<td align="right"><a href="image/GenomicFeatures.png">view</a></td>
+</tr>
+<tr>
+<td align="left">caret</td>
+<td align="right">54</td>
+<td align="right">59</td>
+<td align="right"><a href="image/caret.png">view</a></td>
+</tr>
+<tr>
+<td align="left">scholar</td>
+<td align="right">54</td>
+<td align="right">57</td>
+<td align="right"><a href="image/scholar.png">view</a></td>
+</tr>
+<tr>
+<td align="left">survminer</td>
+<td align="right">53</td>
+<td align="right">53</td>
+<td align="right"><a href="image/survminer.png">view</a></td>
+</tr>
+<tr>
+<td align="left">AnnotationHub</td>
+<td align="right">52</td>
+<td align="right">89</td>
+<td align="right"><a href="image/AnnotationHub.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Hmisc</td>
+<td align="right">52</td>
+<td align="right">57</td>
+<td align="right"><a href="image/Hmisc.png">view</a></td>
+</tr>
+<tr>
+<td align="left">car</td>
+<td align="right">49</td>
+<td align="right">71</td>
+<td align="right"><a href="image/car.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sampleSelection</td>
+<td align="right">49</td>
+<td align="right">49</td>
+<td align="right"><a href="image/sampleSelection.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sesame</td>
+<td align="right">48</td>
+<td align="right">119</td>
+<td align="right"><a href="image/sesame.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tidyverse</td>
+<td align="right">47</td>
+<td align="right">54</td>
+<td align="right"><a href="image/tidyverse.png">view</a></td>
+</tr>
+<tr>
+<td align="left">MultiAssayExperiment</td>
+<td align="right">46</td>
+<td align="right">79</td>
+<td align="right"><a href="image/MultiAssayExperiment.png">view</a></td>
+</tr>
+<tr>
+<td align="left">NMF</td>
+<td align="right">45</td>
+<td align="right">61</td>
+<td align="right"><a href="image/NMF.png">view</a></td>
+</tr>
+<tr>
+<td align="left">seriation</td>
+<td align="right">45</td>
+<td align="right">45</td>
+<td align="right"><a href="image/seriation.png">view</a></td>
+</tr>
+<tr>
+<td align="left">AER</td>
+<td align="right">42</td>
+<td align="right">128</td>
+<td align="right"><a href="image/AER.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggraph</td>
+<td align="right">42</td>
+<td align="right">62</td>
+<td align="right"><a href="image/ggraph.png">view</a></td>
+</tr>
+<tr>
+<td align="left">devtools</td>
+<td align="right">42</td>
+<td align="right">47</td>
+<td align="right"><a href="image/devtools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">colourpicker</td>
+<td align="right">42</td>
+<td align="right">45</td>
+<td align="right"><a href="image/colourpicker.png">view</a></td>
+</tr>
+<tr>
+<td align="left">languageserver</td>
+<td align="right">42</td>
+<td align="right">42</td>
+<td align="right"><a href="image/languageserver.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggtree</td>
+<td align="right">41</td>
+<td align="right">49</td>
+<td align="right"><a href="image/ggtree.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DiagrammeR</td>
+<td align="right">41</td>
+<td align="right">46</td>
+<td align="right"><a href="image/DiagrammeR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">forecast</td>
+<td align="right">41</td>
+<td align="right">46</td>
+<td align="right"><a href="image/forecast.png">view</a></td>
+</tr>
+<tr>
+<td align="left">systemfit</td>
+<td align="right">40</td>
+<td align="right">53</td>
+<td align="right"><a href="image/systemfit.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dynlm</td>
+<td align="right">40</td>
+<td align="right">41</td>
+<td align="right"><a href="image/dynlm.png">view</a></td>
+</tr>
+<tr>
+<td align="left">recipes</td>
+<td align="right">39</td>
+<td align="right">51</td>
+<td align="right"><a href="image/recipes.png">view</a></td>
+</tr>
+<tr>
+<td align="left">survMisc</td>
+<td align="right">38</td>
+<td align="right">38</td>
+<td align="right"><a href="image/survMisc.png">view</a></td>
+</tr>
+<tr>
+<td align="left">plotly</td>
+<td align="right">37</td>
+<td align="right">77</td>
+<td align="right"><a href="image/plotly.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pathview</td>
+<td align="right">37</td>
+<td align="right">37</td>
+<td align="right"><a href="image/pathview.png">view</a></td>
+</tr>
+<tr>
+<td align="left">samr</td>
+<td align="right">37</td>
+<td align="right">37</td>
+<td align="right"><a href="image/samr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dendextend</td>
+<td align="right">36</td>
+<td align="right">64</td>
+<td align="right"><a href="image/dendextend.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GGally</td>
+<td align="right">36</td>
+<td align="right">54</td>
+<td align="right"><a href="image/GGally.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sva</td>
+<td align="right">36</td>
+<td align="right">47</td>
+<td align="right"><a href="image/sva.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DESeq</td>
+<td align="right">36</td>
+<td align="right">40</td>
+<td align="right"><a href="image/DESeq.png">view</a></td>
+</tr>
+<tr>
+<td align="left">qvalue</td>
+<td align="right">36</td>
+<td align="right">37</td>
+<td align="right"><a href="image/qvalue.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fgsea</td>
+<td align="right">35</td>
+<td align="right">57</td>
+<td align="right"><a href="image/fgsea.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ShortRead</td>
+<td align="right">34</td>
+<td align="right">66</td>
+<td align="right"><a href="image/ShortRead.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggthemes</td>
+<td align="right">34</td>
+<td align="right">50</td>
+<td align="right"><a href="image/ggthemes.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pkgdown</td>
+<td align="right">34</td>
+<td align="right">39</td>
+<td align="right"><a href="image/pkgdown.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggforce</td>
+<td align="right">34</td>
+<td align="right">37</td>
+<td align="right"><a href="image/ggforce.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggplotify</td>
+<td align="right">34</td>
+<td align="right">36</td>
+<td align="right"><a href="image/ggplotify.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggpubr</td>
+<td align="right">34</td>
+<td align="right">35</td>
+<td align="right"><a href="image/ggpubr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">BiocFileCache</td>
+<td align="right">33</td>
+<td align="right">64</td>
+<td align="right"><a href="image/BiocFileCache.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggrepel</td>
+<td align="right">33</td>
+<td align="right">53</td>
+<td align="right"><a href="image/ggrepel.png">view</a></td>
+</tr>
+<tr>
+<td align="left">genefilter</td>
+<td align="right">33</td>
+<td align="right">52</td>
+<td align="right"><a href="image/genefilter.png">view</a></td>
+</tr>
+<tr>
+<td align="left">treeio</td>
+<td align="right">33</td>
+<td align="right">52</td>
+<td align="right"><a href="image/treeio.png">view</a></td>
+</tr>
+<tr>
+<td align="left">biomaRt</td>
+<td align="right">33</td>
+<td align="right">44</td>
+<td align="right"><a href="image/biomaRt.png">view</a></td>
+</tr>
+<tr>
+<td align="left">viridis</td>
+<td align="right">33</td>
+<td align="right">43</td>
+<td align="right"><a href="image/viridis.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggsci</td>
+<td align="right">33</td>
+<td align="right">41</td>
+<td align="right"><a href="image/ggsci.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cowplot</td>
+<td align="right">33</td>
+<td align="right">40</td>
+<td align="right"><a href="image/cowplot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggridges</td>
+<td align="right">33</td>
+<td align="right">40</td>
+<td align="right"><a href="image/ggridges.png">view</a></td>
+</tr>
+<tr>
+<td align="left">modelr</td>
+<td align="right">33</td>
+<td align="right">40</td>
+<td align="right"><a href="image/modelr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggsignif</td>
+<td align="right">33</td>
+<td align="right">38</td>
+<td align="right"><a href="image/ggsignif.png">view</a></td>
+</tr>
+<tr>
+<td align="left">UpSetR</td>
+<td align="right">33</td>
+<td align="right">34</td>
+<td align="right"><a href="image/UpSetR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">BSgenome</td>
+<td align="right">33</td>
+<td align="right">33</td>
+<td align="right"><a href="image/BSgenome.png">view</a></td>
+</tr>
+<tr>
+<td align="left">broom</td>
+<td align="right">32</td>
+<td align="right">122</td>
+<td align="right"><a href="image/broom.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rtracklayer</td>
+<td align="right">31</td>
+<td align="right">60</td>
+<td align="right"><a href="image/rtracklayer.png">view</a></td>
+</tr>
+<tr>
+<td align="left">shinyFiles</td>
+<td align="right">31</td>
+<td align="right">31</td>
+<td align="right"><a href="image/shinyFiles.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ggplot2</td>
+<td align="right">30</td>
+<td align="right">71</td>
+<td align="right"><a href="image/ggplot2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tidytree</td>
+<td align="right">30</td>
+<td align="right">45</td>
+<td align="right"><a href="image/tidytree.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GEOquery</td>
+<td align="right">30</td>
+<td align="right">37</td>
+<td align="right"><a href="image/GEOquery.png">view</a></td>
+</tr>
+<tr>
+<td align="left">geneplotter</td>
+<td align="right">30</td>
+<td align="right">33</td>
+<td align="right"><a href="image/geneplotter.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GenomicAlignments</td>
+<td align="right">29</td>
+<td align="right">107</td>
+<td align="right"><a href="image/GenomicAlignments.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GSEABase</td>
+<td align="right">29</td>
+<td align="right">43</td>
+<td align="right"><a href="image/GSEABase.png">view</a></td>
+</tr>
+<tr>
+<td align="left">europepmc</td>
+<td align="right">29</td>
+<td align="right">41</td>
+<td align="right"><a href="image/europepmc.png">view</a></td>
+</tr>
+<tr>
+<td align="left">InteractionSet</td>
+<td align="right">28</td>
+<td align="right">40</td>
+<td align="right"><a href="image/InteractionSet.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rio</td>
+<td align="right">28</td>
+<td align="right">31</td>
+<td align="right"><a href="image/rio.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tidygraph</td>
+<td align="right">27</td>
+<td align="right">60</td>
+<td align="right"><a href="image/tidygraph.png">view</a></td>
+</tr>
+<tr>
+<td align="left">usethis</td>
+<td align="right">27</td>
+<td align="right">42</td>
+<td align="right"><a href="image/usethis.png">view</a></td>
+</tr>
+<tr>
+<td align="left">styler</td>
+<td align="right">27</td>
+<td align="right">37</td>
+<td align="right"><a href="image/styler.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GOSemSim</td>
+<td align="right">26</td>
+<td align="right">110</td>
+<td align="right"><a href="image/GOSemSim.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dbplyr</td>
+<td align="right">26</td>
+<td align="right">38</td>
+<td align="right"><a href="image/dbplyr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">graphite</td>
+<td align="right">26</td>
+<td align="right">38</td>
+<td align="right"><a href="image/graphite.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tidyr</td>
+<td align="right">26</td>
+<td align="right">34</td>
+<td align="right"><a href="image/tidyr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">haven</td>
+<td align="right">26</td>
+<td align="right">33</td>
+<td align="right"><a href="image/haven.png">view</a></td>
+</tr>
+<tr>
+<td align="left">hgu95av2.db</td>
+<td align="right">26</td>
+<td align="right">30</td>
+<td align="right"><a href="image/hgu95av2.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">hu6800.db</td>
+<td align="right">26</td>
+<td align="right">30</td>
+<td align="right"><a href="image/hu6800.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rae230a.db</td>
+<td align="right">26</td>
+<td align="right">30</td>
+<td align="right"><a href="image/rae230a.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rgl</td>
+<td align="right">26</td>
+<td align="right">29</td>
+<td align="right"><a href="image/rgl.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cometExactTest</td>
+<td align="right">26</td>
+<td align="right">26</td>
+<td align="right"><a href="image/cometExactTest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cola</td>
+<td align="right">25</td>
+<td align="right">166</td>
+<td align="right"><a href="image/cola.png">view</a></td>
+</tr>
+<tr>
+<td align="left">AnnotationForge</td>
+<td align="right">25</td>
+<td align="right">50</td>
+<td align="right"><a href="image/AnnotationForge.png">view</a></td>
+</tr>
+<tr>
+<td align="left">annotate</td>
+<td align="right">25</td>
+<td align="right">45</td>
+<td align="right"><a href="image/annotate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sna</td>
+<td align="right">25</td>
+<td align="right">44</td>
+<td align="right"><a href="image/sna.png">view</a></td>
+</tr>
+<tr>
+<td align="left">HilbertCurve</td>
+<td align="right">25</td>
+<td align="right">37</td>
+<td align="right"><a href="image/HilbertCurve.png">view</a></td>
+</tr>
+<tr>
+<td align="left">SummarizedExperiment</td>
+<td align="right">24</td>
+<td align="right">67</td>
+<td align="right"><a href="image/SummarizedExperiment.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gtrellis</td>
+<td align="right">24</td>
+<td align="right">35</td>
+<td align="right"><a href="image/gtrellis.png">view</a></td>
+</tr>
+<tr>
+<td align="left">org.Hs.eg.db</td>
+<td align="right">24</td>
+<td align="right">29</td>
+<td align="right"><a href="image/org.Hs.eg.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">org.Mm.eg.db</td>
+<td align="right">24</td>
+<td align="right">29</td>
+<td align="right"><a href="image/org.Mm.eg.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">org.Rn.eg.db</td>
+<td align="right">24</td>
+<td align="right">29</td>
+<td align="right"><a href="image/org.Rn.eg.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DO.db</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right"><a href="image/DO.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GO.db</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right"><a href="image/GO.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">hom.Hs.inp.db</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right"><a href="image/hom.Hs.inp.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">KEGG.db</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right"><a href="image/KEGG.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rae230aprobe</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right"><a href="image/rae230aprobe.png">view</a></td>
+</tr>
+<tr>
+<td align="left">reactome.db</td>
+<td align="right">24</td>
+<td align="right">24</td>
+<td align="right"><a href="image/reactome.db.png">view</a></td>
+</tr>
+<tr>
+<td align="left">manipulateWidget</td>
+<td align="right">23</td>
+<td align="right">56</td>
+<td align="right"><a href="image/manipulateWidget.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lintr</td>
+<td align="right">23</td>
+<td align="right">28</td>
+<td align="right"><a href="image/lintr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">remote</td>
+<td align="right">23</td>
+<td align="right">23</td>
+<td align="right"><a href="image/remote.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dplyr</td>
+<td align="right">22</td>
+<td align="right">55</td>
+<td align="right"><a href="image/dplyr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">effects</td>
+<td align="right">22</td>
+<td align="right">53</td>
+<td align="right"><a href="image/effects.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DelayedMatrixStats</td>
+<td align="right">22</td>
+<td align="right">36</td>
+<td align="right"><a href="image/DelayedMatrixStats.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rcmdcheck</td>
+<td align="right">22</td>
+<td align="right">32</td>
+<td align="right"><a href="image/rcmdcheck.png">view</a></td>
+</tr>
+<tr>
+<td align="left">blogdown</td>
+<td align="right">22</td>
+<td align="right">28</td>
+<td align="right"><a href="image/blogdown.png">view</a></td>
+</tr>
+<tr>
+<td align="left">roxygen2</td>
+<td align="right">21</td>
+<td align="right">44</td>
+<td align="right"><a href="image/roxygen2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">testthat</td>
+<td align="right">21</td>
+<td align="right">42</td>
+<td align="right"><a href="image/testthat.png">view</a></td>
+</tr>
+<tr>
+<td align="left">forcats</td>
+<td align="right">21</td>
+<td align="right">41</td>
+<td align="right"><a href="image/forcats.png">view</a></td>
+</tr>
+<tr>
+<td align="left">AnnotationDbi</td>
+<td align="right">21</td>
+<td align="right">38</td>
+<td align="right"><a href="image/AnnotationDbi.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rGREAT</td>
+<td align="right">21</td>
+<td align="right">34</td>
+<td align="right"><a href="image/rGREAT.png">view</a></td>
+</tr>
+<tr>
+<td align="left">readxl</td>
+<td align="right">21</td>
+<td align="right">31</td>
+<td align="right"><a href="image/readxl.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cellranger</td>
+<td align="right">21</td>
+<td align="right">30</td>
+<td align="right"><a href="image/cellranger.png">view</a></td>
+</tr>
+<tr>
+<td align="left">network</td>
+<td align="right">21</td>
+<td align="right">30</td>
+<td align="right"><a href="image/network.png">view</a></td>
+</tr>
+<tr>
+<td align="left">readr</td>
+<td align="right">21</td>
+<td align="right">30</td>
+<td align="right"><a href="image/readr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pkgload</td>
+<td align="right">21</td>
+<td align="right">25</td>
+<td align="right"><a href="image/pkgload.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rematch2</td>
+<td align="right">21</td>
+<td align="right">24</td>
+<td align="right"><a href="image/rematch2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">interactiveDisplayBase</td>
+<td align="right">21</td>
+<td align="right">23</td>
+<td align="right"><a href="image/interactiveDisplayBase.png">view</a></td>
+</tr>
+<tr>
+<td align="left">feather</td>
+<td align="right">21</td>
+<td align="right">22</td>
+<td align="right"><a href="image/feather.png">view</a></td>
+</tr>
+<tr>
+<td align="left">plm</td>
+<td align="right">20</td>
+<td align="right">57</td>
+<td align="right"><a href="image/plm.png">view</a></td>
+</tr>
+<tr>
+<td align="left">shinyjs</td>
+<td align="right">20</td>
+<td align="right">24</td>
+<td align="right"><a href="image/shinyjs.png">view</a></td>
+</tr>
+<tr>
+<td align="left">miniUI</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right"><a href="image/miniUI.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pkgndep</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right"><a href="image/pkgndep.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rugarch</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right"><a href="image/rugarch.png">view</a></td>
+</tr>
+<tr>
+<td align="left">shinyBS</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right"><a href="image/shinyBS.png">view</a></td>
+</tr>
+<tr>
+<td align="left">shinydashboard</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right"><a href="image/shinydashboard.png">view</a></td>
+</tr>
+<tr>
+<td align="left">HDF5Array</td>
+<td align="right">19</td>
+<td align="right">88</td>
+<td align="right"><a href="image/HDF5Array.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rsamtools</td>
+<td align="right">19</td>
+<td align="right">68</td>
+<td align="right"><a href="image/Rsamtools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ELMER.data</td>
+<td align="right">19</td>
+<td align="right">62</td>
+<td align="right"><a href="image/ELMER.data.png">view</a></td>
+</tr>
+<tr>
+<td align="left">AnnotationFilter</td>
+<td align="right">19</td>
+<td align="right">42</td>
+<td align="right"><a href="image/AnnotationFilter.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bamsignals</td>
+<td align="right">19</td>
+<td align="right">35</td>
+<td align="right"><a href="image/bamsignals.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pbkrtest</td>
+<td align="right">19</td>
+<td align="right">19</td>
+<td align="right"><a href="image/pbkrtest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">reprex</td>
+<td align="right">18</td>
+<td align="right">55</td>
+<td align="right"><a href="image/reprex.png">view</a></td>
+</tr>
+<tr>
+<td align="left">siggenes</td>
+<td align="right">18</td>
+<td align="right">36</td>
+<td align="right"><a href="image/siggenes.png">view</a></td>
+</tr>
+<tr>
+<td align="left">IRkernel</td>
+<td align="right">18</td>
+<td align="right">26</td>
+<td align="right"><a href="image/IRkernel.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pkgbuild</td>
+<td align="right">18</td>
+<td align="right">22</td>
+<td align="right"><a href="image/pkgbuild.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GenomicRanges</td>
+<td align="right">17</td>
+<td align="right">128</td>
+<td align="right"><a href="image/GenomicRanges.png">view</a></td>
+</tr>
+<tr>
+<td align="left">htmlTable</td>
+<td align="right">17</td>
+<td align="right">65</td>
+<td align="right"><a href="image/htmlTable.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mlogit</td>
+<td align="right">17</td>
+<td align="right">64</td>
+<td align="right"><a href="image/mlogit.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rgexf</td>
+<td align="right">17</td>
+<td align="right">25</td>
+<td align="right"><a href="image/rgexf.png">view</a></td>
+</tr>
+<tr>
+<td align="left">IRdisplay</td>
+<td align="right">17</td>
+<td align="right">19</td>
+<td align="right"><a href="image/IRdisplay.png">view</a></td>
+</tr>
+<tr>
+<td align="left">EBImage</td>
+<td align="right">16</td>
+<td align="right">31</td>
+<td align="right"><a href="image/EBImage.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bookdown</td>
+<td align="right">16</td>
+<td align="right">26</td>
+<td align="right"><a href="image/bookdown.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cyclocomp</td>
+<td align="right">16</td>
+<td align="right">18</td>
+<td align="right"><a href="image/cyclocomp.png">view</a></td>
+</tr>
+<tr>
+<td align="left">KEGGREST</td>
+<td align="right">16</td>
+<td align="right">18</td>
+<td align="right"><a href="image/KEGGREST.png">view</a></td>
+</tr>
+<tr>
+<td align="left">BiocStyle</td>
+<td align="right">16</td>
+<td align="right">17</td>
+<td align="right"><a href="image/BiocStyle.png">view</a></td>
+</tr>
+<tr>
+<td align="left">shiny</td>
+<td align="right">15</td>
+<td align="right">40</td>
+<td align="right"><a href="image/shiny.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rmarkdown</td>
+<td align="right">15</td>
+<td align="right">38</td>
+<td align="right"><a href="image/rmarkdown.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ks</td>
+<td align="right">15</td>
+<td align="right">36</td>
+<td align="right"><a href="image/ks.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DT</td>
+<td align="right">15</td>
+<td align="right">24</td>
+<td align="right"><a href="image/DT.png">view</a></td>
+</tr>
+<tr>
+<td align="left">CePa</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="right"><a href="image/CePa.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ipred</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="right"><a href="image/ipred.png">view</a></td>
+</tr>
+<tr>
+<td align="left">robust</td>
+<td align="right">15</td>
+<td align="right">15</td>
+<td align="right"><a href="image/robust.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ComplexHeatmap</td>
+<td align="right">14</td>
+<td align="right">57</td>
+<td align="right"><a href="image/ComplexHeatmap.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Biostrings</td>
+<td align="right">14</td>
+<td align="right">56</td>
+<td align="right"><a href="image/Biostrings.png">view</a></td>
+</tr>
+<tr>
+<td align="left">survey</td>
+<td align="right">14</td>
+<td align="right">55</td>
+<td align="right"><a href="image/survey.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DelayedArray</td>
+<td align="right">14</td>
+<td align="right">53</td>
+<td align="right"><a href="image/DelayedArray.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tibble</td>
+<td align="right">14</td>
+<td align="right">35</td>
+<td align="right"><a href="image/tibble.png">view</a></td>
+</tr>
+<tr>
+<td align="left">umap</td>
+<td align="right">14</td>
+<td align="right">23</td>
+<td align="right"><a href="image/umap.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pillar</td>
+<td align="right">14</td>
+<td align="right">19</td>
+<td align="right"><a href="image/pillar.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gh</td>
+<td align="right">14</td>
+<td align="right">18</td>
+<td align="right"><a href="image/gh.png">view</a></td>
+</tr>
+<tr>
+<td align="left">truncreg</td>
+<td align="right">14</td>
+<td align="right">16</td>
+<td align="right"><a href="image/truncreg.png">view</a></td>
+</tr>
+<tr>
+<td align="left">topicmodels</td>
+<td align="right">14</td>
+<td align="right">15</td>
+<td align="right"><a href="image/topicmodels.png">view</a></td>
+</tr>
+<tr>
+<td align="left">multtest</td>
+<td align="right">14</td>
+<td align="right">14</td>
+<td align="right"><a href="image/multtest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">np</td>
+<td align="right">14</td>
+<td align="right">14</td>
+<td align="right"><a href="image/np.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tseries</td>
+<td align="right">14</td>
+<td align="right">14</td>
+<td align="right"><a href="image/tseries.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GenomeInfoDb</td>
+<td align="right">13</td>
+<td align="right">63</td>
+<td align="right"><a href="image/GenomeInfoDb.png">view</a></td>
+</tr>
+<tr>
+<td align="left">quantmod</td>
+<td align="right">13</td>
+<td align="right">23</td>
+<td align="right"><a href="image/quantmod.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rvest</td>
+<td align="right">13</td>
+<td align="right">22</td>
+<td align="right"><a href="image/rvest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">servr</td>
+<td align="right">13</td>
+<td align="right">20</td>
+<td align="right"><a href="image/servr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sessioninfo</td>
+<td align="right">13</td>
+<td align="right">20</td>
+<td align="right"><a href="image/sessioninfo.png">view</a></td>
+</tr>
+<tr>
+<td align="left">vegan</td>
+<td align="right">13</td>
+<td align="right">15</td>
+<td align="right"><a href="image/vegan.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fGarch</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right"><a href="image/fGarch.png">view</a></td>
+</tr>
+<tr>
+<td align="left">prodlim</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right"><a href="image/prodlim.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ROCR</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right"><a href="image/ROCR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">vars</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right"><a href="image/vars.png">view</a></td>
+</tr>
+<tr>
+<td align="left">BiocParallel</td>
+<td align="right">12</td>
+<td align="right">76</td>
+<td align="right"><a href="image/BiocParallel.png">view</a></td>
+</tr>
+<tr>
+<td align="left">visNetwork</td>
+<td align="right">12</td>
+<td align="right">61</td>
+<td align="right"><a href="image/visNetwork.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lava</td>
+<td align="right">12</td>
+<td align="right">49</td>
+<td align="right"><a href="image/lava.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pkgmaker</td>
+<td align="right">12</td>
+<td align="right">46</td>
+<td align="right"><a href="image/pkgmaker.png">view</a></td>
+</tr>
+<tr>
+<td align="left">doRNG</td>
+<td align="right">12</td>
+<td align="right">45</td>
+<td align="right"><a href="image/doRNG.png">view</a></td>
+</tr>
+<tr>
+<td align="left">KEGGgraph</td>
+<td align="right">12</td>
+<td align="right">31</td>
+<td align="right"><a href="image/KEGGgraph.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gridtext</td>
+<td align="right">12</td>
+<td align="right">22</td>
+<td align="right"><a href="image/gridtext.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RSQLite</td>
+<td align="right">12</td>
+<td align="right">20</td>
+<td align="right"><a href="image/RSQLite.png">view</a></td>
+</tr>
+<tr>
+<td align="left">reshape2</td>
+<td align="right">12</td>
+<td align="right">17</td>
+<td align="right"><a href="image/reshape2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">wordcloud2</td>
+<td align="right">12</td>
+<td align="right">17</td>
+<td align="right"><a href="image/wordcloud2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">repr</td>
+<td align="right">12</td>
+<td align="right">16</td>
+<td align="right"><a href="image/repr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">httpuv</td>
+<td align="right">12</td>
+<td align="right">15</td>
+<td align="right"><a href="image/httpuv.png">view</a></td>
+</tr>
+<tr>
+<td align="left">maxLik</td>
+<td align="right">12</td>
+<td align="right">15</td>
+<td align="right"><a href="image/maxLik.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rdpack</td>
+<td align="right">12</td>
+<td align="right">15</td>
+<td align="right"><a href="image/Rdpack.png">view</a></td>
+</tr>
+<tr>
+<td align="left">XVector</td>
+<td align="right">12</td>
+<td align="right">15</td>
+<td align="right"><a href="image/XVector.png">view</a></td>
+</tr>
+<tr>
+<td align="left">influenceR</td>
+<td align="right">12</td>
+<td align="right">14</td>
+<td align="right"><a href="image/influenceR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">km.ci</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right"><a href="image/km.ci.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pamr</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right"><a href="image/pamr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">IRanges</td>
+<td align="right">11</td>
+<td align="right">63</td>
+<td align="right"><a href="image/IRanges.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lme4</td>
+<td align="right">11</td>
+<td align="right">63</td>
+<td align="right"><a href="image/lme4.png">view</a></td>
+</tr>
+<tr>
+<td align="left">knitr</td>
+<td align="right">11</td>
+<td align="right">48</td>
+<td align="right"><a href="image/knitr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">strucchange</td>
+<td align="right">11</td>
+<td align="right">48</td>
+<td align="right"><a href="image/strucchange.png">view</a></td>
+</tr>
+<tr>
+<td align="left">crosstalk</td>
+<td align="right">11</td>
+<td align="right">41</td>
+<td align="right"><a href="image/crosstalk.png">view</a></td>
+</tr>
+<tr>
+<td align="left">quantreg</td>
+<td align="right">11</td>
+<td align="right">34</td>
+<td align="right"><a href="image/quantreg.png">view</a></td>
+</tr>
+<tr>
+<td align="left">data.tree</td>
+<td align="right">11</td>
+<td align="right">31</td>
+<td align="right"><a href="image/data.tree.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ssh</td>
+<td align="right">11</td>
+<td align="right">21</td>
+<td align="right"><a href="image/ssh.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bibtex</td>
+<td align="right">11</td>
+<td align="right">13</td>
+<td align="right"><a href="image/bibtex.png">view</a></td>
+</tr>
+<tr>
+<td align="left">htmlwidgets</td>
+<td align="right">11</td>
+<td align="right">13</td>
+<td align="right"><a href="image/htmlwidgets.png">view</a></td>
+</tr>
+<tr>
+<td align="left">progress</td>
+<td align="right">11</td>
+<td align="right">13</td>
+<td align="right"><a href="image/progress.png">view</a></td>
+</tr>
+<tr>
+<td align="left">selectr</td>
+<td align="right">11</td>
+<td align="right">13</td>
+<td align="right"><a href="image/selectr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ConsensusClusterPlus</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right"><a href="image/ConsensusClusterPlus.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rgraphviz</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right"><a href="image/Rgraphviz.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rrcov</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right"><a href="image/rrcov.png">view</a></td>
+</tr>
+<tr>
+<td align="left">TTR</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right"><a href="image/TTR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">doParallel</td>
+<td align="right">10</td>
+<td align="right">62</td>
+<td align="right"><a href="image/doParallel.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sandwich</td>
+<td align="right">10</td>
+<td align="right">57</td>
+<td align="right"><a href="image/sandwich.png">view</a></td>
+</tr>
+<tr>
+<td align="left">graphlayouts</td>
+<td align="right">10</td>
+<td align="right">52</td>
+<td align="right"><a href="image/graphlayouts.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lmtest</td>
+<td align="right">10</td>
+<td align="right">47</td>
+<td align="right"><a href="image/lmtest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">edgeR</td>
+<td align="right">10</td>
+<td align="right">42</td>
+<td align="right"><a href="image/edgeR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">igraph</td>
+<td align="right">10</td>
+<td align="right">39</td>
+<td align="right"><a href="image/igraph.png">view</a></td>
+</tr>
+<tr>
+<td align="left">scales</td>
+<td align="right">10</td>
+<td align="right">36</td>
+<td align="right"><a href="image/scales.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bsub</td>
+<td align="right">10</td>
+<td align="right">35</td>
+<td align="right"><a href="image/bsub.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tidyselect</td>
+<td align="right">10</td>
+<td align="right">33</td>
+<td align="right"><a href="image/tidyselect.png">view</a></td>
+</tr>
+<tr>
+<td align="left">webshot</td>
+<td align="right">10</td>
+<td align="right">26</td>
+<td align="right"><a href="image/webshot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">illuminaio</td>
+<td align="right">10</td>
+<td align="right">22</td>
+<td align="right"><a href="image/illuminaio.png">view</a></td>
+</tr>
+<tr>
+<td align="left">reticulate</td>
+<td align="right">10</td>
+<td align="right">22</td>
+<td align="right"><a href="image/reticulate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">svglite</td>
+<td align="right">10</td>
+<td align="right">21</td>
+<td align="right"><a href="image/svglite.png">view</a></td>
+</tr>
+<tr>
+<td align="left">covr</td>
+<td align="right">10</td>
+<td align="right">19</td>
+<td align="right"><a href="image/covr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RSpectra</td>
+<td align="right">10</td>
+<td align="right">18</td>
+<td align="right"><a href="image/RSpectra.png">view</a></td>
+</tr>
+<tr>
+<td align="left">TSP</td>
+<td align="right">10</td>
+<td align="right">17</td>
+<td align="right"><a href="image/TSP.png">view</a></td>
+</tr>
+<tr>
+<td align="left">xts</td>
+<td align="right">10</td>
+<td align="right">17</td>
+<td align="right"><a href="image/xts.png">view</a></td>
+</tr>
+<tr>
+<td align="left">raster</td>
+<td align="right">10</td>
+<td align="right">14</td>
+<td align="right"><a href="image/raster.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ape</td>
+<td align="right">10</td>
+<td align="right">13</td>
+<td align="right"><a href="image/ape.png">view</a></td>
+</tr>
+<tr>
+<td align="left">maptools</td>
+<td align="right">10</td>
+<td align="right">13</td>
+<td align="right"><a href="image/maptools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">statnet.common</td>
+<td align="right">10</td>
+<td align="right">13</td>
+<td align="right"><a href="image/statnet.common.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gplots</td>
+<td align="right">10</td>
+<td align="right">12</td>
+<td align="right"><a href="image/gplots.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mgcv</td>
+<td align="right">10</td>
+<td align="right">12</td>
+<td align="right"><a href="image/mgcv.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ALL</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/ALL.png">view</a></td>
+</tr>
+<tr>
+<td align="left">aroma.light</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/aroma.light.png">view</a></td>
+</tr>
+<tr>
+<td align="left">expm</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/expm.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fts</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/fts.png">view</a></td>
+</tr>
+<tr>
+<td align="left">golubEsets</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/golubEsets.png">view</a></td>
+</tr>
+<tr>
+<td align="left">MatrixModels</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/MatrixModels.png">view</a></td>
+</tr>
+<tr>
+<td align="left">R.cache</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/R.cache.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RcppEigen</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/RcppEigen.png">view</a></td>
+</tr>
+<tr>
+<td align="left">SkewHyperbolic</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/SkewHyperbolic.png">view</a></td>
+</tr>
+<tr>
+<td align="left">survival</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/survival.png">view</a></td>
+</tr>
+<tr>
+<td align="left">urca</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right"><a href="image/urca.png">view</a></td>
+</tr>
+<tr>
+<td align="left">nlme</td>
+<td align="right">9</td>
+<td align="right">62</td>
+<td align="right"><a href="image/nlme.png">view</a></td>
+</tr>
+<tr>
+<td align="left">zoo</td>
+<td align="right">9</td>
+<td align="right">61</td>
+<td align="right"><a href="image/zoo.png">view</a></td>
+</tr>
+<tr>
+<td align="left">S4Vectors</td>
+<td align="right">9</td>
+<td align="right">47</td>
+<td align="right"><a href="image/S4Vectors.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pROC</td>
+<td align="right">9</td>
+<td align="right">37</td>
+<td align="right"><a href="image/pROC.png">view</a></td>
+</tr>
+<tr>
+<td align="left">httr</td>
+<td align="right">9</td>
+<td align="right">35</td>
+<td align="right"><a href="image/httr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gridExtra</td>
+<td align="right">9</td>
+<td align="right">34</td>
+<td align="right"><a href="image/gridExtra.png">view</a></td>
+</tr>
+<tr>
+<td align="left">vctrs</td>
+<td align="right">9</td>
+<td align="right">34</td>
+<td align="right"><a href="image/vctrs.png">view</a></td>
+</tr>
+<tr>
+<td align="left">HilbertVis</td>
+<td align="right">9</td>
+<td align="right">27</td>
+<td align="right"><a href="image/HilbertVis.png">view</a></td>
+</tr>
+<tr>
+<td align="left">callr</td>
+<td align="right">9</td>
+<td align="right">26</td>
+<td align="right"><a href="image/callr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">eulerr</td>
+<td align="right">9</td>
+<td align="right">21</td>
+<td align="right"><a href="image/eulerr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">stringr</td>
+<td align="right">9</td>
+<td align="right">20</td>
+<td align="right"><a href="image/stringr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">credentials</td>
+<td align="right">9</td>
+<td align="right">19</td>
+<td align="right"><a href="image/credentials.png">view</a></td>
+</tr>
+<tr>
+<td align="left">openxlsx</td>
+<td align="right">9</td>
+<td align="right">19</td>
+<td align="right"><a href="image/openxlsx.png">view</a></td>
+</tr>
+<tr>
+<td align="left">promises</td>
+<td align="right">9</td>
+<td align="right">18</td>
+<td align="right"><a href="image/promises.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Biobase</td>
+<td align="right">9</td>
+<td align="right">15</td>
+<td align="right"><a href="image/Biobase.png">view</a></td>
+</tr>
+<tr>
+<td align="left">latticeExtra</td>
+<td align="right">9</td>
+<td align="right">15</td>
+<td align="right"><a href="image/latticeExtra.png">view</a></td>
+</tr>
+<tr>
+<td align="left">blob</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right"><a href="image/blob.png">view</a></td>
+</tr>
+<tr>
+<td align="left">desc</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right"><a href="image/desc.png">view</a></td>
+</tr>
+<tr>
+<td align="left">hms</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right"><a href="image/hms.png">view</a></td>
+</tr>
+<tr>
+<td align="left">urltools</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right"><a href="image/urltools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">hexbin</td>
+<td align="right">9</td>
+<td align="right">13</td>
+<td align="right"><a href="image/hexbin.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tailr</td>
+<td align="right">9</td>
+<td align="right">13</td>
+<td align="right"><a href="image/tailr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">futile.logger</td>
+<td align="right">9</td>
+<td align="right">12</td>
+<td align="right"><a href="image/futile.logger.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sp</td>
+<td align="right">9</td>
+<td align="right">12</td>
+<td align="right"><a href="image/sp.png">view</a></td>
+</tr>
+<tr>
+<td align="left">xopen</td>
+<td align="right">9</td>
+<td align="right">12</td>
+<td align="right"><a href="image/xopen.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Matrix</td>
+<td align="right">9</td>
+<td align="right">11</td>
+<td align="right"><a href="image/Matrix.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tkWidgets</td>
+<td align="right">9</td>
+<td align="right">11</td>
+<td align="right"><a href="image/tkWidgets.png">view</a></td>
+</tr>
+<tr>
+<td align="left">base64</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/base64.png">view</a></td>
+</tr>
+<tr>
+<td align="left">coda</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/coda.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fBasics</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/fBasics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fit.models</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/fit.models.png">view</a></td>
+</tr>
+<tr>
+<td align="left">graph</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/graph.png">view</a></td>
+</tr>
+<tr>
+<td align="left">locfit</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/locfit.png">view</a></td>
+</tr>
+<tr>
+<td align="left">R.utils</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/R.utils.png">view</a></td>
+</tr>
+<tr>
+<td align="left">reshape</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/reshape.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RWeka</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/RWeka.png">view</a></td>
+</tr>
+<tr>
+<td align="left">skmeans</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right"><a href="image/skmeans.png">view</a></td>
+</tr>
+<tr>
+<td align="left">BiocGenerics</td>
+<td align="right">8</td>
+<td align="right">93</td>
+<td align="right"><a href="image/BiocGenerics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rex</td>
+<td align="right">8</td>
+<td align="right">67</td>
+<td align="right"><a href="image/rex.png">view</a></td>
+</tr>
+<tr>
+<td align="left">checkmate</td>
+<td align="right">8</td>
+<td align="right">53</td>
+<td align="right"><a href="image/checkmate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">robustbase</td>
+<td align="right">8</td>
+<td align="right">52</td>
+<td align="right"><a href="image/robustbase.png">view</a></td>
+</tr>
+<tr>
+<td align="left">circlize</td>
+<td align="right">8</td>
+<td align="right">47</td>
+<td align="right"><a href="image/circlize.png">view</a></td>
+</tr>
+<tr>
+<td align="left">colorspace</td>
+<td align="right">8</td>
+<td align="right">47</td>
+<td align="right"><a href="image/colorspace.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pscl</td>
+<td align="right">8</td>
+<td align="right">43</td>
+<td align="right"><a href="image/pscl.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rhdf5</td>
+<td align="right">8</td>
+<td align="right">42</td>
+<td align="right"><a href="image/rhdf5.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gtable</td>
+<td align="right">8</td>
+<td align="right">40</td>
+<td align="right"><a href="image/gtable.png">view</a></td>
+</tr>
+<tr>
+<td align="left">isoband</td>
+<td align="right">8</td>
+<td align="right">40</td>
+<td align="right"><a href="image/isoband.png">view</a></td>
+</tr>
+<tr>
+<td align="left">limma</td>
+<td align="right">8</td>
+<td align="right">36</td>
+<td align="right"><a href="image/limma.png">view</a></td>
+</tr>
+<tr>
+<td align="left">chron</td>
+<td align="right">8</td>
+<td align="right">33</td>
+<td align="right"><a href="image/chron.png">view</a></td>
+</tr>
+<tr>
+<td align="left">microbenchmark</td>
+<td align="right">8</td>
+<td align="right">33</td>
+<td align="right"><a href="image/microbenchmark.png">view</a></td>
+</tr>
+<tr>
+<td align="left">munsell</td>
+<td align="right">8</td>
+<td align="right">33</td>
+<td align="right"><a href="image/munsell.png">view</a></td>
+</tr>
+<tr>
+<td align="left">purrr</td>
+<td align="right">8</td>
+<td align="right">33</td>
+<td align="right"><a href="image/purrr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">remotes</td>
+<td align="right">8</td>
+<td align="right">30</td>
+<td align="right"><a href="image/remotes.png">view</a></td>
+</tr>
+<tr>
+<td align="left">xtable</td>
+<td align="right">8</td>
+<td align="right">30</td>
+<td align="right"><a href="image/xtable.png">view</a></td>
+</tr>
+<tr>
+<td align="left">withr</td>
+<td align="right">8</td>
+<td align="right">27</td>
+<td align="right"><a href="image/withr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cli</td>
+<td align="right">8</td>
+<td align="right">22</td>
+<td align="right"><a href="image/cli.png">view</a></td>
+</tr>
+<tr>
+<td align="left">foreach</td>
+<td align="right">8</td>
+<td align="right">22</td>
+<td align="right"><a href="image/foreach.png">view</a></td>
+</tr>
+<tr>
+<td align="left">foolbox</td>
+<td align="right">8</td>
+<td align="right">20</td>
+<td align="right"><a href="image/foolbox.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lifecycle</td>
+<td align="right">8</td>
+<td align="right">20</td>
+<td align="right"><a href="image/lifecycle.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rhtslib</td>
+<td align="right">8</td>
+<td align="right">19</td>
+<td align="right"><a href="image/Rhtslib.png">view</a></td>
+</tr>
+<tr>
+<td align="left">later</td>
+<td align="right">8</td>
+<td align="right">18</td>
+<td align="right"><a href="image/later.png">view</a></td>
+</tr>
+<tr>
+<td align="left">openssl</td>
+<td align="right">8</td>
+<td align="right">18</td>
+<td align="right"><a href="image/openssl.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rprojroot</td>
+<td align="right">8</td>
+<td align="right">18</td>
+<td align="right"><a href="image/rprojroot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">triebeard</td>
+<td align="right">8</td>
+<td align="right">18</td>
+<td align="right"><a href="image/triebeard.png">view</a></td>
+</tr>
+<tr>
+<td align="left">plyr</td>
+<td align="right">8</td>
+<td align="right">17</td>
+<td align="right"><a href="image/plyr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">scrime</td>
+<td align="right">8</td>
+<td align="right">17</td>
+<td align="right"><a href="image/scrime.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gclus</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="right"><a href="image/gclus.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mclust</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="right"><a href="image/mclust.png">view</a></td>
+</tr>
+<tr>
+<td align="left">polynom</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="right"><a href="image/polynom.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tm</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="right"><a href="image/tm.png">view</a></td>
+</tr>
+<tr>
+<td align="left">wheatmap</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="right"><a href="image/wheatmap.png">view</a></td>
+</tr>
+<tr>
+<td align="left">xfun</td>
+<td align="right">8</td>
+<td align="right">16</td>
+<td align="right"><a href="image/xfun.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lubridate</td>
+<td align="right">8</td>
+<td align="right">15</td>
+<td align="right"><a href="image/lubridate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">processx</td>
+<td align="right">8</td>
+<td align="right">15</td>
+<td align="right"><a href="image/processx.png">view</a></td>
+</tr>
+<tr>
+<td align="left">assertthat</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/assertthat.png">view</a></td>
+</tr>
+<tr>
+<td align="left">collections</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/collections.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cubature</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/cubature.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ellipsis</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/ellipsis.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gdtools</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/gdtools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GetoptLong</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/GetoptLong.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GlobalOptions</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/GlobalOptions.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lattice</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/lattice.png">view</a></td>
+</tr>
+<tr>
+<td align="left">maps</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/maps.png">view</a></td>
+</tr>
+<tr>
+<td align="left">memoise</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/memoise.png">view</a></td>
+</tr>
+<tr>
+<td align="left">polylabelr</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/polylabelr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RcppArmadillo</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/RcppArmadillo.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rngtools</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/rngtools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tweenr</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/tweenr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">VGAM</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/VGAM.png">view</a></td>
+</tr>
+<tr>
+<td align="left">wordcloud</td>
+<td align="right">8</td>
+<td align="right">13</td>
+<td align="right"><a href="image/wordcloud.png">view</a></td>
+</tr>
+<tr>
+<td align="left">boot</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/boot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">exactRankTests</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/exactRankTests.png">view</a></td>
+</tr>
+<tr>
+<td align="left">grImport</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/grImport.png">view</a></td>
+</tr>
+<tr>
+<td align="left">MASS</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/MASS.png">view</a></td>
+</tr>
+<tr>
+<td align="left">maxstat</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/maxstat.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rpart</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/rpart.png">view</a></td>
+</tr>
+<tr>
+<td align="left">timeSeries</td>
+<td align="right">8</td>
+<td align="right">12</td>
+<td align="right"><a href="image/timeSeries.png">view</a></td>
+</tr>
+<tr>
+<td align="left">askpass</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/askpass.png">view</a></td>
+</tr>
+<tr>
+<td align="left">crayon</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/crayon.png">view</a></td>
+</tr>
+<tr>
+<td align="left">downloader</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/downloader.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GeneralizedHyperbolic</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/GeneralizedHyperbolic.png">view</a></td>
+</tr>
+<tr>
+<td align="left">htmltools</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/htmltools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">markdown</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/markdown.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ModelMetrics</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/ModelMetrics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rtsne</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/Rtsne.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rversions</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right"><a href="image/rversions.png">view</a></td>
+</tr>
+<tr>
+<td align="left">cluster</td>
+<td align="right">8</td>
+<td align="right">10</td>
+<td align="right"><a href="image/cluster.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mondate</td>
+<td align="right">8</td>
+<td align="right">10</td>
+<td align="right"><a href="image/mondate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">splines</td>
+<td align="right">8</td>
+<td align="right">10</td>
+<td align="right"><a href="image/splines.png">view</a></td>
+</tr>
+<tr>
+<td align="left">stats</td>
+<td align="right">8</td>
+<td align="right">10</td>
+<td align="right"><a href="image/stats.png">view</a></td>
+</tr>
+<tr>
+<td align="left">widgetTools</td>
+<td align="right">8</td>
+<td align="right">10</td>
+<td align="right"><a href="image/widgetTools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">grid</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right"><a href="image/grid.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gridBase</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right"><a href="image/gridBase.png">view</a></td>
+</tr>
+<tr>
+<td align="left">XML</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right"><a href="image/XML.png">view</a></td>
+</tr>
+<tr>
+<td align="left">abind</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/abind.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bit64</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/bit64.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Cairo</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/Cairo.png">view</a></td>
+</tr>
+<tr>
+<td align="left">caTools</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/caTools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">class</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/class.png">view</a></td>
+</tr>
+<tr>
+<td align="left">clue</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/clue.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DynDoc</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/DynDoc.png">view</a></td>
+</tr>
+<tr>
+<td align="left">foreign</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/foreign.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gbRd</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/gbRd.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gdata</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/gdata.png">view</a></td>
+</tr>
+<tr>
+<td align="left">git2r</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/git2r.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gridGraphics</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/gridGraphics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">grImport2</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/grImport2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gtools</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/gtools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">highlight</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/highlight.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ineq</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/ineq.png">view</a></td>
+</tr>
+<tr>
+<td align="left">kernlab</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/kernlab.png">view</a></td>
+</tr>
+<tr>
+<td align="left">kohonen</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/kohonen.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lambda.r</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/lambda.r.png">view</a></td>
+</tr>
+<tr>
+<td align="left">longmemo</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/longmemo.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mapdata</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/mapdata.png">view</a></td>
+</tr>
+<tr>
+<td align="left">methods</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/methods.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mime</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/mime.png">view</a></td>
+</tr>
+<tr>
+<td align="left">minqa</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/minqa.png">view</a></td>
+</tr>
+<tr>
+<td align="left">miscTools</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/miscTools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mitools</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/mitools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">modeltools</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/modeltools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">multicool</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/multicool.png">view</a></td>
+</tr>
+<tr>
+<td align="left">mvtnorm</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/mvtnorm.png">view</a></td>
+</tr>
+<tr>
+<td align="left">nnet</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/nnet.png">view</a></td>
+</tr>
+<tr>
+<td align="left">nor1mix</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/nor1mix.png">view</a></td>
+</tr>
+<tr>
+<td align="left">parallel</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/parallel.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pcaPP</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/pcaPP.png">view</a></td>
+</tr>
+<tr>
+<td align="left">R.oo</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/R.oo.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rcpp</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/Rcpp.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RCurl</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/RCurl.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rook</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/Rook.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rsolnp</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/Rsolnp.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RUnit</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/RUnit.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rvcheck</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/rvcheck.png">view</a></td>
+</tr>
+<tr>
+<td align="left">RWekajars</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/RWekajars.png">view</a></td>
+</tr>
+<tr>
+<td align="left">scatterplot3d</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/scatterplot3d.png">view</a></td>
+</tr>
+<tr>
+<td align="left">shape</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/shape.png">view</a></td>
+</tr>
+<tr>
+<td align="left">SparseM</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/SparseM.png">view</a></td>
+</tr>
+<tr>
+<td align="left">spatial</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/spatial.png">view</a></td>
+</tr>
+<tr>
+<td align="left">spd</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/spd.png">view</a></td>
+</tr>
+<tr>
+<td align="left">statmod</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/statmod.png">view</a></td>
+</tr>
+<tr>
+<td align="left">stats4</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/stats4.png">view</a></td>
+</tr>
+<tr>
+<td align="left">stringdist</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/stringdist.png">view</a></td>
+</tr>
+<tr>
+<td align="left">stringi</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/stringi.png">view</a></td>
+</tr>
+<tr>
+<td align="left">timeDate</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/timeDate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tinytex</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right"><a href="image/tinytex.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fracdiff</td>
+<td align="right">7</td>
+<td align="right">48</td>
+<td align="right"><a href="image/fracdiff.png">view</a></td>
+</tr>
+<tr>
+<td align="left">glue</td>
+<td align="right">7</td>
+<td align="right">48</td>
+<td align="right"><a href="image/glue.png">view</a></td>
+</tr>
+<tr>
+<td align="left">evaluate</td>
+<td align="right">7</td>
+<td align="right">33</td>
+<td align="right"><a href="image/evaluate.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fs</td>
+<td align="right">7</td>
+<td align="right">30</td>
+<td align="right"><a href="image/fs.png">view</a></td>
+</tr>
+<tr>
+<td align="left">generics</td>
+<td align="right">7</td>
+<td align="right">29</td>
+<td align="right"><a href="image/generics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DBI</td>
+<td align="right">7</td>
+<td align="right">28</td>
+<td align="right"><a href="image/DBI.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ps</td>
+<td align="right">7</td>
+<td align="right">26</td>
+<td align="right"><a href="image/ps.png">view</a></td>
+</tr>
+<tr>
+<td align="left">permute</td>
+<td align="right">7</td>
+<td align="right">22</td>
+<td align="right"><a href="image/permute.png">view</a></td>
+</tr>
+<tr>
+<td align="left">BiocManager</td>
+<td align="right">7</td>
+<td align="right">21</td>
+<td align="right"><a href="image/BiocManager.png">view</a></td>
+</tr>
+<tr>
+<td align="left">clipr</td>
+<td align="right">7</td>
+<td align="right">20</td>
+<td align="right"><a href="image/clipr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">jsonlite</td>
+<td align="right">7</td>
+<td align="right">20</td>
+<td align="right"><a href="image/jsonlite.png">view</a></td>
+</tr>
+<tr>
+<td align="left">xml2</td>
+<td align="right">7</td>
+<td align="right">20</td>
+<td align="right"><a href="image/xml2.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rappdirs</td>
+<td align="right">7</td>
+<td align="right">19</td>
+<td align="right"><a href="image/rappdirs.png">view</a></td>
+</tr>
+<tr>
+<td align="left">data.table</td>
+<td align="right">7</td>
+<td align="right">16</td>
+<td align="right"><a href="image/data.table.png">view</a></td>
+</tr>
+<tr>
+<td align="left">digest</td>
+<td align="right">7</td>
+<td align="right">16</td>
+<td align="right"><a href="image/digest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">easyPubMed</td>
+<td align="right">7</td>
+<td align="right">16</td>
+<td align="right"><a href="image/easyPubMed.png">view</a></td>
+</tr>
+<tr>
+<td align="left">getopt</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="right"><a href="image/getopt.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pkgconfig</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="right"><a href="image/pkgconfig.png">view</a></td>
+</tr>
+<tr>
+<td align="left">stabledist</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="right"><a href="image/stabledist.png">view</a></td>
+</tr>
+<tr>
+<td align="left">iterators</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right"><a href="image/iterators.png">view</a></td>
+</tr>
+<tr>
+<td align="left">KernSmooth</td>
+<td align="right">7</td>
+<td align="right">8</td>
+<td align="right"><a href="image/KernSmooth.png">view</a></td>
+</tr>
+<tr>
+<td align="left">R.methodsS3</td>
+<td align="right">7</td>
+<td align="right">8</td>
+<td align="right"><a href="image/R.methodsS3.png">view</a></td>
+</tr>
+<tr>
+<td align="left">randomForest</td>
+<td align="right">7</td>
+<td align="right">8</td>
+<td align="right"><a href="image/randomForest.png">view</a></td>
+</tr>
+<tr>
+<td align="left">backports</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/backports.png">view</a></td>
+</tr>
+<tr>
+<td align="left">bdsmatrix</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/bdsmatrix.png">view</a></td>
+</tr>
+<tr>
+<td align="left">colorout</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/colorout.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DEoptimR</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/DEoptimR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dichromat</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/dichromat.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dynamicTreeCut</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/dynamicTreeCut.png">view</a></td>
+</tr>
+<tr>
+<td align="left">estimability</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/estimability.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Formula</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/Formula.png">view</a></td>
+</tr>
+<tr>
+<td align="left">graphics</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/graphics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">gss</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/gss.png">view</a></td>
+</tr>
+<tr>
+<td align="left">matlab</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/matlab.png">view</a></td>
+</tr>
+<tr>
+<td align="left">NLP</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/NLP.png">view</a></td>
+</tr>
+<tr>
+<td align="left">pdist</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/pdist.png">view</a></td>
+</tr>
+<tr>
+<td align="left">preprocessCore</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/preprocessCore.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ProtGenerics</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/ProtGenerics.png">view</a></td>
+</tr>
+<tr>
+<td align="left">registry</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/registry.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rJava</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/rJava.png">view</a></td>
+</tr>
+<tr>
+<td align="left">slam</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/slam.png">view</a></td>
+</tr>
+<tr>
+<td align="left">snow</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/snow.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tcltk</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right"><a href="image/tcltk.png">view</a></td>
+</tr>
+<tr>
+<td align="left">TCGAbiolinksGUI.data</td>
+<td align="right">0</td>
+<td align="right">73</td>
+<td align="right"><a href="image/TCGAbiolinksGUI.data.png">view</a></td>
+</tr>
+<tr>
+<td align="left">dendsort</td>
+<td align="right">0</td>
+<td align="right">52</td>
+<td align="right"><a href="image/dendsort.png">view</a></td>
+</tr>
+<tr>
+<td align="left">viridisLite</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right"><a href="image/viridisLite.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rsvg</td>
+<td align="right">0</td>
+<td align="right">35</td>
+<td align="right"><a href="image/rsvg.png">view</a></td>
+</tr>
+<tr>
+<td align="left">matrixStats</td>
+<td align="right">0</td>
+<td align="right">34</td>
+<td align="right"><a href="image/matrixStats.png">view</a></td>
+</tr>
+<tr>
+<td align="left">R6</td>
+<td align="right">0</td>
+<td align="right">34</td>
+<td align="right"><a href="image/R6.png">view</a></td>
+</tr>
+<tr>
+<td align="left">formatR</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right"><a href="image/formatR.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rlang</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right"><a href="image/rlang.png">view</a></td>
+</tr>
+<tr>
+<td align="left">curl</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right"><a href="image/curl.png">view</a></td>
+</tr>
+<tr>
+<td align="left">lazyeval</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right"><a href="image/lazyeval.png">view</a></td>
+</tr>
+<tr>
+<td align="left">systemfonts</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right"><a href="image/systemfonts.png">view</a></td>
+</tr>
+<tr>
+<td align="left">Rhdf5lib</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right"><a href="image/Rhdf5lib.png">view</a></td>
+</tr>
+<tr>
+<td align="left">nloptr</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right"><a href="image/nloptr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rstudioapi</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right"><a href="image/rstudioapi.png">view</a></td>
+</tr>
+<tr>
+<td align="left">utf8</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right"><a href="image/utf8.png">view</a></td>
+</tr>
+<tr>
+<td align="left">zeallot</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right"><a href="image/zeallot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fansi</td>
+<td align="right">0</td>
+<td align="right">16</td>
+<td align="right"><a href="image/fansi.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tis</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right"><a href="image/tis.png">view</a></td>
+</tr>
+<tr>
+<td align="left">zip</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right"><a href="image/zip.png">view</a></td>
+</tr>
+<tr>
+<td align="left">farver</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right"><a href="image/farver.png">view</a></td>
+</tr>
+<tr>
+<td align="left">magrittr</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right"><a href="image/magrittr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">prettyunits</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right"><a href="image/prettyunits.png">view</a></td>
+</tr>
+<tr>
+<td align="left">rematch</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right"><a href="image/rematch.png">view</a></td>
+</tr>
+<tr>
+<td align="left">xmlparsedata</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right"><a href="image/xmlparsedata.png">view</a></td>
+</tr>
+<tr>
+<td align="left">acepack</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/acepack.png">view</a></td>
+</tr>
+<tr>
+<td align="left">clisymbols</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/clisymbols.png">view</a></td>
+</tr>
+<tr>
+<td align="left">commonmark</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/commonmark.png">view</a></td>
+</tr>
+<tr>
+<td align="left">DistributionUtils</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/DistributionUtils.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fastmap</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/fastmap.png">view</a></td>
+</tr>
+<tr>
+<td align="left">ini</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/ini.png">view</a></td>
+</tr>
+<tr>
+<td align="left">praise</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/praise.png">view</a></td>
+</tr>
+<tr>
+<td align="left">qap</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/qap.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sourcetools</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/sourcetools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">sys</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/sys.png">view</a></td>
+</tr>
+<tr>
+<td align="left">truncnorm</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right"><a href="image/truncnorm.png">view</a></td>
+</tr>
+<tr>
+<td align="left">highr</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right"><a href="image/highr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">beanplot</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right"><a href="image/beanplot.png">view</a></td>
+</tr>
+<tr>
+<td align="left">fastICA</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/fastICA.png">view</a></td>
+</tr>
+<tr>
+<td align="left">FNN</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/FNN.png">view</a></td>
+</tr>
+<tr>
+<td align="left">grDevices</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/grDevices.png">view</a></td>
+</tr>
+<tr>
+<td align="left">GSA</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/GSA.png">view</a></td>
+</tr>
+<tr>
+<td align="left">plogr</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/plogr.png">view</a></td>
+</tr>
+<tr>
+<td align="left">tools</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/tools.png">view</a></td>
+</tr>
+<tr>
+<td align="left">utils</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/utils.png">view</a></td>
+</tr>
+<tr>
+<td align="left">whisker</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/whisker.png">view</a></td>
+</tr>
+<tr>
+<td align="left">yaml</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right"><a href="image/yaml.png">view</a></td>
+</tr>
+<tr>
+<td align="left">base</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right"><a href="image/base.png">view</a></td>
+</tr>
+<tr>
+<td align="left">base64enc</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">BH</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">BiocVersion</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">bit</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">bitops</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">brew</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">carData</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">chromstaRData</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">codetools</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">compiler</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">datasets</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">DNAcopy</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">fastcluster</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">fastmatch</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">fftwtools</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">futile.options</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">GenomeInfoDbData</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">GenSA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">gower</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">humanCHRLOC</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">hwriter</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">impute</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">jpeg</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">KMsurv</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">labeling</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">numDeriv</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">pbdZMQ</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">png</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">polyclip</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">quadprog</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">RColorBrewer</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">rjson</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">SnowballC</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">SQUAREM</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">tiff</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">uuid</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">xptr</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="left">zlibbioc</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right"></td>
+</tr>
+</tbody></table>
+
+</body>
+
+</html>

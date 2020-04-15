@@ -1,13 +1,16 @@
 Package: pkgndep
 Type: Package
-Title: Number of Loaded Packages
+Title: Check the Heaviness of Package Dependencies
 Version: 0.99.0
-Date: 2019-01-18
+Date: 2020-04-15
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 3.0.0)
 Imports: ComplexHeatmap (>= 2.0.0), GetoptLong, utils, grid, crayon
-Description: It tells you how many packages are loaded if only one
-    package in Depends or Imports field is loaded in a fresh R session.
+Description: It checks the heaviness of the packages that user's
+    package depends on. For each package listed in the "Depends", "Imports" and
+    "Suggests" fields in the DESCRIPTION file, it opens a new R session, loads the
+    package and counts the number of namespaces that are loaded. The summary of
+    the dependencies is visualized by a customized heatmap.
 URL: https://github.com/jokergoo/pkgndep
 License: MIT + file LICENSE

@@ -6,7 +6,7 @@ pkg = args[1]
 
 tmp_file = tempfile()
 sink(tmp_file)
-oe = try(suppressPackageStartupMessages(library(pkg, character.only = TRUE)), silent = TRUE)
+oe = try(suppressWarnings(suppressPackageStartupMessages(library(pkg, character.only = TRUE))), silent = TRUE)
 sink()
 unlink(tmp_file)
 

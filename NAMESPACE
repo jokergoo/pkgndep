@@ -1,8 +1,14 @@
+S3method("plot", "pkgndep")
+export("plot.pkgndep")
+S3method("print", "pkgndep")
+export("print.pkgndep")
+export("loaded_ns")
 export("pkgndep")
+export("unavailable_pkg")
 
 import(ComplexHeatmap)
 import(GetoptLong)
 import(crayon)
-importFrom("grid", "unit", "gpar")
+import(grid)
 importFrom("utils", "packageDescription", "read.table")
 

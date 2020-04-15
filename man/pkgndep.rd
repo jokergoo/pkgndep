@@ -1,23 +1,27 @@
 \name{pkgndep}
 \alias{pkgndep}
 \title{
-Number of Loaded Packages
+Number of Dependency Packages
 }
 \description{
-Number of Loaded Packages
+Number of Dependency Packages
 }
 \usage{
-pkgndep(pkg)
+pkgndep(pkg, verbose = TRUE)
 }
 \arguments{
 
-  \item{pkg}{A string of package name or the path of the package on the local disc.}
+  \item{pkg}{Package name or the path of the package.}
+  \item{verbose}{Whether print messages. }
 
 }
 \details{
-It tells you how many packages are loaded if only one
-package in Depends or Imports field is loaded in a fresh R session.
+For each package listed in the "Depends", "Imports" and "Suggests" fields
+in the DESCRIPTION file, this function opens a new R session, loads the package
+and counts the number of namespaces that are loaded.
 }
 \examples{
-pkgndep("ComplexHeatmap")
+x = pkgndep("ComplexHeatmap")
+x
+plot(x)
 }

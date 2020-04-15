@@ -1,0 +1,22 @@
+\name{print.pkgndep}
+\alias{print.pkgndep}
+\title{
+Print method
+}
+\description{
+Print method
+}
+\usage{
+\method{print}{pkgndep}(x, ...)
+}
+\arguments{
+
+  \item{x}{The object from \code{\link{pkgndep}}.}
+  \item{...}{Other arguments.}
+
+}
+\examples{
+# There is no example
+NULL
+
+}

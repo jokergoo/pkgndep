@@ -1,18 +1,24 @@
 # == title
-# Number of Loaded Packages
+# Number of Dependency Packages
 #
 # == param
-# -pkg A string of package name or the path of the package on the local disc.
+# -pkg Package name or the path of the package.
+# -verbose Whether print messages. 
 #
 # == details
-# It tells you how many packages are loaded if only one
-# package in Depends or Imports field is loaded in a fresh R session.
+# For each package listed in the "Depends", "Imports" and "Suggests" fields
+# in the DESCRIPTION file, this function opens a new R session, loads the package
+# and counts the number of namespaces that are loaded.
 #
 # == example
 # x = pkgndep("ComplexHeatmap")
 # x
 # plot(x)
 pkgndep = function(pkg, verbose = TRUE) {
+
+	if(verbose) {
+		cat(blue(qq("========== checking @{pkg} ==========\n")))
+	}
 	if(file.exists(pkg)) {
 		x = read.dcf(paste0(pkg, "/DESCRIPTION"))
 		x = as.data.frame(x)
@@ -108,12 +114,26 @@ pkgndep = function(pkg, verbose = TRUE) {
 	return(obj)
 }
 
+# == title
+# Print method
+#
+# == param
+# -x The object from `pkgndep`.
+# -... Other arguments.
+#
 print.pkgndep = function(x, ...) {
 	qqcat("@{x$package} version @{x$version}\n")
 	qqcat("@{x$n1} namespaces loaded if only load packages in Depends and Imports\n")
 	qqcat("@{x$n2} namespaces loaded for loading all packages in Depends, Imports and Suggests\n")
 }
 
+# == title
+# Loaded namespaces
+#
+# == param
+# -x The object from `pkgndep`.
+# -include_suggests Whether include the namespaces that are loaded if loading the packages from "Suggests" field.
+#
 loaded_ns = function(x, include_suggests = TRUE) {
 	if(include_suggests) {
 		sort(colnames(x$mat))
@@ -123,12 +143,53 @@ loaded_ns = function(x, include_suggests = TRUE) {
 	}
 }
 
+# == title
+# Unavailable packages
+#
+# == param
+# -x The object from `pkgndep`.
+#
+# == details
+# It lists the packages that are not installed in the "Suggests" field.
+#
 unavailable_pkg = function(x) {
 	sort(rownames(x$mat)[!x$pkg_available])
 }
 
+# == title
+# Plot method
+#
+# == param
+# -x The object from `pkgndep`.
+# -pkg_fontsize Fontsize for the package names.
+# -title_fontsize Fontsize for the titles.
+# -legend_fontsize Fontsize for the legends.
+# -fix_size Should the rows and columns in the heatmap have fixed size?
+# -... Other arguments.
+#
+# == details
+# If ``fix_size`` is set to ``TRUE``. The size of the whole plot can be obtained by:
+#
+#     size = plot(x)
+#
+# where ``size`` is a `grid::unit` object with the width and height of the whole heatmap, in unit ``mm``.
+# If you want to save the plot in to e.g. a PDF file that has the same size of the heatmap, you
+# need to make the plot twice. First save the plot into a null device, just to obtain the size 
+# of the plot:
+#
+#     pdf(NULL) # a null device
+#     size = plot(x)
+#     dev.off()
+#     width = convertX(size[1], "inches", valueOnly = TRUE)
+#     height = convertY(size[2], "inches", valueOnly = TRUE)
+#     pdf(..., width = width, height = height)
+#     plot(x)
+#     dev.off()
+#
+# If there is no dependency stored in ``x``, ``NULL`` is returned.
+# 
 plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8, 
-	fix_size = TRUE) {
+	fix_size = TRUE, ...) {
 
 	m = x$mat
 	row_split = x$pkg_category
@@ -169,7 +230,10 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 	)
 	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm")),
 			annotation_name_side = "top", annotation_name_rot = 0, show_annotation_name = FALSE) +
-		rowAnnotation(pkg = anno_text(rownames(m), gp = gpar(fontsize = pkg_fontsize, col = ifelse(x$pkg_available, "black", "#AAAAAA"))))
+		rowAnnotation(pkg = anno_text(rownames(m), 
+			gp = gpar(fontsize = pkg_fontsize, 
+				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
+				fontface = ifelse(x$pkg_available, "plain", 'italic'))))
 		
 	ht = draw(ht, ht_gap = unit(c(3, 1), "mm"),
 		heatmap_legend_side = "bottom", 
@@ -190,7 +254,15 @@ dep = function(pkg, verbose = TRUE) {
 		
 	if(is.null(env$loaded_ns[[pkg]])) {
 		
-		cmd = qq("Rscript '/Users/jokergoo/project/pkgndep/inst/extdata/get_dep.R' @{pkg}")
+		if(identical(topenv(), .GlobalEnv)) {
+			if(normalizePath("~") == "/Users/jokergoo") {
+				cmd = qq("Rscript '/Users/jokergoo/project/pkgndep/inst/extdata/get_dep.R' @{pkg}")
+			} else {
+				cmd = qq("Rscript '/desktop-home/guz/project/development/pkgndep/inst/extdata/get_dep.R' @{pkg}")
+			}
+		} else {
+			cmd = qq("'@{paste0(R.home(), '/bin/Rscript')}' '@{system.file('extdata', 'get_dep.R', package = 'pkgndep')}' @{pkg}")
+	    }
 	    oe = try(tb <- read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE), silent = TRUE)
 	    if(inherits(oe, "try-error")) {
 	    	if(verbose) cat(red(qq("@{pkg} cannot be loaded.\n")))
