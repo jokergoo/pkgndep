@@ -111,8 +111,33 @@ available at https://jokergoo.github.io/pkgndep/stat/.
 
 For a quick look, the top 10 packages with the largest dependencies are:
 
+|Package                                       | # Namespaces| also load packages in Suggests|                                                         Heatmap|
+|:---------------------------------------------|------------:|------------------------------:|---------------------------------------------------------------:|
+|ReportingTools                                |          125|                            131|                                [view](https://jokergoo.github.io/pkgndep/stat/image/ReportingTools.png)|
+|TCGAbiolinks                                  |          118|                            209|                                  [view](https://jokergoo.github.io/pkgndep/stat/image/TCGAbiolinks.png)|
+|epik                                          |          116|                            116|                                          [view](https://jokergoo.github.io/pkgndep/stat/image/epik.png)|
+|minfiData                                     |          109|                            109|                                     [view](https://jokergoo.github.io/pkgndep/stat/image/minfiData.png)|
+|minfiDataEPIC                                 |          109|                            109|                                 [view](https://jokergoo.github.io/pkgndep/stat/image/minfiDataEPIC.png)|
+|ggbio                                         |          108|                            119|                                         [view](https://jokergoo.github.io/pkgndep/stat/image/ggbio.png)|
+|FlowSorted.Blood.450k                         |          108|                            108|                         [view](https://jokergoo.github.io/pkgndep/stat/image/FlowSorted.Blood.450k.png)|
+|IlluminaHumanMethylation450kanno.ilmn12.hg19  |          108|                            108|  [view](https://jokergoo.github.io/pkgndep/stat/image/IlluminaHumanMethylation450kanno.ilmn12.hg19.png)|
+|IlluminaHumanMethylation450kmanifest          |          108|                            108|          [view](https://jokergoo.github.io/pkgndep/stat/image/IlluminaHumanMethylation450kmanifest.png)|
+|IlluminaHumanMethylationEPICanno.ilm10b2.hg19 |          108|                            108| [view](https://jokergoo.github.io/pkgndep/stat/image/IlluminaHumanMethylationEPICanno.ilm10b2.hg19.png)|
+
 And the top 10 packages with the largest dependencies where packages in "Suggests" are also loaded are:
 
+|Package        | # Namespaces| also load packages in Suggests|                          Heatmap|
+|:--------------|------------:|------------------------------:|--------------------------------:|
+|TCGAbiolinks   |          118|                            209|   [view](https://jokergoo.github.io/pkgndep/stat/image/TCGAbiolinks.png)|
+|cola           |           25|                            174|           [view](https://jokergoo.github.io/pkgndep/stat/image/cola.png)|
+|broom          |           29|                            171|          [view](https://jokergoo.github.io/pkgndep/stat/image/broom.png)|
+|GSEABase       |           29|                            135|       [view](https://jokergoo.github.io/pkgndep/stat/image/GSEABase.png)|
+|sesame         |           73|                            134|         [view](https://jokergoo.github.io/pkgndep/stat/image/sesame.png)|
+|ReportingTools |          125|                            131| [view](https://jokergoo.github.io/pkgndep/stat/image/ReportingTools.png)|
+|GenomicRanges  |           17|                            128|  [view](https://jokergoo.github.io/pkgndep/stat/image/GenomicRanges.png)|
+|ensembldb      |           57|                            126|      [view](https://jokergoo.github.io/pkgndep/stat/image/ensembldb.png)|
+|AER            |           36|                            126|            [view](https://jokergoo.github.io/pkgndep/stat/image/AER.png)|
+|BiocGenerics   |            8|                            125|   [view](https://jokergoo.github.io/pkgndep/stat/image/BiocGenerics.png)|
 
 ## License
 MIT @ Zuguang Gu
