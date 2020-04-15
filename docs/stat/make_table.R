@@ -1,4 +1,7 @@
 
+library(pkgndep)
+library(GetoptLong)
+
 if(normalizePath("~") == "/Users/jokergoo") {
 	setwd("/Users/jokergoo/project/pkgndep/docs/stat")
 } else {
