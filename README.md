@@ -1,5 +1,7 @@
 # Check the Heaviness of Package Dependencies
 
+[![Build Status](https://travis-ci.org/jokergoo/pkgndep.svg)](https://travis-ci.org/jokergoo/pkgndep)
+
 When developing R packages, we should try to avoid directly setting
 dependencies to "heavy packages". The "heaviness" for a package means, the
 number of additional dependent packages it brings to. If your package directly depends
