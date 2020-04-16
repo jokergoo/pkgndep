@@ -2,20 +2,20 @@
 
 When developing R packages, we should try to avoid directly setting
 dependencies to "heavy packages". The "heaviness" for a package means, the
-additional dependent packages it brings to. If your package directly depends
+number of additional dependent packages it brings to. If your package directly depends
 on a heavy package, it brings several consequences:
 
-1. Users need to install a lot of additional packages if they install your
-   package ( which brings the risk that installation of some of the packages
-   may fail and it makes your package cannot be installed). 
+1. Users need to install a lot of additional packages if your
+   package is installed (which brings the risk that installation of some packages
+   may fail that makes your package cannot be installed neither). 
 2. The namespaces that are loaded into your R session after loading your package (by
-   `library(your-pkg)`) will be huge (you can see it by `sessionInfo()`).
+   `library(your-pkg)`) will be huge (you can see the loaded namespaces by `sessionInfo()`).
 
-And you package will be "heavy" as well and it may take long time to load your
+You package will be "heavy" as well and it may take long time to load your
 package.
 
 In the DESCRIPTION file of your package, those "directly dependent pakcages"
-are always listed in the "Depends" or "Imports" fields. To remove the heavy
+are always listed in the "Depends" or "Imports" fields. To get rid of the heavy
 packages that are not offen used in your package, it is better to move them
 into the "Suggests" fields and load them only when they are needed.
 
@@ -26,22 +26,22 @@ package and counts the number of namespaces that are loaded. The summary of
 the dependencies is visualized by a customized heatmap.
 
 As an example, I am developing a package 
-[**cola**](https://jokergoo.github.com/cola) which depends on a lot of [other
+[**cola**](https://jokergoo.github.com/cola) which depends on [a lot of other
 packages](https://github.com/jokergoo/cola/blob/6d5f5a7737fd273c36ff50f35a60bf2b671ed84d/DESCRIPTION).
 The dependency heatmap looks like (click to view in the original size):
 
 ![cola](https://user-images.githubusercontent.com/449218/79337498-e6bec180-7f25-11ea-9861-293eba8931bc.png)
 
-In the heatmap, rows are the packages listed in "Depends", "Imports" and "Suggests",
+In the heatmap, rows are the packages listed in "Depends", "Imports" and "Suggests" fields,
 columns are the namespaces that are loaded if each of the package is only loaded to a new R session.
-The barplots on the right show the number of namespaces that are brought by each package.
+The barplots on the right show the number of namespaces that are imported by each package.
 
 We can see if all the packages are put in the "Imports" field, 166 namespaces
 will be loaded after `library(cola)`. Some of the heavy packages such as
 **WGCNA** and **clusterProfiler** are not very frequently used in **cola**,
 moving them to "Suggests" field and loading them only when they are needed
 helps to speed up loading **cola**. Now the number of namespaces are reduced
-to 25 after `library(cola)`.
+to only 25 after `library(cola)`.
 
 ## Usage
 
@@ -106,13 +106,13 @@ plot(x)
 ## Statistics
 
 I ran **pkgndep** on all packages that are installed in my computer. The table
-of number of loaded namespaces as well as the dependency heatmaps are
+of the number of loaded namespaces as well as the dependency heatmaps are
 available at https://jokergoo.github.io/pkgndep/stat/.
 
 For a quick look, the top 10 packages with the largest dependencies are:
 
-|Package                                       | # Namespaces| also load packages in Suggests|                                                         Heatmap|
-|:---------------------------------------------|------------:|------------------------------:|---------------------------------------------------------------:|
+|Package                                       | # Namespaces| also load packages in Suggests|                                                                                                 Heatmap|
+|:---------------------------------------------|------------:|------------------------------:|-------------------------------------------------------------------------------------------------------:|
 |ReportingTools                                |          125|                            131|                                [view](https://jokergoo.github.io/pkgndep/stat/image/ReportingTools.png)|
 |TCGAbiolinks                                  |          118|                            209|                                  [view](https://jokergoo.github.io/pkgndep/stat/image/TCGAbiolinks.png)|
 |epik                                          |          116|                            116|                                          [view](https://jokergoo.github.io/pkgndep/stat/image/epik.png)|
@@ -126,8 +126,8 @@ For a quick look, the top 10 packages with the largest dependencies are:
 
 And the top 10 packages with the largest dependencies where packages in "Suggests" are also loaded are:
 
-|Package        | # Namespaces| also load packages in Suggests|                          Heatmap|
-|:--------------|------------:|------------------------------:|--------------------------------:|
+|Package        | # Namespaces| also load packages in Suggests|                                                                  Heatmap|
+|:--------------|------------:|------------------------------:|------------------------------------------------------------------------:|
 |TCGAbiolinks   |          118|                            209|   [view](https://jokergoo.github.io/pkgndep/stat/image/TCGAbiolinks.png)|
 |cola           |           25|                            174|           [view](https://jokergoo.github.io/pkgndep/stat/image/cola.png)|
 |broom          |           29|                            171|          [view](https://jokergoo.github.io/pkgndep/stat/image/broom.png)|
