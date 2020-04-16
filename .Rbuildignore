@@ -1,0 +1,7 @@
+^\..*
+README.*
+.travis.yml
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+build_pkg_site.R
