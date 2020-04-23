@@ -124,7 +124,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 print.pkgndep = function(x, ...) {
 	qqcat("@{x$package} version @{x$version}\n")
 	qqcat("@{x$n1} namespaces loaded if only load packages in Depends and Imports\n")
-	qqcat("@{x$n2} namespaces loaded for loading all packages in Depends, Imports and Suggests\n")
+	qqcat("@{x$n2} namespaces loaded after loading all packages in Depends, Imports and Suggests\n")
 }
 
 # == title
@@ -186,7 +186,7 @@ unavailable_pkg = function(x) {
 #     plot(x)
 #     dev.off()
 #
-# If there is no dependency stored in ``x``, ``NULL`` is returned.
+# If there are no dependency packages stored in ``x``, ``NULL`` is returned.
 # 
 plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8, 
 	fix_size = TRUE, ...) {
@@ -238,7 +238,7 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 	ht = draw(ht, ht_gap = unit(c(3, 1), "mm"),
 		heatmap_legend_side = "bottom", 
 		adjust_annotation_extension = FALSE,
-		column_title = qq("In total @{ncol(m)} namespaces are attached directly or indirectly when loading @{x$package} (@{x$version})"),
+		column_title = qq("In total @{ncol(m)} namespaces are loaded directly or indirectly when loading @{x$package} (@{x$version})"),
 		column_title_gp = gpar(fontsize = title_fontsize))
 	decorate_annotation("n_pkg", {
 		grid.text("Number of packages", y = unit(1, "npc") + ht_opt$TITLE_PADDING + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),

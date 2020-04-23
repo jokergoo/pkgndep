@@ -1,8 +1,8 @@
 Package: pkgndep
 Type: Package
 Title: Check the Heaviness of Package Dependencies
-Version: 0.99.0
-Date: 2020-04-15
+Version: 1.0.0
+Date: 2020-04-23
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 3.0.0)

@@ -41,7 +41,7 @@ of the plot:
     plot(x)
     dev.off()  }
 
-If there is no dependency stored in \code{x}, \code{NULL} is returned.
+If there are no dependency packages stored in \code{x}, \code{NULL} is returned.
 }
 \examples{
 # There is no example
