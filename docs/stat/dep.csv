@@ -99,6 +99,7 @@
 "DiagrammeR",43,47
 "car",42,73
 "NMF",41,63
+"simplifyGO",41,62
 "seriation",41,48
 "ggraph",40,64
 "devtools",40,62
@@ -267,6 +268,7 @@
 "tablerDash",22,28
 "cliapp",22,26
 "cranlike",22,26
+"pkgndep",22,24
 "affyPLM",22,23
 "AnnotationDbi",21,70
 "effects",21,61
@@ -299,7 +301,6 @@
 "cometExactTest",20,20
 "imputeLCMD",20,20
 "miniUI",20,20
-"pkgndep",20,20
 "rugarch",20,20
 "shinydashboard",20,20
 "shinythemes",20,20
@@ -554,6 +555,7 @@
 "unitizer",10,21
 "covr",10,20
 "gargle",10,20
+"apcluster",10,19
 "RSpectra",10,19
 "JuliaCall",10,18
 "TSP",10,17
@@ -734,6 +736,7 @@
 "gclus",8,16
 "polynom",8,16
 "processx",8,16
+"tm",8,16
 "wheatmap",8,16
 "xfun",8,16
 "gdtools",8,15
@@ -759,6 +762,7 @@
 "showimage",8,13
 "tweenr",8,13
 "VGAM",8,13
+"wordcloud",8,13
 "assertthat",8,13
 "ellipsis",8,13
 "lattice",8,13
@@ -903,7 +907,6 @@
 "tinytex",8,8
 "tkrplot",8,8
 "tree",8,8
-"wordcloud",8,8
 "class",8,8
 "foreign",8,8
 "methods",8,8
@@ -966,6 +969,7 @@
 "human370v1cCrlmm",7,7
 "matlab",7,7
 "mix",7,7
+"NLP",7,7
 "nortest",7,7
 "nws",7,7
 "oz",7,7

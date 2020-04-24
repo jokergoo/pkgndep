@@ -112,6 +112,7 @@ The table can be downloaded as [a csv file](dep.csv).
 |DiagrammeR                                    |           43|                             47|                                    [view](image/DiagrammeR.png)|
 |car                                           |           42|                             73|                                           [view](image/car.png)|
 |NMF                                           |           41|                             63|                                           [view](image/NMF.png)|
+|simplifyGO                                    |           41|                             62|                                    [view](image/simplifyGO.png)|
 |seriation                                     |           41|                             48|                                     [view](image/seriation.png)|
 |ggraph                                        |           40|                             64|                                        [view](image/ggraph.png)|
 |devtools                                      |           40|                             62|                                      [view](image/devtools.png)|
@@ -280,6 +281,7 @@ The table can be downloaded as [a csv file](dep.csv).
 |tablerDash                                    |           22|                             28|                                    [view](image/tablerDash.png)|
 |cliapp                                        |           22|                             26|                                        [view](image/cliapp.png)|
 |cranlike                                      |           22|                             26|                                      [view](image/cranlike.png)|
+|pkgndep                                       |           22|                             24|                                       [view](image/pkgndep.png)|
 |affyPLM                                       |           22|                             23|                                       [view](image/affyPLM.png)|
 |AnnotationDbi                                 |           21|                             70|                                 [view](image/AnnotationDbi.png)|
 |effects                                       |           21|                             61|                                       [view](image/effects.png)|
@@ -312,7 +314,6 @@ The table can be downloaded as [a csv file](dep.csv).
 |cometExactTest                                |           20|                             20|                                [view](image/cometExactTest.png)|
 |imputeLCMD                                    |           20|                             20|                                    [view](image/imputeLCMD.png)|
 |miniUI                                        |           20|                             20|                                        [view](image/miniUI.png)|
-|pkgndep                                       |           20|                             20|                                       [view](image/pkgndep.png)|
 |rugarch                                       |           20|                             20|                                       [view](image/rugarch.png)|
 |shinydashboard                                |           20|                             20|                                [view](image/shinydashboard.png)|
 |shinythemes                                   |           20|                             20|                                   [view](image/shinythemes.png)|
@@ -567,6 +568,7 @@ The table can be downloaded as [a csv file](dep.csv).
 |unitizer                                      |           10|                             21|                                      [view](image/unitizer.png)|
 |covr                                          |           10|                             20|                                          [view](image/covr.png)|
 |gargle                                        |           10|                             20|                                        [view](image/gargle.png)|
+|apcluster                                     |           10|                             19|                                     [view](image/apcluster.png)|
 |RSpectra                                      |           10|                             19|                                      [view](image/RSpectra.png)|
 |JuliaCall                                     |           10|                             18|                                     [view](image/JuliaCall.png)|
 |TSP                                           |           10|                             17|                                           [view](image/TSP.png)|
@@ -747,6 +749,7 @@ The table can be downloaded as [a csv file](dep.csv).
 |gclus                                         |            8|                             16|                                         [view](image/gclus.png)|
 |polynom                                       |            8|                             16|                                       [view](image/polynom.png)|
 |processx                                      |            8|                             16|                                      [view](image/processx.png)|
+|tm                                            |            8|                             16|                                            [view](image/tm.png)|
 |wheatmap                                      |            8|                             16|                                      [view](image/wheatmap.png)|
 |xfun                                          |            8|                             16|                                          [view](image/xfun.png)|
 |gdtools                                       |            8|                             15|                                       [view](image/gdtools.png)|
@@ -772,6 +775,7 @@ The table can be downloaded as [a csv file](dep.csv).
 |showimage                                     |            8|                             13|                                     [view](image/showimage.png)|
 |tweenr                                        |            8|                             13|                                        [view](image/tweenr.png)|
 |VGAM                                          |            8|                             13|                                          [view](image/VGAM.png)|
+|wordcloud                                     |            8|                             13|                                     [view](image/wordcloud.png)|
 |assertthat                                    |            8|                             13|                                    [view](image/assertthat.png)|
 |ellipsis                                      |            8|                             13|                                      [view](image/ellipsis.png)|
 |lattice                                       |            8|                             13|                                       [view](image/lattice.png)|
@@ -916,7 +920,6 @@ The table can be downloaded as [a csv file](dep.csv).
 |tinytex                                       |            8|                              8|                                       [view](image/tinytex.png)|
 |tkrplot                                       |            8|                              8|                                       [view](image/tkrplot.png)|
 |tree                                          |            8|                              8|                                          [view](image/tree.png)|
-|wordcloud                                     |            8|                              8|                                     [view](image/wordcloud.png)|
 |class                                         |            8|                              8|                                         [view](image/class.png)|
 |foreign                                       |            8|                              8|                                       [view](image/foreign.png)|
 |methods                                       |            8|                              8|                                       [view](image/methods.png)|
@@ -979,6 +982,7 @@ The table can be downloaded as [a csv file](dep.csv).
 |human370v1cCrlmm                              |            7|                              7|                              [view](image/human370v1cCrlmm.png)|
 |matlab                                        |            7|                              7|                                        [view](image/matlab.png)|
 |mix                                           |            7|                              7|                                           [view](image/mix.png)|
+|NLP                                           |            7|                              7|                                           [view](image/NLP.png)|
 |nortest                                       |            7|                              7|                                       [view](image/nortest.png)|
 |nws                                           |            7|                              7|                                           [view](image/nws.png)|
 |oz                                            |            7|                              7|                                            [view](image/oz.png)|
