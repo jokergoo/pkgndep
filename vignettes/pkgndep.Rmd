@@ -35,7 +35,7 @@ the dependencies is visualized by a customized heatmap.
 
 As an example, I am developing a package 
 [**cola**](https://jokergoo.github.com/cola) which depends on [a lot of other
-packages](https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
+packages](http://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
 The dependency heatmap looks like ([Figure in the original size is here](https://jokergoo.github.io/pkgndep/stat/image/cola.png)):
 
 <p><img width='120%' src='cola.png' /></p>
@@ -68,48 +68,14 @@ x = pkgndep("path-to-the-package")
 plot(x)
 ```
 
-An executable example:
+Executable examples:
 
-```r
+```{r, fig.width = 10, fig.height = 6, out.width = "80%", out.height = "80%"}
 library(pkgndep)
 x = pkgndep("ComplexHeatmap")
-# ========== checking ComplexHeatmap ==========
-# Loading methods to a new R session... 7 namespaces loaded.
-# Loading grid to a new R session... 8 namespaces loaded.
-# Loading graphics to a new R session... 7 namespaces loaded.
-# Loading stats to a new R session... 7 namespaces loaded.
-# Loading grDevices to a new R session... 7 namespaces loaded.
-# Loading circlize to a new R session... 12 namespaces loaded.
-# Loading GetoptLong to a new R session... 10 namespaces loaded.
-# Loading colorspace to a new R session... 8 namespaces loaded.
-# Loading clue to a new R session... 9 namespaces loaded.
-# Loading RColorBrewer to a new R session... 8 namespaces loaded.
-# Loading GlobalOptions to a new R session... 8 namespaces loaded.
-# Loading parallel to a new R session... 8 namespaces loaded.
-# Loading png to a new R session... 8 namespaces loaded.
-# Loading testthat to a new R session... 11 namespaces loaded.
-# Loading knitr to a new R session... 10 namespaces loaded.
-# Loading markdown to a new R session... 8 namespaces loaded.
-# Loading dendsort to a new R session... 8 namespaces loaded.
-# Loading Cairo to a new R session... 8 namespaces loaded.
-# Loading jpeg to a new R session... 8 namespaces loaded.
-# Loading tiff to a new R session... 8 namespaces loaded.
-# Loading fastcluster to a new R session... 8 namespaces loaded.
-# Loading dendextend to a new R session... 36 namespaces loaded.
-# Loading grImport to a new R session... 10 namespaces loaded.
-# Loading grImport2 to a new R session... 13 namespaces loaded.
-# Loading glue to a new R session... 8 namespaces loaded.
-# Loading GenomicRanges to a new R session... 19 namespaces loaded.
-# Loading gridtext to a new R session... 12 namespaces loaded.
 x
-# ComplexHeatmap version 2.3.4
-# 14 namespaces loaded if only load packages in Depends and Imports
-# 57 namespaces loaded after loading all packages in Depends, Imports and Suggests
 plot(x)
 ```
-
-<p><img width='100%' src='ComplexHeatmap.png' /></p>
-
 
 ## Statistics
 

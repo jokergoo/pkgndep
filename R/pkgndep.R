@@ -249,25 +249,50 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 	invisible(unit.c(w, h))
 }
 
+# dep = function(pkg, verbose = TRUE) {
+# 	if(verbose) cat(silver("Loading"), green(pkg), silver("to a new R session... "))
+		
+# 	if(is.null(env$loaded_ns[[pkg]])) {
+		
+# 		if(identical(topenv(), .GlobalEnv)) {
+# 			if(normalizePath("~") == "/Users/jokergoo") {
+# 				cmd = qq("Rscript '/Users/jokergoo/project/pkgndep/inst/extdata/get_dep.R' @{pkg}")
+# 			} else {
+# 				cmd = qq("Rscript '/desktop-home/guz/project/development/pkgndep/inst/extdata/get_dep.R' @{pkg}")
+# 			}
+# 		} else {
+# 			cmd = qq("'@{normalizePath(c(R.home(), 'bin', 'Rscript'))}' '@{system.file('extdata', 'get_dep.R', package = 'pkgndep')}' @{pkg}")
+# 	    }
+# 	    oe = try(tb <- read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE), silent = TRUE)
+# 	    if(inherits(oe, "try-error")) {
+# 	    	if(verbose) cat(red(qq("@{pkg} cannot be loaded.\n")))
+# 	    	return(NULL)
+# 	    } else {
+# 		    nr = nrow(tb)
+# 		    if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
+# 		}
+# 		env$loaded_ns[[pkg]] = tb
+# 	} else {
+# 		tb = env$loaded_ns[[pkg]]
+# 		nr = nrow(tb)
+# 		if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
+# 	}
+#     return(tb)
+# }
+
 dep = function(pkg, verbose = TRUE) {
 	if(verbose) cat(silver("Loading"), green(pkg), silver("to a new R session... "))
 		
 	if(is.null(env$loaded_ns[[pkg]])) {
 		
-		if(identical(topenv(), .GlobalEnv)) {
-			if(normalizePath("~") == "/Users/jokergoo") {
-				cmd = qq("Rscript '/Users/jokergoo/project/pkgndep/inst/extdata/get_dep.R' @{pkg}")
-			} else {
-				cmd = qq("Rscript '/desktop-home/guz/project/development/pkgndep/inst/extdata/get_dep.R' @{pkg}")
-			}
-		} else {
-			cmd = qq("'@{paste0(R.home(), '/bin/Rscript')}' '@{system.file('extdata', 'get_dep.R', package = 'pkgndep')}' @{pkg}")
-	    }
-	    oe = try(tb <- read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE), silent = TRUE)
-	    if(inherits(oe, "try-error")) {
+		tb = r(load_pkg, args = list(pkg = pkg), user_profile = FALSE)
+		if(is.null(tb)) {
 	    	if(verbose) cat(red(qq("@{pkg} cannot be loaded.\n")))
 	    	return(NULL)
 	    } else {
+	    	for(i in seq_len(ncol(tb))) {
+	    		tb[, i] = as.vector(tb[, i])
+	    	}
 		    nr = nrow(tb)
 		    if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
 		}
@@ -280,6 +305,25 @@ dep = function(pkg, verbose = TRUE) {
     return(tb)
 }
 
+load_pkg = function(pkg) {
+	tmp_file = tempfile()
+	sink(tmp_file)
+	oe = try(suppressWarnings(suppressPackageStartupMessages(library(pkg, character.only = TRUE))), silent = TRUE)
+	sink()
+	unlink(tmp_file)
+
+	if(inherits(oe, "try-error")) {
+		cat("\n")
+	} else {
+		foo = sessionInfo()
+		df1 = data.frame(pkg = foo$basePkgs, type = rep("basePkgs", length(foo$basePkgs)))
+		df2 = data.frame(pkg = names(foo$loadedOnly), type = rep("loadedOnly", length(foo$loadedOnly)))
+		df3 = data.frame(pkg = names(foo$otherPkgs), type = rep("otherPkgs", length(foo$otherPkgs)))
+		df = rbind(df1, df2, df3)
+		df = df[df[, 1] != pkg ,]
+		print(df, row.names = FALSE)
+	}
+}
 
 env = new.env()
 env$loaded_ns = list()
