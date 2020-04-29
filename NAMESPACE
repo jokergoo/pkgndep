@@ -10,6 +10,7 @@ import(ComplexHeatmap)
 import(GetoptLong)
 import(crayon)
 import(grid)
-importFrom("utils", "packageDescription", "read.table")
 importFrom("callr", "r")
+importFrom("utils", "packageDescription", "read.table")
 importFrom("utils", "sessionInfo")
+

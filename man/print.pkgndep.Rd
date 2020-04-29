@@ -15,8 +15,9 @@ Print method
   \item{...}{Other arguments.}
 
 }
+\value{
+No value is returned.
+}
 \examples{
-# There is no example
-NULL
-
+# See examples in `pkgndep()`.
 }

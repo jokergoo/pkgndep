@@ -17,6 +17,9 @@ unavailable_pkg(x)
 \details{
 It lists the packages that are not installed in the "Suggests" field.
 }
+\value{
+A vector of package names.
+}
 \examples{
 # There is no example
 NULL
