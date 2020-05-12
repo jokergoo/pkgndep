@@ -10,9 +10,9 @@ if(normalizePath("~") == "/Users/jokergoo") {
 
 lt = list(pkg = NULL, n1 = NULL, n2 = NULL)
 
-for(pkg in installed.packages()[, 1]) {
+for(pkg in sort(installed.packages()[, 1])) {
 	x = pkgndep(pkg)
-	p = unavailable_pkg(x)
+	# p = unavailable_pkg(x)
 	# if(length(p)) {
 	# 	BiocManager::install(p, update = FALSE, ask = FALSE)
 	# 	x = pkgndep(pkg)
