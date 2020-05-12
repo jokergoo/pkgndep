@@ -1,18 +1,19 @@
 Package: pkgndep
 Type: Package
 Title: Check the Heaviness of Package Dependencies
-Version: 1.0.0
-Date: 2020-04-29
+Version: 1.0.1
+Date: 2020-05-11
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 3.5.0)
-Imports: ComplexHeatmap (>= 2.4.1), GetoptLong, utils, grid, crayon, callr
+Imports: ComplexHeatmap (>= 2.0.0), GetoptLong, utils, grid, crayon, callr
 Suggests: knitr
 Description: It checks the heaviness of the packages that user's
     package depends on. For each package listed in the "Depends", "Imports" and
     "Suggests" fields in the DESCRIPTION file, it opens a new R session, loads the
     package and counts the number of namespaces that are loaded. The summary of
-    the dependencies is visualized by a customized heatmap.
+    the dependencies is visualized by a customized heatmap. Examples of dependency
+    analysis can be found at <https://jokergoo.github.io/pkgndep/stat/>.
 URL: https://github.com/jokergoo/pkgndep
 VignetteBuilder: knitr
 License: MIT + file LICENSE

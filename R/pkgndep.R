@@ -92,17 +92,22 @@ pkgndep = function(pkg, verbose = TRUE) {
 		                          lapply(sug_lt2, function(x) x[, 1]))))
 
 	m = matrix(NA, nrow = length(all_pkg), ncol = length(all_pkg_dep), dimnames = list(all_pkg, all_pkg_dep))
+	tm = numeric(nrow(m))
+	names(tm) = rownames(m)
 	for(nm in names(dep_lt2)) {
 		y = structure(dep_lt2[[nm]][, 2], names = dep_lt2[[nm]][, 1])
 		m[nm, names(y)] = y
+		tm[nm] = dep_lt2[[nm]][, 3][1]
 	}
 	for(nm in names(imp_lt2)) {
 		y = structure(imp_lt2[[nm]][, 2], names = imp_lt2[[nm]][, 1])
 		m[nm, names(y)] = y
+		tm[nm] = imp_lt2[[nm]][, 3][1]
 	}
 	for(nm in names(sug_lt2)) {
 		y = structure(sug_lt2[[nm]][, 2], names = sug_lt2[[nm]][, 1])
 		m[nm, names(y)] = y
+		tm[nm] = sug_lt2[[nm]][, 3][1]
 	}
 
 	pkg_category = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests)))
@@ -114,6 +119,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 		mat = m, 
 		pkg_category = pkg_category,
 		pkg_available = pkg_available,
+		loading_time = tm,
 		n1 = sum(apply(m[pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))),
 		n2 = sum(apply(m, 2, function(x) any(!is.na(x))))
 	)
@@ -254,20 +260,27 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 		width = if(fix_size) ncol(m)*line_height else NULL,
 		height = if(fix_size) nrow(m)*line_height else NULL
 	)
-	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm")),
-			annotation_name_side = "top", annotation_name_rot = 0, show_annotation_name = FALSE) +
+
+	loading_time = x$loading_time
+	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2.5, "cm")),
+			show_annotation_name = FALSE) +
+		rowAnnotation("sec" = anno_barplot(loading_time, width = unit(2.5, "cm"))) +
 		rowAnnotation(pkg = anno_text(rownames(m), 
 			gp = gpar(fontsize = pkg_fontsize, 
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
 				fontface = ifelse(x$pkg_available, "plain", 'italic'))))
 		
-	ht = draw(ht, ht_gap = unit(c(3, 1), "mm"),
+	ht = draw(ht, ht_gap = unit(c(3, 1, 1), "mm"),
 		heatmap_legend_side = "bottom", 
 		adjust_annotation_extension = FALSE,
 		column_title = qq("In total @{ncol(m)} namespaces are loaded directly or indirectly when loading @{x$package} (@{x$version})"),
 		column_title_gp = gpar(fontsize = title_fontsize))
 	decorate_annotation("n_pkg", {
-		grid.text("Number of packages", y = unit(1, "npc") + ht_opt$TITLE_PADDING + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),
+		grid.text("#Packages", y = unit(1, "npc") + ht_opt$TITLE_PADDING + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),
+			gp = gpar(fontsize = title_fontsize))
+	})
+	decorate_annotation("sec", {
+		grid.text("Loading time", y = unit(1, "npc") + ht_opt$TITLE_PADDING + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),
 			gp = gpar(fontsize = title_fontsize))
 	})
 	w = ComplexHeatmap:::width(ht)
@@ -334,7 +347,7 @@ dep = function(pkg, verbose = TRUE) {
 load_pkg = function(pkg) {
 	tmp_file = tempfile()
 	sink(tmp_file)
-	oe = try(suppressWarnings(suppressPackageStartupMessages(library(pkg, character.only = TRUE))), silent = TRUE)
+	oe = try(suppressWarnings(suppressPackageStartupMessages(tm <- system.time(library(pkg, character.only = TRUE)))), silent = TRUE)
 	sink()
 	unlink(tmp_file)
 
@@ -347,6 +360,7 @@ load_pkg = function(pkg) {
 		df3 = data.frame(pkg = names(foo$otherPkgs), type = rep("otherPkgs", length(foo$otherPkgs)))
 		df = rbind(df1, df2, df3)
 		df = df[df[, 1] != pkg ,]
+		df$tm = tm[3]
 		print(df, row.names = FALSE)
 	}
 }
