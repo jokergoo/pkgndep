@@ -8,7 +8,7 @@ Plot method
 }
 \usage{
 \method{plot}{pkgndep}(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8,
-    fix_size = TRUE, ...)
+    fix_size = !dev.interactive(), ...)
 }
 \arguments{
 
@@ -24,7 +24,7 @@ Plot method
 If \code{fix_size} is set to \code{TRUE}. The size of the whole plot can be obtained by:
 
   \preformatted{
-    size = plot(x)  }
+    size = plot(x, fix_size = TRUE)  }
 
 where \code{size} is a \code{\link[grid]{unit}} object with the width and height of the whole heatmap, in unit \code{mm}.
 If you want to save the plot in to e.g. a PDF file that has the same size of the heatmap, you
@@ -33,7 +33,7 @@ of the plot:
 
   \preformatted{
     pdf(NULL) # a null device
-    size = plot(x)
+    size = plot(x, fix_size = TRUE)
     dev.off()
     width = convertX(size[1], "inches", valueOnly = TRUE)
     height = convertY(size[2], "inches", valueOnly = TRUE)

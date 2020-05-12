@@ -196,7 +196,7 @@ unavailable_pkg = function(x) {
 # == details
 # If ``fix_size`` is set to ``TRUE``. The size of the whole plot can be obtained by:
 #
-#     size = plot(x)
+#     size = plot(x, fix_size = TRUE)
 #
 # where ``size`` is a `grid::unit` object with the width and height of the whole heatmap, in unit ``mm``.
 # If you want to save the plot in to e.g. a PDF file that has the same size of the heatmap, you
@@ -204,7 +204,7 @@ unavailable_pkg = function(x) {
 # of the plot:
 #
 #     pdf(NULL) # a null device
-#     size = plot(x)
+#     size = plot(x, fix_size = TRUE)
 #     dev.off()
 #     width = convertX(size[1], "inches", valueOnly = TRUE)
 #     height = convertY(size[2], "inches", valueOnly = TRUE)
@@ -221,7 +221,7 @@ unavailable_pkg = function(x) {
 # # See examples in `pkgndep()`.
 #
 plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8, 
-	fix_size = TRUE, ...) {
+	fix_size = !dev.interactive(), ...) {
 
 	m = x$mat
 	row_split = x$pkg_category
