@@ -32,7 +32,7 @@ As an example, I am developing a package
 packages](https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
 The dependency heatmap looks like (click to view in the original size):
 
-![cola](https://user-images.githubusercontent.com/449218/79337498-e6bec180-7f25-11ea-9861-293eba8931bc.png)
+![cola](https://jokergoo.github.io/pkgndep/stat/image/cola.png)
 
 In the heatmap, rows are the packages listed in "Depends", "Imports" and "Suggests" fields,
 columns are the namespaces that are loaded if each of the package is only loaded to a new R session.
@@ -102,7 +102,7 @@ x
 plot(x)
 ```
 
-![ComplexHeatmap](https://user-images.githubusercontent.com/449218/79369104-b80a1080-7f50-11ea-8e20-a8e69f69b40f.png)
+![ComplexHeatmap](https://jokergoo.github.io/pkgndep/stat/image/ComplexHeatmap.png)
 
 
 ## Statistics
