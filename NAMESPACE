@@ -13,4 +13,5 @@ import(grid)
 importFrom("callr", "r")
 importFrom("utils", "packageDescription", "read.table")
 importFrom("utils", "sessionInfo")
+importFrom("grDevices", "dev.interactive")
 
