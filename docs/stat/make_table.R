@@ -1,4 +1,3 @@
-
 library(pkgndep)
 library(GetoptLong)
 
@@ -18,7 +17,7 @@ for(pkg in installed.packages()[, 1]) {
 	# 	x = pkgndep(pkg)
 	# }
 	pdf(NULL)
-	size = plot(x)
+	size = plot(x, fix_size = TRUE)
 	dev.off()
 
 	if(!is.null(size)) {
