@@ -264,7 +264,8 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 	loading_time = x$loading_time
 	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2.5, "cm")),
 			show_annotation_name = FALSE) +
-		rowAnnotation("sec" = anno_barplot(loading_time, width = unit(2.5, "cm"))) +
+		rowAnnotation("sec" = anno_barplot(loading_time, width = unit(2.5, "cm"),
+			ylim = c(0, max(loading_time, 0.1)))) +
 		rowAnnotation(pkg = anno_text(rownames(m), 
 			gp = gpar(fontsize = pkg_fontsize, 
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
