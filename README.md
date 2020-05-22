@@ -46,6 +46,20 @@ moving them to "Suggests" field and loading them only when they are needed
 helps to speed up loading **cola**. Now the number of namespaces are reduced
 to only 25 after `library(cola)`.
 
+## Installation
+
+Prior to installing this package, you'll need to install the Bioconductor package 
+[**ComplexHeatmap**](https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html) 
+with
+```r
+BiocManager::install("ComplexHeatmap")
+```
+The **pkgndep** package can be installed from CRAN with
+```r
+install.packages("pkgndep")
+```
+
+
 ## Usage
 
 To use this package:
