@@ -1,13 +1,13 @@
 Package: pkgndep
 Type: Package
 Title: Check the Heaviness of Package Dependencies
-Version: 1.0.1
-Date: 2020-05-11
+Version: 1.0.2
+Date: 2021-1-8
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 3.5.0)
 Imports: ComplexHeatmap (>= 2.0.0), GetoptLong, utils, grid, crayon, callr
-Suggests: knitr
+Suggests: knitr, rmarkdown
 Description: It checks the heaviness of the packages that user's
     package depends on. For each package listed in the "Depends", "Imports" and
     "Suggests" fields in the DESCRIPTION file, it opens a new R session, loads the

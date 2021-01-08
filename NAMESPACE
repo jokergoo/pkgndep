@@ -11,7 +11,7 @@ import(GetoptLong)
 import(crayon)
 import(grid)
 importFrom("callr", "r")
+importFrom("grDevices", "dev.interactive")
 importFrom("utils", "packageDescription", "read.table")
 importFrom("utils", "sessionInfo")
-importFrom("grDevices", "dev.interactive")
 

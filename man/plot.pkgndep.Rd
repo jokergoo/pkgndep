@@ -8,7 +8,7 @@ Plot method
 }
 \usage{
 \method{plot}{pkgndep}(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8,
-    fix_size = !dev.interactive(), ...)
+    fix_size = !dev.interactive(), unit = "in", ...)
 }
 \arguments{
 
@@ -17,6 +17,7 @@ Plot method
   \item{title_fontsize}{Fontsize for the titles.}
   \item{legend_fontsize}{Fontsize for the legends.}
   \item{fix_size}{Should the rows and columns in the heatmap have fixed size?}
+  \item{unit}{The unit of the returned figure width and height.}
   \item{...}{Other arguments.}
 
 }
@@ -26,7 +27,7 @@ If \code{fix_size} is set to \code{TRUE}. The size of the whole plot can be obta
   \preformatted{
     size = plot(x, fix_size = TRUE)  }
 
-where \code{size} is a \code{\link[grid]{unit}} object with the width and height of the whole heatmap, in unit \code{mm}.
+where \code{size} is a \code{\link[grid]{unit}} object with the width and height of the whole heatmap.
 If you want to save the plot in to e.g. a PDF file that has the same size of the heatmap, you
 need to make the plot twice. First save the plot into a null device, just to obtain the size 
 of the plot:
@@ -35,8 +36,8 @@ of the plot:
     pdf(NULL) # a null device
     size = plot(x, fix_size = TRUE)
     dev.off()
-    width = convertX(size[1], "inches", valueOnly = TRUE)
-    height = convertY(size[2], "inches", valueOnly = TRUE)
+    width = as.numeric(size[1])
+    height = as.numeric(size[2])
     pdf(..., width = width, height = height)
     plot(x)
     dev.off()  }
@@ -44,7 +45,7 @@ of the plot:
 If there are no dependency packages stored in \code{x}, \code{NULL} is returned.
 }
 \value{
-A length-tow \code{\link[grid]{unit}} object which corresponds to the width and height of the plot.
+A list of two units that correspond to the width and height of the plot.
 }
 \examples{
 # See examples in `pkgndep()`.
