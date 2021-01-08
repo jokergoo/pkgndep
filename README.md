@@ -1,6 +1,7 @@
 # Check the Heaviness of Package Dependencies
 
 [![Build Status](https://travis-ci.org/jokergoo/pkgndep.svg)](https://travis-ci.org/jokergoo/pkgndep)
+[![CRAN](https://www.r-pkg.org/badges/version/pkgndep)](https://cran.r-project.org/web/packages/pkgndep/index.html)
 
 When developing R packages, we should try to avoid directly setting
 dependencies to "heavy packages". The "heaviness" for a package means, the
@@ -44,6 +45,20 @@ will be loaded after `library(cola)`. Some of the heavy packages such as
 moving them to "Suggests" field and loading them only when they are needed
 helps to speed up loading **cola**. Now the number of namespaces are reduced
 to only 25 after `library(cola)`.
+
+## Installation
+
+Prior to installing this package, you'll need to install the Bioconductor package 
+[**ComplexHeatmap**](https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html) 
+with
+```r
+BiocManager::install("ComplexHeatmap")
+```
+The **pkgndep** package can be installed from CRAN with
+```r
+install.packages("pkgndep")
+```
+
 
 ## Usage
 
