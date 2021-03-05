@@ -192,6 +192,7 @@ unavailable_pkg = function(x) {
 # -legend_fontsize Fontsize for the legends.
 # -fix_size Should the rows and columns in the heatmap have fixed size?
 # -unit The unit of the returned figure width and height.
+# -cex A factor multiplicated to all font sizes.
 # -... Other arguments.
 #
 # == details
@@ -221,8 +222,8 @@ unavailable_pkg = function(x) {
 # == example
 # # See examples in `pkgndep()`.
 #
-plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsize = 8, 
-	fix_size = !dev.interactive(), unit = "in", ...) {
+plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legend_fontsize = 8*cex, 
+	fix_size = !dev.interactive(), unit = "in", cex = 1, ...) {
 
 	m = x$mat
 	row_split = x$pkg_category
@@ -241,9 +242,10 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 	column_order_by[l2] = column_order_by[l2] + 10000
 	column_order = order(column_order_by, decreasing = TRUE)
 	
-	line_height = grobHeight(textGrob("A", gp = gpar(pkg_fontsize)))*1.1
+	line_height = grobHeight(textGrob("A", gp = gpar(fontsize = pkg_fontsize)))*1.5
 
 	ht = Heatmap(m, 
+		name = x$package,
 		row_split = row_split,
 		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Other packages"),
 		heatmap_legend_param = list(nrow = 1, title = "", labels_gp = gpar(fontsize = legend_fontsize)), 
@@ -263,10 +265,14 @@ plot.pkgndep = function(x, pkg_fontsize = 10, title_fontsize = 12, legend_fontsi
 	)
 
 	loading_time = x$loading_time
-	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2.5, "cm")),
+	lt_breaks = grid.pretty(c(0, max(loading_time, 0.1)))
+	lt_labels = paste0(lt_breaks, "s")
+	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2.5, "cm"),
+								axis_param = list(gp = gpar(fontsize = 8*cex))),
 			show_annotation_name = FALSE) +
 		rowAnnotation("sec" = anno_barplot(loading_time, width = unit(2.5, "cm"),
-			ylim = c(0, max(loading_time, 0.1)))) +
+			ylim = c(0, max(loading_time, 0.1)), axis_param = list(gp = gpar(fontsize = 8*cex), at = lt_breaks, labels = lt_labels)),
+			show_annotation_name = FALSE) +
 		rowAnnotation(pkg = anno_text(rownames(m), 
 			gp = gpar(fontsize = pkg_fontsize, 
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
