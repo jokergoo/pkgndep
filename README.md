@@ -1,6 +1,6 @@
 # Check the Heaviness of Package Dependencies
 
-[![Build Status](https://travis-ci.org/jokergoo/pkgndep.svg)](https://travis-ci.org/jokergoo/pkgndep)
+[![R-CMD-check](https://github.com/jokergoo/pkgndep/workflows/R-CMD-check/badge.svg)](https://github.com/jokergoo/pkgndep/actions)
 [![CRAN](https://www.r-pkg.org/badges/version/pkgndep)](https://cran.r-project.org/web/packages/pkgndep/index.html)
 
 When developing R packages, we should try to avoid directly setting

@@ -1,9 +1,0 @@
-language: r
-r:
-  - release
-  - devel
-repos:
-  CRAN: https://cloud.r-project.org
-  BioCsoft: https://bioconductor.org/packages/devel/bioc
-  BioCann: https://bioconductor.org/packages/devel/data/annotation
-  BioCexp: https://bioconductor.org/packages/devel/data/experiment
