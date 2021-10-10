@@ -6,7 +6,7 @@
 # -verbose Whether print messages. 
 #
 # == details
-# For each package listed in the "Depends", "Imports" and "Suggests" fields
+# For each package listed in the "Depends", "Imports" and "Suggests" (or also "Enhances") fields
 # in the DESCRIPTION file, this function opens a new R session, loads the package
 # and counts the number of namespaces that are loaded.
 #
@@ -25,13 +25,13 @@
 pkgndep = function(pkg, verbose = TRUE) {
 
 	if(verbose) {
-		cat(blue(qq("========== checking @{pkg} ==========\n")))
+		cat(blue(GetoptLong::qq("========== checking @{pkg} ==========\n")))
 	}
 	if(file.exists(pkg)) {
 		x = read.dcf(paste0(pkg, "/DESCRIPTION"))
 		x = as.data.frame(x)
 	} else {
-		if(!requireNamespace(pkg, quietly = TRUE)) {
+		if(!pkg_exists(pkg)) {
 			stop(paste0("Package '", pkg, "' cannot be found."))
 		}
 		x = packageDescription(pkg)
@@ -42,7 +42,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 	} else {
 		depends = x$Depends
 		depends = gsub("\\s*\\(.*?\\)", "", depends)
-		depends = strsplit(depends, ",\\s*")[[1]]
+		depends = strsplit(depends, "\\s*,\\s*")[[1]]
 		depends = depends[depends != "R"]
 	}
 
@@ -51,7 +51,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 	} else {
 		imports = x$Imports
 		imports = gsub("\\s*\\(.*?\\)", "", imports)
-		imports = strsplit(imports, ",\\s*")[[1]]
+		imports = strsplit(imports, "\\s*,\\s*")[[1]]
 	}
 
 	if(is.null(x$Suggests)) {
@@ -59,7 +59,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 	} else {
 		suggests = x$Suggests
 		suggests = gsub("\\s*\\(.*?\\)", "", suggests)
-		suggests = strsplit(suggests, ",\\s*")[[1]]
+		suggests = strsplit(suggests, "\\s*,\\s*")[[1]]
 	}
 
 	if(is.null(x$Enhances)) {
@@ -68,7 +68,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 	} else {
 		enhances = x$Enhances
 		enhances = gsub("\\s*\\(.*?\\)", "", enhances)
-		enhances = strsplit(enhances, ",\\s*")[[1]]
+		enhances = strsplit(enhances, "\\s*,\\s*")[[1]]
 		has_enhances = TRUE
 	}
 
@@ -90,8 +90,10 @@ pkgndep = function(pkg, verbose = TRUE) {
 			mat = matrix(nrow = 0, ncol = 0), 
 			pkg_category = character(0),
 			pkg_available = logical(0),
-			n1 = 0,
-			n2 = 0
+			n_by_depends_imports = 0,
+			n_by_all = 0,
+			bioc = !is.null(x$biocViews),
+			df_imports = NULL
 		)
 
 		class(obj) = "pkgndep"
@@ -132,6 +134,12 @@ pkgndep = function(pkg, verbose = TRUE) {
 	}
 	pkg_available = !sapply(c(dep_lt, imp_lt, sug_lt), is.null)
 
+	od = order(pkg_category, apply(m, 1, function(x) sum(!is.na(x))))
+	m = m[od, , drop = FALSE]
+	pkg_category = pkg_category[od]
+	pkg_available = pkg_available[od]
+	tm = tm[od]
+
 	obj = list(
 		package = x$Package,
 		version = x$Version,
@@ -139,13 +147,84 @@ pkgndep = function(pkg, verbose = TRUE) {
 		pkg_category = pkg_category,
 		pkg_available = pkg_available,
 		loading_time = tm,
-		n1 = sum(apply(m[pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))),
-		n2 = sum(apply(m, 2, function(x) any(!is.na(x)))),
+		n_by_depends_imports = sum(apply(m[pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))),
+		n_by_all = sum(apply(m, 2, function(x) any(!is.na(x)))),
 		bioc = !is.null(x$biocViews)
 	)
 
+	df_imports = matrix(0, nrow = nrow(m), ncol = 3)
+	colnames(df_imports) = c("imports", "importMethods", "importClasses")
+	rownames(df_imports) = rownames(m)
+
+	lt_imports = n_imports(x$Package)
+	if(!is.null(lt_imports)) {
+		if(length(lt_imports$n_imports)) {
+			lt_imports$n_imports = lt_imports$n_imports[intersect(names(lt_imports$n_imports), rownames(m))]
+			df_imports[names(lt_imports$n_imports), "imports"] = lt_imports$n_imports
+		}
+		if(length(lt_imports$n_import_methods)) {
+			lt_imports$n_import_methods = lt_imports$n_import_methods[intersect(names(lt_imports$n_import_methods), rownames(m))]
+			df_imports[names(lt_imports$n_import_methods), "importMethods"] = lt_imports$n_import_methods
+		}
+		if(length(lt_imports$n_import_classes)) {
+			lt_imports$n_import_classes = lt_imports$n_import_classes[intersect(names(lt_imports$n_import_classes), rownames(m))]
+			df_imports[names(lt_imports$n_import_classes), "importClasses"] = lt_imports$n_import_classes
+		}
+	}
+
+	obj$df_imports = df_imports
+
 	class(obj) = "pkgndep"
 	return(obj)
+}
+
+pkg_exists = function(x) {
+	system.file(package = x) != ""
+}
+
+n_imports = function(x) {
+	lib_dir = dirname(system.file(package = x))
+	if(packageHasNamespace(x, lib_dir)) {
+		ns_data = parseNamespaceFile(x, lib_dir)
+
+		lt = ns_data$imports
+		if(length(lt)) {
+			lt1 = lt[!sapply(lt, is.list)]
+			lt2 = lt[sapply(lt, is.list)]
+			n_imports = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
+				function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
+			n_imports = sapply(n_imports, length)
+		} else {
+			n_imports = NULL                
+		}
+
+		lt = ns_data$importMethods
+		if(length(lt)) {
+			lt1 = lt[!sapply(lt, is.list)]
+			lt2 = lt[sapply(lt, is.list)]
+			n_import_methods = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
+				function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
+			n_import_methods = sapply(n_import_methods, length)
+		} else {
+			n_import_methods = NULL
+		}
+
+
+		lt = ns_data$importClasses
+		if(length(lt)) {
+			lt1 = lt[!sapply(lt, is.list)]
+			lt2 = lt[sapply(lt, is.list)]
+			n_import_classes = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
+				function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
+			n_import_classes = sapply(n_import_classes, length)
+		} else {
+			n_import_classes = NULL
+		}
+
+		list(n_imports = n_imports, n_import_methods = n_import_methods, n_import_classes = n_import_classes)
+	} else {
+		NULL
+	}
 }
 
 # == title
@@ -162,9 +241,9 @@ pkgndep = function(pkg, verbose = TRUE) {
 # # See examples in `pkgndep()`.
 #
 print.pkgndep = function(x, ...) {
-	qqcat("@{x$package} version @{x$version}\n")
-	qqcat("@{x$n1} namespaces loaded if only loading packages in Depends and Imports\n")
-	qqcat("@{x$n2} namespaces loaded after loading all packages in Depends, Imports and Suggests/Enhances\n")
+	GetoptLong::qqcat("@{x$package} version @{x$version}\n")
+	GetoptLong::qqcat("@{x$n_by_depends_imports} namespaces loaded if only loading packages in Depends and Imports\n")
+	GetoptLong::qqcat("@{x$n_by_all} namespaces loaded after loading all packages in Depends, Imports and Suggests/Enhances\n")
 }
 
 # == title
@@ -211,9 +290,10 @@ unavailable_pkg = function(x) {
 # -title_fontsize Fontsize for the titles.
 # -legend_fontsize Fontsize for the legends.
 # -fix_size Should the rows and columns in the heatmap have fixed size?
-# -unit The unit of the returned figure width and height.
 # -cex A factor multiplicated to all font sizes.
 # -help Whether to print help message?
+# -file A path of the figure. The size of the figure is automatically calculated.
+# -res Resolution of the figure (only for png and jpeg).
 # -... Other arguments.
 #
 # == details
@@ -222,32 +302,87 @@ unavailable_pkg = function(x) {
 #     size = plot(x, fix_size = TRUE)
 #
 # where ``size`` is a numeric vector of length two which are the width and height of the whole heatmap.
-# If you want to save the plot in to e.g. a PDF file that has the same size of the heatmap, you
-# need to make the plot twice. First save the plot into a null device, just to obtain the size 
-# of the plot:
-#
-#     pdf(NULL) # a null device
-#     size = plot(x, fix_size = TRUE, help = FALSE) # turn off the help message
-#     dev.off()
-#     width = size[1]
-#     height = size[2]
-#     pdf(..., width = width, height = height)
-#     plot(x)
-#     dev.off()
+# If ``file`` argument is set, the size of the figure is automatically calculated.
 #
 # If there are no dependency packages stored in ``x``, ``NULL`` is returned.
 # 
 # == value
-# A vector of two numeric values that correspond to the width and height of the plot.
+# A vector of two numeric values (in inches) that correspond to the width and height of the plot.
 #
 # == example
 # # See examples in `pkgndep()`.
 #
-plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legend_fontsize = 8*cex, 
-	fix_size = !dev.interactive(), unit = "in", cex = 1, help = TRUE, ...) {
+plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, 
+	legend_fontsize = 10*cex, fix_size = !dev.interactive(), cex = 1, 
+	help = TRUE, file = NULL, res = 144, ...) {
 
-	var_name = as.character(substitute(x))
+	if(!is.null(file)) {
+		if(grepl("\\.png$", file, ignore.case = TRUE)) {
+			tmp_file = tempfile(fileext = ".png")
+			png(tmp_file, width = 1000)
+			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+			dev.off()
+			file.remove(tmp_file)
 
+			if(!is.null(size)) {
+				png(file, width = size[1], height = size[2], units = "in", res = res)
+				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+				dev.off()
+			} else {
+				png(file)
+				grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
+				dev.off()
+			}
+
+			return(invisible(NULL))
+		} else if(grepl("\\.(jpg|jpeg)$", file, ignore.case = TRUE)) {
+			tmp_file = tempfile()
+			jpeg(tmp_file)
+			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+			dev.off()
+			file.remove(tmp_file)
+
+			if(!is.null(size)) {
+				jpeg(file, width = size[1], height = size[2], units = "in", res = res)
+				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+				dev.off()
+			} else {
+				jpeg(file)
+				grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
+				dev.off()
+			}
+
+			return(invisible(NULL))
+		} else if(grepl("\\.svg$", file, ignore.case = TRUE)) {
+			tmp_file = tempfile()
+			svg(tmp_file)
+			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+			dev.off()
+			file.remove(tmp_file)
+
+			if(!is.null(size)) {
+				svg(file, width = size[1], height = size[2])
+				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+				dev.off()
+			} else {
+				svg(file)
+				grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
+				dev.off()
+			}
+
+			return(invisible(NULL))
+		} else {
+			stop("`file` only allows extensions of 'png/jpg/svg'.")
+		}
+	}
+
+	get.gpar() # test whether the graphics window can be opened or not
 	if(missing(fix_size) && cex != 1) {
 		fix_size = TRUE
 	}
@@ -256,19 +391,20 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legen
 	row_split = x$pkg_category
 
 	if(ncol(m) == 0) {
+		if(help) message(qq("No dependency found for package '@{x$package}'. Won't generate the plot.\n"))
 		return(invisible(NULL))
 	}
 
-	base_pkgs = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
-		"parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
-	
 	# a rude way to move all packages which are attached by imported packages before those by suggested packages
-	column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
-	l = row_split %in% c("Depends", "Imports")
-	l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
-	column_order_by[l2] = column_order_by[l2] + 10000
-	column_order = order(column_order_by, decreasing = TRUE)
-	
+	# column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
+	# l = row_split %in% c("Depends", "Imports")
+	# l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
+	# column_order_by[l2] = column_order_by[l2] + 10000
+	# column_order = order(column_order_by, decreasing = TRUE)
+
+	scores = apply(m[rev(seq_len(nrow(m))), , drop = FALSE], 2, scoreCol)
+	column_order = order(scores, decreasing = TRUE)
+
 	line_height = grobHeight(textGrob("A", gp = gpar(fontsize = pkg_fontsize)))*1.5
 
 	fix_size = fix_size
@@ -276,15 +412,16 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legen
 	ht = Heatmap(m, 
 		name = x$package,
 		row_split = row_split,
-		column_split = ifelse(colnames(m) %in% base_pkgs, "Base packages", "Other packages"),
+		column_split = ifelse(colnames(m) %in% BASE_PKGS, "Base packages", "Other packages"),
 		heatmap_legend_param = list(nrow = 1, title = "", labels_gp = gpar(fontsize = legend_fontsize)), 
-		rect_gp = gpar(col = "#DDDDDD"),
+		rect_gp = gpar(col = "#EEEEEE"),
 		show_row_dend = FALSE, 
 		show_column_dend = FALSE,
-		col = c("basePkgs" = "red", "loadedOnly" = "blue", "otherPkgs" = "darkgreen"),
-		row_order = order(apply(m, 1, function(x) sum(!is.na(x)))),
+		col = c("basePkgs" = "#e31a1c", "loadedOnly" = "#1f78b4", "otherPkgs" = "#33a02c"),
+		# row_order = order(apply(m, 1, function(x) sum(!is.na(x)))),
 		column_order = column_order,
 		column_names_gp = gpar(fontsize = pkg_fontsize),
+		column_names_rot = 60,
 		row_names_gp = gpar(fontsize = pkg_fontsize),
 		column_title_gp = gpar(fontsize = title_fontsize),
 		row_title_gp = gpar(fontsize = title_fontsize),
@@ -293,83 +430,139 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legen
 		height = if(fix_size) nrow(m)*line_height else NULL
 	)
 
-	loading_time = x$loading_time
-	lt_breaks = pretty(c(0, max(loading_time, 0.1)), n = 4)
-	lt_breaks = lt_breaks[lt_breaks <= max(loading_time)]
-	lt_labels = paste0(lt_breaks, "s")
+	ht_gap = unit(3, "mm")
 	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm"),
-								axis_param = list(gp = gpar(fontsize = 8*cex))),
-			show_annotation_name = FALSE) +
-		rowAnnotation("sec" = anno_barplot(loading_time, width = unit(2, "cm"),
-			ylim = c(0, max(loading_time, 0.1)), axis_param = list(gp = gpar(fontsize = 8*cex), at = lt_breaks, labels = lt_labels)),
-			show_annotation_name = FALSE) +
-		rowAnnotation(pkg = anno_text(rownames(m), 
+								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#CCCCCC", col = NA)),
+			annotation_label = "Loaded\nnamespaces", annotation_name_rot = 60,
+			annotation_name_offset = unit(8, "mm"))
+
+	df_imports = x$df_imports
+	ht_gap = unit.c(ht_gap, unit(1, "mm"))
+	ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$pkg_category, width = unit(2, "cm"),
+			gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7"), col = NA),
+			axis_param = list(gp = gpar(fontsize = 8*cex))),
+			annotation_label = "Imported\nmethods", annotation_name_rot = 60,
+			annotation_name_offset = unit(8, "mm"))
+
+	lgd_list = list()
+	if(any(rowSums(df_imports) > 0)) {
+		if(all(df_imports[, 1] == 0 & df_imports[, 2] == 0)) {
+			ind = 3
+		} else if(all(df_imports[, 1] == 0 & df_imports[, 3] == 0)) {
+			ind = 2
+		} else if(all(df_imports[, 2] == 0 & df_imports[, 3] == 0)) {
+			ind = 1
+		} else if(all(df_imports[, 1] == 0)) {
+			ind = 2:3
+		} else if(all(df_imports[, 2] == 0)) {
+			ind = c(1, 3)
+		} else if(all(df_imports[, 3] == 0)) {
+			ind = 1:2
+		} else {
+			ind = 1:3
+		}
+		lgd1 = Legend(title = "", at = c("imported functions", "imported S4 methods", "imported S4 classes")[ind], 
+			nrow = 1, legend_gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7")[ind]), 
+			labels_gp = gpar(fontsize = legend_fontsize))
+		lgd_list = c(lgd_list, list(lgd1))
+	}
+
+	if(any(rowSums(df_imports)[x$pkg_category %in% c("Imports", "Depends")] == 0)) {
+		lgd2 = Legend(title = "", at = c("imported whole namespace"), type = "lines",
+			nrow = 1, legend_gp = gpar(lty = 2, col = "#808080"), grid_width = unit(0.6, "cm"), 
+			labels_gp = gpar(fontsize = legend_fontsize))
+		lgd_list = c(lgd_list, list(lgd2))
+	}
+	
+	ht_gap = unit.c(ht_gap, unit(1, "mm"))
+	ht = ht + rowAnnotation(pkg = anno_text(rownames(m), 
 			gp = gpar(fontsize = pkg_fontsize, 
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
 				fontface = ifelse(x$pkg_available, "plain", 'italic'))))
-		
-	ht = draw(ht, ht_gap = unit(c(3, 1, 1), "mm"),
+	
+	ht = draw(ht, ht_gap = ht_gap,
 		heatmap_legend_side = "bottom", 
 		adjust_annotation_extension = FALSE,
-		column_title = qq("In total @{ncol(m)} namespaces are loaded directly or indirectly when loading @{x$package} (@{x$version})"),
-		column_title_gp = gpar(fontsize = title_fontsize))
-
-	decorate_annotation("n_pkg", {
-		grid.text("#Pkgs", y = unit(1, "npc") + unit(7.5, "pt") + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),
-			gp = gpar(fontsize = title_fontsize))
-	})
-	decorate_annotation("sec", {
-		grid.text("Loading time", y = unit(1, "npc") + unit(7.5, "pt") + 0.5*grobHeight(textGrob("A", gp = gpar(fontsize = title_fontsize))),
-			gp = gpar(fontsize = title_fontsize))
-	})
+		column_title = GetoptLong::qq("In total @{ncol(m)} namespaces are loaded directly or indirectly when loading '@{x$package}' (@{x$version})"),
+		column_title_gp = gpar(fontsize = title_fontsize),
+		heatmap_legend_list = lgd_list)
 
 	w = convertWidth(ComplexHeatmap:::width(ht), "in", valueOnly = TRUE)
 	h = convertHeight(ComplexHeatmap:::height(ht), "in", valueOnly = TRUE)
 
-	if(fix_size) {
+	if(fix_size && help) {
 		ds = dev.size()
 		if(w - ds[1] > 0.1 || h - ds[2] > 0.1) {
 			message(paste0("The best device size to visualize the complete plot is ", 
 				ceiling(w*100)/100, " x ", 
-				ceiling(h*100)/100, " (in inches),\nor use plot(", var_name, ", fix_size = FALSE) so that heatmap cells are not in fixed sizes."))
+				ceiling(h*100)/100, " (in inches),\nor use plot(obj, fix_size = FALSE) so that heatmap cells are not in fixed sizes."))
 		}
 	}
 
-	w = convertWidth(ComplexHeatmap:::width(ht), unit, valueOnly = TRUE)
-	h = convertHeight(ComplexHeatmap:::height(ht), unit, valueOnly = TRUE)
 	invisible(c(width = w, height = h))
 }
 
-# dep = function(pkg, verbose = TRUE) {
-# 	if(verbose) cat(silver("Loading"), green(pkg), silver("to a new R session... "))
+scoreCol = function(x) {
+	score = 0
+	for(i in 1:length(x)) {
+		if(!is.na(x[i])) {
+			score = score + 2^(length(x)-i)
+		}
+	}
+	return(score)
+}
+
+anno_nimports_barplot = function(x, category,
+	bar_width = 0.6, ylim = NULL, axis = TRUE, gp = gpar(),
+	axis_param = list(side = "top", labels_rot = 0),
+	width = NULL, height = NULL, border = TRUE) {
+
+	which = "row"
+
+	anno_size = ComplexHeatmap:::anno_width_and_height(which, width, height, unit(2, "cm"))
+
+	if(all(rowSums(x) == 0) && is.null(ylim)) ylim = c(0, 1)
+
+	row_fun = function(index, k, n) {
+		fun = anno_barplot(x, gp = gp, which = "row", ylim = ylim,
+			baseline = 0, width = anno_size$width, border = border, bar_width = bar_width,
+			axis = axis, axis_param = axis_param)@fun
+		fun(index, k, n)
+
+		if(category[index[1]] %in% c("Imports", "Depends")) {
+			v = x[index, , drop = FALSE]
+			l = rowSums(v) == 0
+			if(any(l)) {
+				n = length(index)
+				pushViewport(viewport(xscale = c(0, 1), yscale = c(0.5, n + 0.5)))
+				grid.segments(0, n - which(l) + 1, 1, n - which(l) + 1, gp = gpar(lty = 2, col = "#808080"), default.units = "native")
+				popViewport()
+			}
+		}
+	}
+
+	fun = row_fun
+
+	anno = AnnotationFunction(
+		fun = fun,
+		fun_name = "anno_barplot",
+		which = which,
+		width = anno_size$width,
+		height = anno_size$height,
+		var_import = list(x, category, border, bar_width, axis, axis_param, anno_size, ylim, gp)
+	)
 		
-# 	if(is.null(env$loaded_ns[[pkg]])) {
-		
-# 		if(identical(topenv(), .GlobalEnv)) {
-# 			if(normalizePath("~") == "/Users/jokergoo") {
-# 				cmd = qq("Rscript '/Users/jokergoo/project/pkgndep/inst/extdata/get_dep.R' @{pkg}")
-# 			} else {
-# 				cmd = qq("Rscript '/desktop-home/guz/project/development/pkgndep/inst/extdata/get_dep.R' @{pkg}")
-# 			}
-# 		} else {
-# 			cmd = qq("'@{normalizePath(c(R.home(), 'bin', 'Rscript'))}' '@{system.file('extdata', 'get_dep.R', package = 'pkgndep')}' @{pkg}")
-# 	    }
-# 	    oe = try(tb <- read.table(pipe(cmd), header = TRUE, stringsAsFactors = FALSE), silent = TRUE)
-# 	    if(inherits(oe, "try-error")) {
-# 	    	if(verbose) cat(red(qq("@{pkg} cannot be loaded.\n")))
-# 	    	return(NULL)
-# 	    } else {
-# 		    nr = nrow(tb)
-# 		    if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
-# 		}
-# 		env$loaded_ns[[pkg]] = tb
-# 	} else {
-# 		tb = env$loaded_ns[[pkg]]
-# 		nr = nrow(tb)
-# 		if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
-# 	}
-#     return(tb)
-# }
+	anno@subsetable = TRUE
+
+	data_scale = c(0, max(rowSums(x)))
+	if(data_scale[2] == 0) data_scale[2] = 1
+
+	axis_param = ComplexHeatmap:::validate_axis_param(axis_param, which)
+	axis_grob = if(axis) ComplexHeatmap:::construct_axis_grob(axis_param, which, data_scale) else NULL
+	anno@extended = ComplexHeatmap:::update_anno_extend(anno, axis_grob, axis_param)
+
+	return(anno) 
+}
 
 dep = function(pkg, verbose = TRUE) {
 	if(verbose) cat(silver("Loading"), green(pkg), silver("to a new R session... "))
@@ -378,20 +571,20 @@ dep = function(pkg, verbose = TRUE) {
 		
 		tb = r(load_pkg, args = list(pkg = pkg), user_profile = FALSE)
 		if(is.null(tb)) {
-	    	if(verbose) cat(red(qq("@{pkg} cannot be loaded.\n")))
+	    	if(verbose) cat(red(GetoptLong::qq("@{pkg} cannot be loaded.\n")))
 	    	return(NULL)
 	    } else {
 	    	for(i in seq_len(ncol(tb))) {
 	    		tb[, i] = as.vector(tb[, i])
 	    	}
 		    nr = nrow(tb)
-		    if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
+		    if(verbose) cat(green(nr), silver(GetoptLong::qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
 		}
 		env$loaded_ns[[pkg]] = tb
 	} else {
 		tb = env$loaded_ns[[pkg]]
 		nr = nrow(tb)
-		if(verbose) cat(green(nr), silver(qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
+		if(verbose) cat(green(nr), silver(GetoptLong::qq("namespace@{ifelse(nr == 1, '', 's')} loaded.\n")))
 	}
     return(tb)
 }
@@ -410,7 +603,7 @@ load_pkg = function(pkg) {
 		df1 = data.frame(pkg = foo$basePkgs, type = rep("basePkgs", length(foo$basePkgs)))
 		df2 = data.frame(pkg = names(foo$loadedOnly), type = rep("loadedOnly", length(foo$loadedOnly)))
 		df3 = data.frame(pkg = names(foo$otherPkgs), type = rep("otherPkgs", length(foo$otherPkgs)))
-		df = rbind(df1, df2, df3)
+		df = base::rbind(df1, df2, df3)
 		df = df[df[, 1] != pkg ,]
 		df$tm = tm[3]
 		print(df, row.names = FALSE)
@@ -437,6 +630,40 @@ n_import = function(pkg) {
 	n
 }
 
+
+heaviness = function(x, rel = FALSE, a = 10) {
+	m = x$m[x$pkg_category %in% c("Imports", "Depends"), , drop = FALSE]
+	nm = rownames(m)
+
+	v1 = sum(apply(m, 2, function(x) any(!is.na(x))))
+	v = numeric(0)
+	for(i in seq_along(nm)) {
+		v2 = sum(apply(m[rownames(m) != nm[i], , drop = FALSE], 2, function(x) any(!is.na(x))))
+		if(rel) {
+			v[i] = v1 - v2
+		} else {
+			v[i] = (v1 + a)/(v2 + a)
+		}
+	}
+	names(v) = nm
+
+	mi = x$m[!x$pkg_category %in% c("Imports", "Depends"), , drop = FALSE]
+	nm = rownames(mi)
+	vi = numeric(0)
+	for(i in seq_along(nm)) {
+		v2 = sum(apply(x$m[c(rownames(m), nm[i]), , drop = FALSE], 2, function(x) any(!is.na(x))))
+		if(rel) {
+			vi[i] = v2 - v1
+		} else {
+			vi[i] = (v2 + a)/(v1 + a)
+		}
+	}
+	names(vi) = nm
+
+	v = c(v, vi)
+	v[rownames(x$m)]
+}
+
 env = new.env()
 env$loaded_ns = list()
 
@@ -444,3 +671,7 @@ env$loaded_ns = list()
     env$loaded_ns = list()
 }
 
+
+BASE_PKGS = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
+		"parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
+	

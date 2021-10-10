@@ -25,11 +25,11 @@ package.
 In the DESCRIPTION file of your package, those "directly dependent pakcages"
 are always listed in the "Depends" or "Imports" fields. To get rid of the heavy
 packages that are not offen used in your package, it is better to move them
-into the "Suggests" fields and load them only when they are needed.
+into the "Suggests"/"Enhances" fields and load them only when they are needed.
 
 Here **pkgndep** package checks the heaviness of the packages that your
 package depends on. For each package listed in the "Depends", "Imports" and
-"Suggests" fields in the DESCRIPTION file, it opens a new R session, loads the
+"Suggests"/"Enhances" fields in the DESCRIPTION file, it opens a new R session, loads the
 package and counts the number of namespaces that are loaded. The summary of
 the dependencies is visualized by a customized heatmap.
 
@@ -89,38 +89,11 @@ height = as.numeric(size$height)
 plot(x)
 ```
 
-By default, the heatmap has a fixed size, thus, when there are too many
-dependencies, the heatmap might be out of the figure area. In this case,
-`fix_size = FALSE` can be set in `plot()` so that the heatmap is adjusted to
-fit the figure area.
+You can set the `file` argument to directly save the image into a figure where the figure
+size is automatically calculated.
 
-```{r, eval = FALSE}
-plot(x, fix_size = FALSE)
-```
-
-If `fix_size` is set to `TRUE` (which is the default), The size of the whole
-heatmap can be obtained by:
-
-```{r, eval = FALSE}
-size = plot(x)  
-```
-
-where size is a `unit` object with the width and height of the whole heatmap.
-If you want to save the plot in to e.g. a PDF file that has the same size of
-the heatmap, you need to make the plot twice. The first one for saving the
-plot into a null graphics device, just to obtain the size of the plot:
-
-```{r, eval = FALSE}
-pdf(NULL) # a null device
-size = plot(x)
-dev.off()
-
-width = as.numeric(size[1])
-height = as.numeric(size[2])
-
-pdf(..., width = width, height = height)
-plot(x)
-dev.off()
+````{r, eval = FALSE}
+plot(x, file = "test.png")
 ```
 
 ## Statistics

@@ -8,7 +8,7 @@ Plot method
 }
 \usage{
 \method{plot}{pkgndep}(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legend_fontsize = 8*cex,
-    fix_size = !dev.interactive(), unit = "in", cex = 1, ...)
+    fix_size = !dev.interactive(), cex = 1, ...)
 }
 \arguments{
 
@@ -17,7 +17,6 @@ Plot method
   \item{title_fontsize}{Fontsize for the titles.}
   \item{legend_fontsize}{Fontsize for the legends.}
   \item{fix_size}{Should the rows and columns in the heatmap have fixed size?}
-  \item{unit}{The unit of the returned figure width and height.}
   \item{cex}{A factor multiplicated to all font sizes.}
   \item{...}{Other arguments.}
 
