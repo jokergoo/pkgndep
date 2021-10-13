@@ -7,8 +7,9 @@ Plot method
 Plot method
 }
 \usage{
-\method{plot}{pkgndep}(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, legend_fontsize = 8*cex,
-    fix_size = !dev.interactive(), cex = 1, ...)
+\method{plot}{pkgndep}(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
+    legend_fontsize = 10*cex, fix_size = !dev.interactive(), cex = 1,
+    help = TRUE, file = NULL, res = 144, ...)
 }
 \arguments{
 
@@ -18,6 +19,9 @@ Plot method
   \item{legend_fontsize}{Fontsize for the legends.}
   \item{fix_size}{Should the rows and columns in the heatmap have fixed size?}
   \item{cex}{A factor multiplicated to all font sizes.}
+  \item{help}{Whether to print help message?}
+  \item{file}{A path of the figure. The size of the figure is automatically calculated.}
+  \item{res}{Resolution of the figure (only for png and jpeg).}
   \item{...}{Other arguments.}
 
 }
@@ -27,25 +31,13 @@ If \code{fix_size} is set to \code{TRUE}. The size of the whole plot can be obta
   \preformatted{
     size = plot(x, fix_size = TRUE)  }
 
-where \code{size} is a \code{\link[grid]{unit}} object with the width and height of the whole heatmap.
-If you want to save the plot in to e.g. a PDF file that has the same size of the heatmap, you
-need to make the plot twice. First save the plot into a null device, just to obtain the size 
-of the plot:
-
-  \preformatted{
-    pdf(NULL) # a null device
-    size = plot(x, fix_size = TRUE)
-    dev.off()
-    width = as.numeric(size[1])
-    height = as.numeric(size[2])
-    pdf(..., width = width, height = height)
-    plot(x)
-    dev.off()  }
+where \code{size} is a numeric vector of length two which are the width and height of the whole heatmap.
+If \code{file} argument is set, the size of the figure is automatically calculated.
 
 If there are no dependency packages stored in \code{x}, \code{NULL} is returned.
 }
 \value{
-A list of two units that correspond to the width and height of the plot.
+A vector of two numeric values (in inches) that correspond to the width and height of the plot.
 }
 \examples{
 # See examples in `pkgndep()`.

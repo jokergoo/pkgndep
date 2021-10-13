@@ -16,7 +16,7 @@ pkgndep(pkg, verbose = TRUE)
 
 }
 \details{
-For each package listed in the "Depends", "Imports" and "Suggests" fields
+For each package listed in the "Depends", "Imports" and "Suggests" (or also "Enhances") fields
 in the DESCRIPTION file, this function opens a new R session, loads the package
 and counts the number of namespaces that are loaded.
 }

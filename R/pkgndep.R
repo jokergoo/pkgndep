@@ -52,6 +52,8 @@ pkgndep = function(pkg, verbose = TRUE) {
 		imports = x$Imports
 		imports = gsub("\\s*\\(.*?\\)", "", imports)
 		imports = strsplit(imports, "\\s*,\\s*")[[1]]
+
+		imports = setdiff(imports, depends)
 	}
 
 	if(is.null(x$Suggests)) {
@@ -132,6 +134,7 @@ pkgndep = function(pkg, verbose = TRUE) {
 	} else {
 		pkg_category = c(rep("Depends", length(dep_lt)), rep("Imports", length(imports)), rep("Suggests", length(suggests)))
 	}
+	names(pkg_category) = rownames(m)
 	pkg_available = !sapply(c(dep_lt, imp_lt, sug_lt), is.null)
 
 	od = order(pkg_category, apply(m, 1, function(x) sum(!is.na(x))))
@@ -140,6 +143,11 @@ pkgndep = function(pkg, verbose = TRUE) {
 	pkg_available = pkg_available[od]
 	tm = tm[od]
 
+	n_total1 = length(unique(c(rownames(m), colnames(m))))
+	l1 = pkg_category %in% c("Depends", "Imports")
+	l2 = apply(m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
+	n_total2 = length(unique(unlist(dimnames(m[l1, l2, drop = FALSE]))))
+	
 	obj = list(
 		package = x$Package,
 		version = x$Version,
@@ -147,20 +155,20 @@ pkgndep = function(pkg, verbose = TRUE) {
 		pkg_category = pkg_category,
 		pkg_available = pkg_available,
 		loading_time = tm,
-		n_by_depends_imports = sum(apply(m[pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))),
-		n_by_all = sum(apply(m, 2, function(x) any(!is.na(x)))),
+		n_by_depends_imports = n_total2,
+		n_by_all = n_total1,
 		bioc = !is.null(x$biocViews)
 	)
 
 	df_imports = matrix(0, nrow = nrow(m), ncol = 3)
-	colnames(df_imports) = c("imports", "importMethods", "importClasses")
+	colnames(df_imports) = c("import", "importMethods", "importClasses")
 	rownames(df_imports) = rownames(m)
 
-	lt_imports = n_imports(x$Package)
+	lt_imports = parse_imports_from_namespace(x$Package)
 	if(!is.null(lt_imports)) {
 		if(length(lt_imports$n_imports)) {
 			lt_imports$n_imports = lt_imports$n_imports[intersect(names(lt_imports$n_imports), rownames(m))]
-			df_imports[names(lt_imports$n_imports), "imports"] = lt_imports$n_imports
+			df_imports[names(lt_imports$n_imports), "import"] = lt_imports$n_imports
 		}
 		if(length(lt_imports$n_import_methods)) {
 			lt_imports$n_import_methods = lt_imports$n_import_methods[intersect(names(lt_imports$n_import_methods), rownames(m))]
@@ -175,6 +183,8 @@ pkgndep = function(pkg, verbose = TRUE) {
 	obj$df_imports = df_imports
 
 	class(obj) = "pkgndep"
+
+	obj$heaviness = heaviness(obj)
 	return(obj)
 }
 
@@ -182,7 +192,7 @@ pkg_exists = function(x) {
 	system.file(package = x) != ""
 }
 
-n_imports = function(x) {
+parse_imports_from_namespace = function(x) {
 	lib_dir = dirname(system.file(package = x))
 	if(packageHasNamespace(x, lib_dir)) {
 		ns_data = parseNamespaceFile(x, lib_dir)
@@ -256,13 +266,28 @@ print.pkgndep = function(x, ...) {
 # == value
 # A vector of namespace names.
 #
-loaded_ns = function(x, include_suggests = TRUE) {
+loaded_namespaces = function(x, include_suggests = TRUE) {
+	m = x$m
 	if(include_suggests) {
-		sort(colnames(x$mat))
+		sort(unique(c(rownames(m), colnames(m))))
 	} else {
-		l = apply(x$m[x$pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))
-		sort(colnames(x$mat)[l])
+		l1 = x$pkg_category %in% c("Depends", "Imports")
+		l2 = apply(m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
+		sort(unique(unlist(dimnames(m[l1, l2, drop = FALSE]))))
 	}
+}
+
+# == title
+# Which packages are listed in Depends/Imports
+#
+# == param
+# -x The object from `pkgndep`.
+#
+# == value
+# A vector of logical values.
+#
+which_imported = function(x) {
+	x$pkg_category %in% c("Depends", "Imports")
 }
 
 # == title
@@ -326,12 +351,14 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			file.remove(tmp_file)
 
 			if(!is.null(size)) {
+				size[1] = max(size[1], 7)
+				size[2] = max(size[2], 3)
 				png(file, width = size[1], height = size[2], units = "in", res = res)
 				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
-				png(file)
+				png(file, width = 3, height = 1, units = "in", res = res)
 				grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
 				dev.off()
 			}
@@ -346,12 +373,14 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			file.remove(tmp_file)
 
 			if(!is.null(size)) {
+				size[1] = max(size[1], 7)
+				size[2] = max(size[2], 3)
 				jpeg(file, width = size[1], height = size[2], units = "in", res = res)
 				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
-				jpeg(file)
+				jpeg(file, width = 3, height = 1, units = "in", res = res)
 				grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
 				dev.off()
 			}
@@ -365,13 +394,21 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			dev.off()
 			file.remove(tmp_file)
 
+			if(requireNamespace("svglite", quietly = TRUE)) {
+				svg_fun = svglite::svglite
+			} else {
+				svg_fun = svg
+			}
+
 			if(!is.null(size)) {
-				svg(file, width = size[1], height = size[2])
+				size[1] = max(size[1], 7)
+				size[2] = max(size[2], 3)
+				svg_fun(file, width = size[1], height = size[2])
 				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
-				svg(file)
+				svg_fun(file, width = 3, height = 1)
 				grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
 				dev.off()
 			}
@@ -396,19 +433,15 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 	}
 
 	# a rude way to move all packages which are attached by imported packages before those by suggested packages
-	# column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
-	# l = row_split %in% c("Depends", "Imports")
-	# l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
-	# column_order_by[l2] = column_order_by[l2] + 10000
-	# column_order = order(column_order_by, decreasing = TRUE)
-
-	scores = apply(m[rev(seq_len(nrow(m))), , drop = FALSE], 2, scoreCol)
-	column_order = order(scores, decreasing = TRUE)
+	column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
+	l = row_split %in% c("Depends", "Imports")
+	l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
+	column_order_by[l2] = column_order_by[l2] + 10000
+	column_order = order(column_order_by, decreasing = TRUE)
 
 	line_height = grobHeight(textGrob("A", gp = gpar(fontsize = pkg_fontsize)))*1.5
 
 	fix_size = fix_size
-
 	ht = Heatmap(m, 
 		name = x$package,
 		row_split = row_split,
@@ -426,22 +459,32 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		column_title_gp = gpar(fontsize = title_fontsize),
 		row_title_gp = gpar(fontsize = title_fontsize),
 		row_title_rot = 90,
+		bottom_annotation = HeatmapAnnotation(loaded = ifelse(apply(m[which_imported(x), , drop = FALSE], 2, function(x) any(!is.na(x))), "yes", "no"),
+			col = list(loaded = c("yes" = "purple", "no" = "white")), simple_anno_size = unit(1, "mm"), 
+			show_legend = FALSE, show_annotation_name = FALSE),
 		width = if(fix_size) ncol(m)*line_height else NULL,
-		height = if(fix_size) nrow(m)*line_height else NULL
+		height = if(fix_size) nrow(m)*line_height else NULL,
+		right_annotation = if(any(x$pkg_category %in% c("Imports", "Depends"))) {
+			rowAnnotation(loaded2 = ifelse(x$pkg_category %in% c("Imports", "Depends"), "yes", "no"),
+					col = list(loaded2 = c("yes" = "purple", "no" = "white")), simple_anno_size = unit(1, "mm"), 
+					show_legend = FALSE, show_annotation_name = FALSE)
+		} else {
+			NULL
+		}
 	)
 
-	ht_gap = unit(3, "mm")
 	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm"),
-								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#CCCCCC", col = NA)),
+								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#808080", col = NA)),
 			annotation_label = "Loaded\nnamespaces", annotation_name_rot = 60,
+			annotation_name_gp = gpar(fontsize = pkg_fontsize),
 			annotation_name_offset = unit(8, "mm"))
 
 	df_imports = x$df_imports
-	ht_gap = unit.c(ht_gap, unit(1, "mm"))
 	ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$pkg_category, width = unit(2, "cm"),
 			gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7"), col = NA),
 			axis_param = list(gp = gpar(fontsize = 8*cex))),
 			annotation_label = "Imported\nmethods", annotation_name_rot = 60,
+			annotation_name_gp = gpar(fontsize = pkg_fontsize),
 			annotation_name_offset = unit(8, "mm"))
 
 	lgd_list = list()
@@ -474,16 +517,19 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		lgd_list = c(lgd_list, list(lgd2))
 	}
 	
-	ht_gap = unit.c(ht_gap, unit(1, "mm"))
 	ht = ht + rowAnnotation(pkg = anno_text(rownames(m), 
 			gp = gpar(fontsize = pkg_fontsize, 
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
 				fontface = ifelse(x$pkg_available, "plain", 'italic'))))
 	
-	ht = draw(ht, ht_gap = ht_gap,
+	n_total1 = length(unique(c(rownames(x$m), colnames(x$m))))
+	l1 = x$pkg_category %in% c("Depends", "Imports")
+	l2 = apply(x$m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
+	n_total2 = length(unique(unlist(dimnames(x$m[l1, l2, drop = FALSE]))))
+	ht = draw(ht, 
 		heatmap_legend_side = "bottom", 
 		adjust_annotation_extension = FALSE,
-		column_title = GetoptLong::qq("In total @{ncol(m)} namespaces are loaded directly or indirectly when loading '@{x$package}' (@{x$version})"),
+		column_title = GetoptLong::qq("In total @{n_total2} namespaces are loaded directly or indirectly (@{n_total1}) when loading '@{x$package}' (@{x$version})"),
 		column_title_gp = gpar(fontsize = title_fontsize),
 		heatmap_legend_list = lgd_list)
 
@@ -610,27 +656,30 @@ load_pkg = function(pkg) {
 	}
 }
 
-n_import = function(pkg) {
-	imports_data = parseNamespaceFile(pkg, dirname(system.file(package = pkg)))$imports
-	all_ns = unique(sapply(imports_data, function(x) x[[1]]))
-	lt = vector("list", length(all_ns))
-	names(lt) = all_ns
-	for(i in seq_along(imports_data)) {
-		if(!is.list(imports_data[[i]])) {
-			lt[[ imports_data[[i]] ]] = NA
-			next
-		}
-		if(identical(lt[[ imports_data[[i]][[1]] ]], NA)) {
-			next
-		}
-		lt[[ imports_data[[i]][[1]] ]] = c(lt[[ imports_data[[i]][[1]] ]], imports_data[[i]][[2]])
-	}
-	n = sapply(lt, function(x) length(unique(x[!is.na(x)])))
-	n[n == 0] = NA
-	n
-}
-
-
+# == title
+# Heaviness of a dependent package
+#
+# == param
+# -x An object returned by `pkgndep`.
+# -rel Whether to return the absolute measure or the relative measure.
+# -a A contant added for calculating the relative measure.
+#
+# == details
+# The heaviness of a dependent package is calculated as follows. If package B is in the "Depends/Imports" fields of package A,
+# which means, package B will be loaded when loading package A, denote ``v1`` as the total namespaces when loading package A,
+# and ``v2`` as the total number of namespaces if moving package B to "Suggests" (which means, now B is not loaded when loading A).
+# The absolute measure is simply ``v1 -  v2`` and relative measure is ``(v1 + a)/(v2 + a)``. 
+#
+# In the second scenario, if B is in the "Suggests/Enhances" fields of package A, now ``v2`` is the total number of namespaces if moving
+# B to "Depends/Imports", the absolute measure is ``v2 - v1`` and relative measure is ``(v2 + a)/(v1 + a)``.
+#
+# == value
+# A numeric vector.
+#
+# == example
+# x = readRDS(system.file("extdata", "x.rds", package = "pkgndep"))
+# heaviness(x)
+# heaviness(x, rel = TRUE)
 heaviness = function(x, rel = FALSE, a = 10) {
 	m = x$m[x$pkg_category %in% c("Imports", "Depends"), , drop = FALSE]
 	nm = rownames(m)
@@ -640,9 +689,9 @@ heaviness = function(x, rel = FALSE, a = 10) {
 	for(i in seq_along(nm)) {
 		v2 = sum(apply(m[rownames(m) != nm[i], , drop = FALSE], 2, function(x) any(!is.na(x))))
 		if(rel) {
-			v[i] = v1 - v2
-		} else {
 			v[i] = (v1 + a)/(v2 + a)
+		} else {
+			v[i] = v1 - v2
 		}
 	}
 	names(v) = nm
@@ -653,9 +702,9 @@ heaviness = function(x, rel = FALSE, a = 10) {
 	for(i in seq_along(nm)) {
 		v2 = sum(apply(x$m[c(rownames(m), nm[i]), , drop = FALSE], 2, function(x) any(!is.na(x))))
 		if(rel) {
-			vi[i] = v2 - v1
-		} else {
 			vi[i] = (v2 + a)/(v1 + a)
+		} else {
+			vi[i] = v2 - v1
 		}
 	}
 	names(vi) = nm
@@ -663,6 +712,28 @@ heaviness = function(x, rel = FALSE, a = 10) {
 	v = c(v, vi)
 	v[rownames(x$m)]
 }
+
+# == title
+# Gini index on the heaviness
+#
+# == param
+# -x An object returned by `pkgndep`.
+# -a A constant add to heaviness.
+#
+gini_index = function(x, a = 2) {
+	l = x$pkg_category %in% c("Imports", "Depends")
+	if(sum(l) < 2) {
+		0
+	} else {
+		v = x$heaviness[l] + a
+		v = sort(v)
+		n = length(v)
+        s = 2 * sum(v * 1:n)/(n * sum(v)) - 1 - (1/n)
+        s = n/(n - 1)*s
+        max(0, s)
+	}
+}
+
 
 env = new.env()
 env$loaded_ns = list()

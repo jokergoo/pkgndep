@@ -8,7 +8,7 @@ Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 3.5.0)
 Imports: ComplexHeatmap (>= 2.0.0), GetoptLong, utils, grid, crayon, callr
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, svglite
 Description: It checks the heaviness of the packages that user's
     package depends on. For each package listed in the "Depends", "Imports" and
     "Suggests" fields in the DESCRIPTION file, it opens a new R session, loads the
