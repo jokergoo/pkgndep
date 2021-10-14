@@ -1,19 +1,20 @@
 \name{heaviness}
 \alias{heaviness}
 \title{
-Heaviness of a dependent package
+Heaviness of dependency packages
 }
 \description{
-Heaviness of a dependent package
+Heaviness of dependency packages
 }
 \usage{
-heaviness(x, rel = FALSE, a = 10)
+heaviness(x, rel = FALSE, a = 10, reverse = FALSE)
 }
 \arguments{
 
   \item{x}{An object returned by \code{\link{pkgndep}}.}
   \item{rel}{Whether to return the absolute measure or the relative measure.}
   \item{a}{A contant added for calculating the relative measure.}
+  \item{reverse}{Whether to look at the reverse dependency, i.e. the heaviness the package \code{x} contribute to all its children packages.}
 
 }
 \details{
@@ -32,4 +33,7 @@ A numeric vector.
 x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
 heaviness(x)
 heaviness(x, rel = TRUE)
+
+heaviness("ggplot2", reverse = TRUE)
+heaviness("Hmisc", reverse = TRUE)
 }

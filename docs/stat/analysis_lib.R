@@ -101,6 +101,7 @@ qq("
 }
 </style>
 <div id='@{id}'></div>
+<p><a href='#' id='reset'>Reset layout</a></p>
 
 <script src='../_js/cytoscape.min.js'></script>
 	<script src='../_js/dagre.min.js'></script>
@@ -150,6 +151,10 @@ qq("
 	cy.$('node').one('click', function(e){
 	  var ele = e.target;
 	  window.open(ele.id()+'.html')
+	});
+
+	$('#reset').click(function() {
+		cy.reset();
 	});
 </script>
 
@@ -220,16 +225,20 @@ td, th {
 		tb[, 1] = qq("<a href='@{tb[, 1]}.html'>@{tb[, 1]}</a>", collapse = FALSE)
 		tb = as.matrix(tb)
 
-		html = as.character(kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Package", "Category", "import", "importMethods", "importClasses", "Loaded namespeces", "Heaviness")))
+		html = as.character(kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Package", "Category", "imports", "importMethods", "importClasses", "Loaded namespeces", "Heaviness")))
 		html = gsub("(<td[^>]*?> Suggests </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Namespace is not imported.</td>\n", html)
 		html = gsub("(<td[^>]*?> Suggests or\nEnhances </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Namespace is not imported.</td>\n", html)
 		html = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html)
+		html = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html)
+		html = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Depends' but no object from the namespace is imported.</td>\n", html)
 		html = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html)
+		html = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html)
+		html = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html)
 
 		writeLines("<p><b>Table of dependency pacakges:</b></p>", con = con)
 		writeLines(html, con = con)
 		writeLines("<br>
-<p><b>import</b>: variables/functions listed in <code>import</code>/<code>importFrom</code> directive.</p>
+<p><b>imports</b>: variables/functions listed in <code>import</code>/<code>importFrom</code> directive.</p>
 <p><b>importMethods</b>: S4 methods listed in <code>importMethodFrom</code> directive.</p>
 <p><b>importClasses</b>: S4 classes listed in <code>importClassesFrom</code> directive.</p>
 ", con = con)
@@ -244,7 +253,7 @@ td, th {
 
 			tb = data.frame(Package = rev_pkg, category = rev_cate)
 			tb$import = sapply(lt[rev_pkg], function(pkg) {
-				pkg$df_imports[pp, "import"]
+				pkg$df_imports[pp, "imports"]
 			})
 			tb$importMethods = sapply(lt[rev_pkg], function(pkg) {
 				pkg$df_imports[pp, "importMethods"]

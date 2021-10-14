@@ -12,7 +12,7 @@ gini_index(x, a = 2)
 \arguments{
 
   \item{x}{An object returned by \code{\link{pkgndep}}.}
-  \item{a}{A constant add to heaviness.}
+  \item{a}{A constant added to heaviness.}
 
 }
 \examples{
