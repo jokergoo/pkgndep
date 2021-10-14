@@ -13,9 +13,9 @@ Plot method
 }
 \arguments{
 
-  \item{x}{The object from \code{\link{pkgndep}}.}
+  \item{x}{An object from \code{\link{pkgndep}}.}
   \item{pkg_fontsize}{Fontsize for the package names.}
-  \item{title_fontsize}{Fontsize for the titles.}
+  \item{title_fontsize}{Fontsize for the title.}
   \item{legend_fontsize}{Fontsize for the legends.}
   \item{fix_size}{Should the rows and columns in the heatmap have fixed size?}
   \item{cex}{A factor multiplicated to all font sizes.}

@@ -1,5 +1,5 @@
-\name{unavailable_pkg}
-\alias{unavailable_pkg}
+\name{unavailable_packages}
+\alias{unavailable_packages}
 \title{
 Unavailable packages
 }
@@ -7,11 +7,11 @@ Unavailable packages
 Unavailable packages
 }
 \usage{
-unavailable_pkg(x)
+unavailable_packages(x)
 }
 \arguments{
 
-  \item{x}{The object from \code{\link{pkgndep}}.}
+  \item{x}{An object from \code{\link{pkgndep}}.}
 
 }
 \details{

@@ -29,7 +29,7 @@ B to "Depends/Imports", the absolute measure is \code{v2 - v1} and relative meas
 A numeric vector.
 }
 \examples{
-x = readRDS(system.file("extdata", "x.rds", package = "pkgndep"))
+x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
 heaviness(x)
 heaviness(x, rel = TRUE)
 }

@@ -8,3 +8,4 @@ build_pkg_site.R
 ^\.github$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+inst/extdata/all_pkgs.rds

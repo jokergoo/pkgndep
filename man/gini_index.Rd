@@ -18,4 +18,5 @@ gini_index(x, a = 2)
 \examples{
 # There is no example
 NULL
+
 }

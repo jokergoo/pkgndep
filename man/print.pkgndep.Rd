@@ -11,7 +11,7 @@ Print method
 }
 \arguments{
 
-  \item{x}{The object from \code{\link{pkgndep}}.}
+  \item{x}{An object from \code{\link{pkgndep}}.}
   \item{...}{Other arguments.}
 
 }

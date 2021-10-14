@@ -9,48 +9,46 @@ vignette: >
 
 
 When developing R packages, we should try to avoid directly setting
-dependencies to "heavy packages". The "heaviness" for a package means, the
+dependencies on "heavy packages". The "heaviness" for a package means, the
 number of additional dependent packages it brings to. If your package directly depends
-on a heavy package, it brings several consequences:
+on a heavy package, it would bring several consequences:
 
-1. Users need to install a lot of additional packages if your
-   package is installed (which brings the risk that installation of some packages
-   may fail that makes your package cannot be installed neither). 
+1. Users need to install a lot of additional packages when installing your
+   package (which brings the risk that installation of some packages
+   may fail and it makes your package cannot be installed neither). 
 2. The namespaces that are loaded into your R session after loading your package (by
    `library(your-pkg)`) will be huge (you can see the loaded namespaces by `sessionInfo()`).
-
-You package will be "heavy" as well and it may take long time to load your
-package.
+3. You package will be "heavy" as well and it may take long time to load your package.
 
 In the DESCRIPTION file of your package, those "directly dependent pakcages"
-are always listed in the "Depends" or "Imports" fields. To get rid of the heavy
-packages that are not offen used in your package, it is better to move them
-into the "Suggests"/"Enhances" fields and load them only when they are needed.
+are always listed in the `Depends` and `Imports` fields. To get rid of the heavy
+packages that are not often used in your package, it is better to move them
+into the `Suggests`/`Enhances` fields and to load them only when they are needed.
 
-Here **pkgndep** package checks the heaviness of the packages that your
-package depends on. For each package listed in the "Depends", "Imports" and
-"Suggests"/"Enhances" fields in the DESCRIPTION file, it opens a new R session, loads the
+Here the **pkgndep** package checks the heaviness of the dependency packages of your
+package. For each package listed in the `Depends`, `Imports` and
+`Suggests`/`Enhances` fields in the DESCRIPTION file, it opens a new R session, only loads the
 package and counts the number of namespaces that are loaded. The summary of
-the dependencies is visualized by a customized heatmap.
+the dependency is visualized by a customized heatmap.
 
-As an example, I am developing a package 
+As an example, I am developing a package called
 [**cola**](https://github.com/jokergoo/cola/) which depends on [a lot of other
 packages](https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
-The dependency heatmap looks like ([Figure in the original size is here](https://jokergoo.github.io/pkgndep/stat/image/cola.png)):
+The dependency heatmap looks like (please drag the figure to a new tab to see it in the actual size):
 
-<p><img width='120%' src='cola.png' /></p>
+<p><img src='cola.png' width="1000px" /></p>
 
-In the heatmap, rows are the packages listed in "Depends", "Imports" and "Suggests" fields,
-columns are the namespaces that are loaded if each of the package is only loaded to a new R session.
-The barplots on the right show the number of namespaces that are imported by each package
-and the time of only loading one of the packages into R.
+In the heatmap, rows are the packages listed in `Depends`, `Imports` and `Suggests` fields,
+columns are the namespaces that are loaded if each of the dependency package is only loaded to a new R session.
+The two barplots on the right show the number of additional namespaces that are loaded by each dependency package
+and the number of imported functions/methods/classes from each dependency package.
 
-We can see if all the packages are put in the "Imports" field, 166 namespaces
+We can see if all the packages are put in the `Depends` or `Imports` field, 210 namespaces
 will be loaded after `library(cola)`. Some of the heavy packages such as
-**WGCNA** and **clusterProfiler** are not very frequently used in **cola**,
-moving them to "Suggests" field and loading them only when they are needed
+**WGCNA**, **clusterProfiler** and **ReactomePA** (the last three packages in the heatmap rows) are not very frequently used in **cola**,
+moving them to `Suggests` field and loading them only when they are needed
 helps to speed up loading **cola**. Now the number of namespaces are reduced
-to only 25 after `library(cola)`.
+to only 50 after executing `library(cola)`.
 
 ## Usage
 
@@ -58,14 +56,14 @@ To use this package:
 
 ```r
 library(pkgndep)
-x = pkgndep("package-name")
+x = pkgndep("package-name")  # if the package is already installed
 plot(x)
 ```
 
 or
 
 ```r
-x = pkgndep("path-to-the-package")
+x = pkgndep("path-of-the-package")  # if the package has not been installed yet
 plot(x)
 ```
 
@@ -79,19 +77,46 @@ x
 
 ```{r, echo = FALSE}
 pdf(NULL)
-size = plot(x)
+size = plot(x, help = FALSE)
 invisible(dev.off())
-width = as.numeric(size["width"])
-height = as.numeric(size["height"])
 ```
 
-```{r, fig.width = width, fig.height = height, out.width = "100%"}
+```{r, fig.width = size[1], fig.height = size[2], out.width = "1000px"}
 plot(x)
 ```
 
 You can set the `file` argument to directly save the image into a figure where the figure
-size is automatically calculated.
+size is automatically calculated. Supported image formats are `png`/`jpg`/`svg`.
 
-````{r, eval = FALSE}
+```{r, eval = FALSE}
 plot(x, file = "test.png")
+```
+
+## Heaviness
+
+The heaviness can be measures quantitatively. **pkgndep** provides two measures: the absolute
+measure and the relative measure.
+
+The heaviness of a dependency package is calculated as follows. If package B
+is in the `Depends`/`Imports` fields of package A, which means, package B will
+be loaded when loading package A, denote `v1` as the total number of namespaces when
+loading package A, and denote `v2` as the total number of namespaces if moving package
+B to `Suggests` (which means, now B is not loaded when loading A). The
+absolute measure is simply `v1 - v2` and relative measure is `(v1 + a)/(v2 + a)` where `a` is a small constant, e.g. 10.
+
+In the second scenario, if B is in the `Suggests`/`Enhances` fields of package
+A, now `v2` is the total number of namespaces if moving B to `Depends`/`Imports`,
+the absolute measure is `v2 - v1` and relative measure is `(v2 + a)/(v1 + a)`.
+
+The heaviness score can be calculated by the function `heaviness()`:
+
+```{r}
+heaviness(x)
+heaviness(x, rel = TRUE)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
 ```
