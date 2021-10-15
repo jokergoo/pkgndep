@@ -197,6 +197,8 @@ pkgndep = function(pkg, verbose = TRUE) {
 	}
 	obj$df_imports = df_imports
 
+	obj$which_imported_but_not_loaded = is.infinite(df_imports[, 1])
+
 	class(obj) = "pkgndep"
 
 	obj$heaviness = heaviness(obj)
@@ -293,17 +295,17 @@ print.pkgndep = function(x, ...) {
 #
 # == param
 # -x An object from `pkgndep`.
-# -include_suggests Whether to include the namespaces that are loaded if also loading packages from "Suggests"/"Enhances" field.
+# -include_all Whether to include the namespaces that are loaded if also loading packages from "Suggests"/"Enhances" field.
 #
 # == value
 # A vector of namespace names.
 #
-loaded_namespaces = function(x, include_suggests = FALSE) {
+loaded_namespaces = function(x, include_all = FALSE) {
 	m = x$mat
-	if(include_suggests) {
+	if(include_all) {
 		unique(c(rownames(m), colnames(m)))
 	} else {
-		l1 = x$which_imported
+		l1 = x$which_imported & !x$which_imported_but_not_loaded
 		l2 = apply(m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
 		unique(unlist(dimnames(m[l1, l2, drop = FALSE])))
 	}

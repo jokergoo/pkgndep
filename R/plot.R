@@ -142,13 +142,13 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		column_title_gp = gpar(fontsize = title_fontsize),
 		row_title_gp = gpar(fontsize = title_fontsize),
 		row_title_rot = 90,
-		bottom_annotation = HeatmapAnnotation(loaded = ifelse(apply(m[x$which_imported, , drop = FALSE], 2, function(x) any(!is.na(x))), "yes", "no"),
+		bottom_annotation = HeatmapAnnotation(loaded = ifelse(apply(m[x$which_imported & !x$which_imported_but_not_loaded, , drop = FALSE], 2, function(x) any(!is.na(x))), "yes", "no"),
 			col = list(loaded = c("yes" = "purple", "no" = "white")), simple_anno_size = unit(1, "mm"), 
 			show_legend = FALSE, show_annotation_name = FALSE),
 		width = if(fix_size) ncol(m)*line_height else NULL,
 		height = if(fix_size) nrow(m)*line_height else NULL,
 		right_annotation = if(any(x$pkg_category %in% c("Imports", "Depends"))) {
-			rowAnnotation(loaded2 = ifelse(x$pkg_category %in% c("Imports", "Depends"), "yes", "no"),
+			rowAnnotation(loaded2 = ifelse(x$pkg_category %in% c("Imports", "Depends") & !x$which_imported_but_not_loaded, "yes", "no"),
 					col = list(loaded2 = c("yes" = "purple", "no" = "white")), simple_anno_size = unit(1, "mm"), 
 					show_legend = FALSE, show_annotation_name = FALSE)
 		} else {
@@ -167,21 +167,28 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			title = "", labels_gp = gpar(fontsize = legend_fontsize))
 	lgd_list = list(lgd0)
 
-	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(2, "cm"),
-								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#808080", col = NA)),
-			annotation_label = "Loaded\nnamespaces", annotation_name_rot = 60,
-			annotation_name_gp = gpar(fontsize = pkg_fontsize),
-			annotation_name_offset = unit(8, "mm"))
-
 	df_imports = x$df_imports
-	df_imports[df_imports < 0] = 0
-	ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$pkg_category, width = unit(2, "cm"),
+	ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$pkg_category, width = unit(1, "cm"),
 			gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7"), col = NA),
 			axis_param = list(gp = gpar(fontsize = 8*cex))),
 			annotation_label = "Imported\nmethods", annotation_name_rot = 60,
 			annotation_name_gp = gpar(fontsize = pkg_fontsize),
 			annotation_name_offset = unit(8, "mm"))
 
+	ht = ht + rowAnnotation(n_pkg = anno_barplot(apply(m, 1, function(x) sum(!is.na(x))), width = unit(1, "cm"),
+								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#808080", col = NA)),
+			annotation_label = "Loaded\nnamespaces", annotation_name_rot = 60,
+			annotation_name_gp = gpar(fontsize = pkg_fontsize),
+			annotation_name_offset = unit(8, "mm"))
+
+	ht = ht + rowAnnotation(heaviness = anno_barplot(x$heaviness, width = unit(1, "cm"),
+								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#808080", col = NA)),
+			annotation_label = "Heaviness", annotation_name_rot = 60,
+			annotation_name_gp = gpar(fontsize = pkg_fontsize),
+			annotation_name_offset = unit(8, "mm"))
+
+	
+	
 	lgd1 = NULL
 	if(any(rowSums(df_imports) > 0)) {
 		if(all(df_imports[, 1] == 0 & df_imports[, 2] == 0)) {
@@ -205,13 +212,26 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 	}
 
 	lgd2 = NULL
-	if(any(rowSums(df_imports)[x$pkg_category %in% c("Imports", "Depends")] == 0)) {
-		lgd2 = Legend(title = "", at = c("The whole namespace is imported"), type = "lines",
-			legend_gp = gpar(lty = 2, col = "#808080"), grid_width = unit(0.6, "cm"), 
+	mdf = x$df_imports[x$pkg_category %in% c("Imports", "Depends"), , drop = FALSE]
+	ind = numeric(0)
+	if(any(mdf[, 1] == 0 & mdf[, 2] == 0 & mdf[, 3] == 0)) {
+		ind = c(ind, 1)
+	}
+	if(any(mdf[, 1] < 0 & is.finite(mdf[, 1]))) {
+		ind = c(ind, 2)
+	}
+	if(any(is.infinite(mdf[, 1]))) {
+		ind = c(ind, 3)
+	}
+	if(length(ind)) {
+		lgd2 = Legend(title = "", at = c("The whole namespace is imported", "The whole namespace is imported except some functions", "Package is listed in 'Imports' but namespace is not imported")[ind], 
+			type = "lines",
+			legend_gp = gpar(lty = 2, col = c("red", "blue", "#808080")[ind]), grid_width = unit(0.6, "cm"), 
 			labels_gp = gpar(fontsize = legend_fontsize))
 	}
+
 	if(!is.null(lgd1) && !is.null(lgd2)) {
-		lgd_list = c(lgd_list, list(packLegend(lgd1, lgd2)))
+		lgd_list = c(lgd_list, list(packLegend(lgd1, lgd2, row_gap = unit(2, "pt"), max_height = unit(10, "cm"))))
 	} else if(!is.null(lgd1)) {
 		lgd_list = c(lgd_list, list(lgd1))
 	} else if(!is.null(lgd2)) {
@@ -268,7 +288,13 @@ anno_nimports_barplot = function(x, category,
 
 	anno_size = ComplexHeatmap:::anno_width_and_height(which, width, height, unit(2, "cm"))
 
-	if(all(rowSums(x) == 0) && is.null(ylim)) ylim = c(0, 1)
+	l = x[, 1] > 0 | x[, 2] > 0 | x[, 3] > 0
+	if(!any(l) && is.null(ylim)) ylim = c(0, 1)
+
+	data_scale = c(0, max(rowSums(x[l, , drop = FALSE])))
+	if(data_scale[2] == 0) data_scale[2] = 1
+
+	if(is.null(ylim)) ylim = data_scale
 
 	row_fun = function(index, k, n) {
 		fun = anno_barplot(x, gp = gp, which = "row", ylim = ylim,
@@ -277,14 +303,23 @@ anno_nimports_barplot = function(x, category,
 		fun(index, k, n)
 
 		if(category[index[1]] %in% c("Imports", "Depends")) {
+			n = length(index)
+			pushViewport(viewport(xscale = c(0, 1), yscale = c(0.5, n + 0.5)))
+				
 			v = x[index, , drop = FALSE]
-			l = rowSums(v) == 0
+			l = v[, 1] == 0 & v[, 2] == 0 & v[, 3] == 0
 			if(any(l)) {
-				n = length(index)
-				pushViewport(viewport(xscale = c(0, 1), yscale = c(0.5, n + 0.5)))
-				grid.segments(0, n - which(l) + 1, 1, n - which(l) + 1, gp = gpar(lty = 2, col = "#808080"), default.units = "native")
-				popViewport()
+				grid.segments(0, n - which(l) + 1, 1, n - which(l) + 1, gp = gpar(lty = 2, col = "red"), default.units = "native")
 			}
+			l = v[, 1] < 0 & is.finite(v[, 1])
+			if(any(l)) {
+				grid.segments(0, n - which(l) + 1, 1, n - which(l) + 1, gp = gpar(lty = 2, col = "blue"), default.units = "native")
+			}
+			l = is.infinite(v[, 1])
+			if(any(l)) {
+				grid.segments(0, n - which(l) + 1, 1, n - which(l) + 1, gp = gpar(lty = 2, col = "#808080"), default.units = "native")
+			}
+			popViewport()
 		}
 	}
 
@@ -300,9 +335,6 @@ anno_nimports_barplot = function(x, category,
 	)
 		
 	anno@subsetable = TRUE
-
-	data_scale = c(0, max(rowSums(x)))
-	if(data_scale[2] == 0) data_scale[2] = 1
 
 	axis_param = ComplexHeatmap:::validate_axis_param(axis_param, which)
 	axis_grob = if(axis) ComplexHeatmap:::construct_axis_grob(axis_param, which, data_scale) else NULL
