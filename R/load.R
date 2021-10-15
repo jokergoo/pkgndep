@@ -31,6 +31,30 @@ load_pkg = function(pkg) {
 	sink()
 	unlink(tmp_file)
 
+	# library(pkg) does not mean loading all packages in Depends/Imports
+	# x = packageDescription(pkg)
+	# if(is.null(x$Depends)) {
+	# 	depends = character(0)
+	# } else {
+	# 	depends = x$Depends
+	# 	depends = gsub("\\s*\\(.*?\\)", "", depends)
+	# 	depends = strsplit(depends, "\\s*,\\s*")[[1]]
+	# 	depends = depends[depends != "R"]
+	# 	for(d in depends) {
+	# 		library(d, character.only = TRUE)
+	# 	}
+	# }
+	# if(is.null(x$Imports)) {
+	# 	imports = character(0)
+	# } else {
+	# 	imports = x$Imports
+	# 	imports = gsub("\\s*\\(.*?\\)", "", imports)
+	# 	imports = strsplit(imports, "\\s*,\\s*")[[1]]
+	# 	for(d in imports) {
+	# 		library(d, character.only = TRUE)
+	# 	}
+	# }
+
 	if(inherits(oe, "try-error")) {
 		cat("\n")
 	} else {

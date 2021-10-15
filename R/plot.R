@@ -125,15 +125,6 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		return(invisible(NULL))
 	}
 
-	row_order = order(apply(m, 1, function(x) sum(!is.na(x))))
-
-	# a rude way to move all packages which are attached by imported packages before those by suggested packages
-	column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
-	l = row_split %in% c("Depends", "Imports")
-	l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
-	column_order_by[l2] = column_order_by[l2] + 10000
-	column_order = order(column_order_by, -apply(m[row_order, , drop = FALSE], 2, function(x) which(!is.na(x))[1]), decreasing = TRUE)
-
 	line_height = grobHeight(textGrob("A", gp = gpar(fontsize = pkg_fontsize)))*1.5
 
 	fix_size = fix_size
@@ -145,8 +136,6 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		show_row_dend = FALSE, 
 		show_column_dend = FALSE,
 		col = c("basePkgs" = "#e31a1c", "loadedOnly" = "#1f78b4", "otherPkgs" = "#33a02c"),
-		row_order = row_order,
-		column_order = column_order,
 		column_names_gp = gpar(fontsize = pkg_fontsize),
 		column_names_rot = 60,
 		row_names_gp = gpar(fontsize = pkg_fontsize),
@@ -234,10 +223,10 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
 				fontface = ifelse(x$pkg_available, "plain", 'italic'))))
 	
-	n_total1 = length(unique(c(rownames(x$m), colnames(x$m))))
+	n_total1 = length(unique(c(rownames(x$mat), colnames(x$mat))))
 	l1 = x$pkg_category %in% c("Depends", "Imports")
-	l2 = apply(x$m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
-	n_total2 = length(unique(unlist(dimnames(x$m[l1, l2, drop = FALSE]))))
+	l2 = apply(x$mat[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
+	n_total2 = length(unique(unlist(dimnames(x$mat[l1, l2, drop = FALSE]))))
 	ht = draw(ht, 
 		heatmap_legend_side = "bottom", 
 		adjust_annotation_extension = FALSE,

@@ -138,11 +138,19 @@ pkgndep = function(pkg, verbose = TRUE) {
 	names(pkg_category) = rownames(m)
 	pkg_available = !sapply(c(dep_lt, imp_lt, sug_lt), is.null)
 
-	od = order(pkg_category, apply(m, 1, function(x) sum(!is.na(x))))
-	m = m[od, , drop = FALSE]
-	pkg_category = pkg_category[od]
-	pkg_available = pkg_available[od]
-	tm = tm[od]
+	row_order = order(pkg_category, apply(m, 1, function(x) sum(!is.na(x))))
+
+	# a rude way to move all packages which are attached by imported packages before those by suggested packages
+	column_order_by = apply(m, 2, function(x) sum(!is.na(x)))
+	l = pkg_category %in% c("Depends", "Imports")
+	l2 = apply(m[l, ,drop = FALSE], 2, function(x) sum(!is.na(x))) > 0
+	column_order_by[l2] = column_order_by[l2] + 10000
+	column_order = order(column_order_by, -apply(m[row_order, , drop = FALSE], 2, function(x) which(!is.na(x))[1]), decreasing = TRUE)
+
+	m = m[row_order, column_order, drop = FALSE]
+	pkg_category = pkg_category[row_order]
+	pkg_available = pkg_available[row_order]
+	tm = tm[row_order]
 
 	n_total1 = length(unique(c(rownames(m), colnames(m))))
 	l1 = pkg_category %in% c("Depends", "Imports")
@@ -211,10 +219,15 @@ parse_imports_from_namespace = function(x) {
 			n_imports = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
 				function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
 			n_imports = sapply(n_imports, length)
-			sign = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
-				function(x) unique(unlist(lapply(lt2[x], function(y) names(y)[2]))))
-			sign = sapply(sign, function(x) ifelse(identical(x, "except"), -1, 1))
-			n_imports = n_imports * sign
+			if(length(n_imports)) {
+				sign = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
+					function(x) unique(unlist(lapply(lt2[x], function(y) names(y)[2]))))
+				sign = sapply(sign, function(x) ifelse(identical(x, "except"), -1, 1))
+				n_imports = n_imports * sign
+			} else {
+			  n_imports = NULL
+			}
+			n_imports = c(n_imports, structure(rep(0, length(lt1)), names = unlist(lt1)))
 		} else {
 			n_imports = NULL                
 		}
@@ -226,6 +239,8 @@ parse_imports_from_namespace = function(x) {
 			n_import_methods = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
 				function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
 			n_import_methods = sapply(n_import_methods, length)
+			if(length(n_import_methods) == 0) n_import_methods = NULL
+			n_import_methods = c(n_import_methods, structure(rep(0, length(lt1)), names = unlist(lt1)))
 		} else {
 			n_import_methods = NULL
 		}
@@ -238,6 +253,8 @@ parse_imports_from_namespace = function(x) {
 			n_import_classes = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
 				function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
 			n_import_classes = sapply(n_import_classes, length)
+			if(length(n_import_classes) == 0) n_import_classes = NULL
+			n_import_classes = c(n_import_classes, structure(rep(0, length(lt1)), names = unlist(lt1)))
 		} else {
 			n_import_classes = NULL
 		}
@@ -262,7 +279,7 @@ parse_imports_from_namespace = function(x) {
 # # See examples in `pkgndep()`.
 #
 print.pkgndep = function(x, ...) {
-	GetoptLong::qqcat("@{x$package} version @{x$version}\n")
+	GetoptLong::qqcat("@{x$package}, version @{x$version}\n")
 	GetoptLong::qqcat("@{x$n_by_depends_imports} namespaces loaded if only loading packages in Depends and Imports\n")
 	if(any(x$which_enhanced)) {
 		GetoptLong::qqcat("@{x$n_by_all} namespaces loaded after loading all packages in Depends, Imports and Suggests/Enhances\n")
@@ -282,13 +299,13 @@ print.pkgndep = function(x, ...) {
 # A vector of namespace names.
 #
 loaded_namespaces = function(x, include_suggests = FALSE) {
-	m = x$m
+	m = x$mat
 	if(include_suggests) {
-		sort(unique(c(rownames(m), colnames(m))))
+		unique(c(rownames(m), colnames(m)))
 	} else {
-		l1 = x$pkg_category %in% c("Depends", "Imports")
+		l1 = x$which_imported
 		l2 = apply(m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
-		sort(unique(unlist(dimnames(m[l1, l2, drop = FALSE]))))
+		unique(unlist(dimnames(m[l1, l2, drop = FALSE])))
 	}
 }
 
@@ -305,11 +322,19 @@ loaded_namespaces = function(x, include_suggests = FALSE) {
 # A vector of package names.
 #
 unavailable_packages = function(x) {
-	sort(rownames(x$mat)[!x$pkg_available])
+	rownames(x$mat)[!x$pkg_available]
 }
 
+# == title
+# Package category
+#
+# == param
+# -x An object from `pkgndep`.
+#
+# == value
+# A vector of the category of dependency packages.
 pkg_category = function(x) {
-	x = x$pkg_category
-	x[x$which_enhanced] = "Enrhances"
-	x
+	cate = x$pkg_category
+	cate[x$which_enhanced] = "Enhances"
+	cate
 }
