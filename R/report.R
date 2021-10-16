@@ -1,6 +1,48 @@
 
+html_main_page = function(js_lib = "") {
+	load_all_pkg_dep()
 
-library(knitr)
+	lt = env$lt
+
+	df = data.frame(
+		package = sapply(lt, function(x) x$package),
+		version = sapply(lt, function(x) x$version),
+		repo = ifelse(sapply(lt, function(x) x$bioc), "Bioconductor", "CRAN"),
+		n_dep = sapply(lt, function(x) sum(x$pkg_category %in% c("Depends", "Imports"))),
+		n_by_depends_imports = sapply(lt, function(x) x$n_by_depends_imports),
+		n_by_all = sapply(lt, function(x) x$n_by_all),
+		gini_index = round(sapply(lt, gini_index), 3),
+		stringsAsFactors = FALSE
+	)
+
+	df$heaviness_to_children = sapply(lt, function(x) {
+		tb = children_dependency(x)
+		if(nrow(tb)) {
+			mean(tb$heaviness)
+		} else {
+			0
+		}
+	})
+
+	df = df[order(df$n_by_depends_imports, df$n_by_all, decreasing = TRUE), ]
+
+qq("
+<html>
+<head>
+</head>
+<body>
+<div id='tb'></div>
+<script>
+var tableData = @{jsonlite::toJSON(df)};
+var table = new Tabulator('#tb', {
+    data:tableData;
+});
+</script>
+</body>
+</html>
+")
+
+}
 
 network_in_json = function(g) {
 	node = unique(c(g[, 1], g[, 2]))
@@ -32,9 +74,6 @@ qq("
 <div id='@{id}'></div>
 <p><a href='#' id='reset'>Reset layout</a></p>
 
-<script src='../_js/cytoscape.min.js'></script>
-	<script src='../_js/dagre.min.js'></script>
-	<script src='../_js/cytoscape-dagre.js'></script>
 	<script type='text/javascript'>
 
 @{network_in_json(g)}
@@ -91,7 +130,7 @@ qq("
 }
 
 
-html_single_package = function(pkg) {
+html_single_package = function(pkg, js_lib = ".", cs_lib = ".") {
 
 	css = '
 body {
@@ -113,14 +152,18 @@ td, th {
     border: 1px solid #dfe2e5;
 }
 '
-
-	con = file(qq("_html/@{pkg$package}.html"), "w")
+	
+	html = ""
+	con = textConnection(html, open = "w")
 	writeLines(qq("<html>
 <head>
 <title>Dependency heatmap for package '@{pkg$package}'</title>
-<link rel='stylesheet' href='../_css/jquery-ui.min.css'>
-<script src='../_js/jquery.min.js'></script>
-<script src='../_js/jquery-ui.min.js'></script>
+<link rel='stylesheet' href='@{css_lib}/jquery-ui.min.css'>
+<script src='@{js_lib}/jquery.min.js'></script>
+<script src='@{js_lib}/jquery-ui.min.js'></script>
+<script src='@{js_lib}/cytoscape.min.js'></script>
+<script src='@{js_lib}/dagre.min.js'></script>
+<script src='@{js_lib}/cytoscape-dagre.js'></script>
 <style>
 @{css}
 </style>
@@ -139,7 +182,11 @@ td, th {
 		writeLines(qq("<p>CRAN link: <a href='https://CRAN.R-project.org/package=@{pkg$package}/' target='_blank'>@{pkg$package}</a><p>"), con = con)
 	}
 
-	writeLines(readLines(qq("_image/@{pkg$package}.svg")), con = con)
+	tmp_file = tempfile(fileext = ".svg")
+	plot(pkg, file = tmp_file)
+	writeLines(readLines(tmp_file), con = con)
+	file.remove(tmp_file)
+
 	writeLines("<br><br>", con = con)
 	if(!is.null(pkg$df_imports)) {
 		loaded_ns = apply(pkg$m, 1, function(x) sum(!is.na(x)))
@@ -211,6 +258,8 @@ td, th {
 </html>
 ", con = con)
 	close(con)
+
+	html
 }
 
 

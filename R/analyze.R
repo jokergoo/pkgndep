@@ -237,6 +237,14 @@ children_dependency = function(package) {
 	tb
 }
 
+heaviness_on_children = function(package) {
+	tb = children_dependency(package)
+	if(nrow(tb)) {
+		mean(tb$heaviness)
+	} else {
+		0
+	}
+}
 
 adjust_all_by_removing_to_suggests = function(package = NULL) {
 
@@ -279,7 +287,7 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 		round = round + 1
 		# now adjust m and n_by_imports_suggests
 		imp_lt = lapply(lt2, function(pkg) {
-			loaded_namespaces(pkg, include_suggests = FALSE)
+			loaded_namespaces(pkg, include_all = FALSE)
 		})
 
 		hash = digest::digest(imp_lt)

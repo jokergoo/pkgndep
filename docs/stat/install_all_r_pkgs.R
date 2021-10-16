@@ -16,3 +16,9 @@ for(i in seq_len(floor(length(ins)/50))) {
 	try(install.packages(ins[ind], type = "mac.binary"))
 }
 
+for(x in av) {
+	oe = try(library(x, character.only = TRUE))
+	if(inherits(oe, "try-error")) {
+		remove.packages(x)
+	}
+}
