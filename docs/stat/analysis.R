@@ -12,14 +12,13 @@ for(i in seq_along(all_pkg)) {
 	qqcat("\n++++++++++++++ @{i}/@{length(all_pkg)} ++++++++++++++\n")
 	pkg = all_pkg[i]
 	x = pkgndep(pkg)
-	plot(x, file = qq("_image/@{pkg}.svg"))
 
 	lt[[pkg]] = x
 
 	if(i %% 1000 == 0) gc()
 }
 
-saveRDS(lt, file = "all_pkgs.rds")
+saveRDS(lt, file = "all_pkgs.rds", compress = "xz")
 
 
 for(i in seq_along(lt)) {
