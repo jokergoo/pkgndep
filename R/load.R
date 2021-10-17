@@ -26,42 +26,18 @@ dep = function(pkg, verbose = TRUE) {
 
 load_pkg = function(pkg) {
 	tmp_file = tempfile()
-	sink(tmp_file)
+	base::sink(tmp_file)
 	oe = try(suppressWarnings(suppressPackageStartupMessages(tm <- system.time(library(pkg, character.only = TRUE)))), silent = TRUE)
-	sink()
-	unlink(tmp_file)
+	base::sink()
+	base::unlink(tmp_file)
 
-	# library(pkg) does not mean loading all packages in Depends/Imports
-	# x = packageDescription(pkg)
-	# if(is.null(x$Depends)) {
-	# 	depends = character(0)
-	# } else {
-	# 	depends = x$Depends
-	# 	depends = gsub("\\s*\\(.*?\\)", "", depends)
-	# 	depends = strsplit(depends, "\\s*,\\s*")[[1]]
-	# 	depends = depends[depends != "R"]
-	# 	for(d in depends) {
-	# 		library(d, character.only = TRUE)
-	# 	}
-	# }
-	# if(is.null(x$Imports)) {
-	# 	imports = character(0)
-	# } else {
-	# 	imports = x$Imports
-	# 	imports = gsub("\\s*\\(.*?\\)", "", imports)
-	# 	imports = strsplit(imports, "\\s*,\\s*")[[1]]
-	# 	for(d in imports) {
-	# 		library(d, character.only = TRUE)
-	# 	}
-	# }
-
-	if(inherits(oe, "try-error")) {
+	if(base::inherits(oe, "try-error")) {
 		cat("\n")
 	} else {
-		foo = sessionInfo()
-		df1 = data.frame(pkg = foo$basePkgs, type = rep("basePkgs", length(foo$basePkgs)))
-		df2 = data.frame(pkg = names(foo$loadedOnly), type = rep("loadedOnly", length(foo$loadedOnly)))
-		df3 = data.frame(pkg = names(foo$otherPkgs), type = rep("otherPkgs", length(foo$otherPkgs)))
+		foo = utils::sessionInfo()
+		df1 = base::data.frame(pkg = foo$basePkgs, type = rep("basePkgs", length(foo$basePkgs)))
+		df2 = base::data.frame(pkg = names(foo$loadedOnly), type = rep("loadedOnly", length(foo$loadedOnly)))
+		df3 = base::data.frame(pkg = names(foo$otherPkgs), type = rep("otherPkgs", length(foo$otherPkgs)))
 		df = base::rbind(df1, df2, df3)
 		df = df[df[, 1] != pkg ,]
 		df$tm = tm[3]
