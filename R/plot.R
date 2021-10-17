@@ -128,6 +128,16 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 	line_height = grobHeight(textGrob("A", gp = gpar(fontsize = pkg_fontsize)))*1.5
 
 	fix_size = fix_size
+	package_loaded = ifelse(apply(m[x$which_imported & !x$which_imported_but_not_loaded, , drop = FALSE], 2, function(x) any(!is.na(x))), "yes", "no")
+	if(any(x$which_suggested_but_also_loaded)) {
+		m2 = x$m[x$which_suggested_but_also_loaded , ,drop = FALSE]
+		m2 = m2[, apply(m2, 2, function(x) any(!is.na(x))), drop = FALSE]
+		l = colnames(x$m) %in% setdiff(colnames(m2), colnames(x$m)[apply(x$m[x$pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))])
+		package_loaded[l] = "others"
+	}
+	pch = rep(NA, length(package_loaded))
+	pch[package_loaded == "others"] = 16
+
 	ht = Heatmap(m, 
 		name = x$package,
 		row_split = row_split,
@@ -142,32 +152,48 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		column_title_gp = gpar(fontsize = title_fontsize),
 		row_title_gp = gpar(fontsize = title_fontsize),
 		row_title_rot = 90,
-		bottom_annotation = HeatmapAnnotation(loaded = ifelse(apply(m[x$which_imported & !x$which_imported_but_not_loaded, , drop = FALSE], 2, function(x) any(!is.na(x))), "yes", "no"),
-			col = list(loaded = c("yes" = "purple", "no" = "white")), simple_anno_size = unit(1, "mm"), 
-			show_legend = FALSE, show_annotation_name = FALSE),
+		bottom_annotation = HeatmapAnnotation(loaded = anno_simple(
+			package_loaded, col = c("yes" = "purple", "no" = "white", "others" = "white"), pch = pch, pt_size = unit(2, "mm"), pt_gp = gpar(col = "purple"),
+			height = unit(1, "mm")), show_annotation_name = FALSE),
 		width = if(fix_size) ncol(m)*line_height else NULL,
 		height = if(fix_size) nrow(m)*line_height else NULL,
 		right_annotation = if(any(x$pkg_category %in% c("Imports", "Depends"))) {
-			rowAnnotation(loaded2 = ifelse(x$pkg_category %in% c("Imports", "Depends") & !x$which_imported_but_not_loaded, "yes", "no"),
-					col = list(loaded2 = c("yes" = "purple", "no" = "white")), simple_anno_size = unit(1, "mm"), 
-					show_legend = FALSE, show_annotation_name = FALSE)
+			loaded2 = ifelse(x$pkg_category %in% c("Imports", "Depends") & !x$which_imported_but_not_loaded, "yes", "no")
+			if(any(x$which_suggested_but_also_loaded)) {
+				loaded2[x$which_suggested_but_also_loaded] = "others"
+			}
+			pch2 = rep(NA, length(loaded2))
+			pch2[loaded2 == "others"] = 16
+			rowAnnotation(loaded2 = anno_simple(
+				loaded2, col = c("yes" = "purple", "no" = "white", "others" = "white"), pch = pch2, pt_size = unit(2, "mm"), pt_gp = gpar(col = "purple"),
+				width = unit(1, "mm")), show_annotation_name = FALSE)
 		} else {
 			NULL
 		},
 		show_heatmap_legend = FALSE
 	)
 
-	lgd0 = Legend(labels = c("Base packages that are attached", "Other attached packages", "Packages whose namespaces are loaded but are not attached", qq("Packages that are directly loaded after library(@{x$package})")),
-			graphics = list(
-		        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#e31a1c", col = "white")),
-		        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#1f78b4", col = "white")),
-		        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#33a02c", col = "white")),
-		        function(x, y, w, h) grid.rect(x, y, w, unit(1, "mm"), gp = gpar(fill = "purple", col = "white"))
-		    ),
+	graphics = list(
+        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#e31a1c", col = "white")),
+        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#1f78b4", col = "white")),
+        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#33a02c", col = "white")),
+        function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "purple", col = "white"))
+    )
+    legend_labels = labels = c("Base packages that are attached", "Other attached packages", "Packages whose namespaces are loaded but are not attached", qq("Packages that are directly loaded after library(@{x$package})"))
+	
+	if(any(x$which_suggested_but_also_loaded)) {
+    	graphics[[5]] = function(x, y, w, h) grid.points(x, y, pch = 16, size = unit(2, "mm"), gp = gpar(col = "purple"))
+    	legend_labels = c(legend_labels, "Brought by suggested packages that are loaded in .onAttach()/.onLoad()")
+    }
+    lgd0 = Legend(labels = legend_labels,
+			graphics = graphics,
 			title = "", labels_gp = gpar(fontsize = legend_fontsize))
 	lgd_list = list(lgd0)
 
 	df_imports = x$df_imports
+	if(any(x$which_suggested_but_also_loaded)) {
+		df_imports[x$which_suggsted_but_also_loaded, 1] = -Inf
+	}
 	ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$pkg_category, width = unit(1, "cm"),
 			gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7"), col = NA),
 			axis_param = list(gp = gpar(fontsize = 8*cex))),
@@ -207,7 +233,12 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			ind = 1:3
 		}
 		lgd1 = Legend(title = "", at = c("Imported functions", "Imported S4 methods", "Imported S4 classes")[ind], 
-			legend_gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7")[ind]), 
+			graphics = list(
+				function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#ff7f00", col = "white")),
+				function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#cab2d6", col = "white")),
+				function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#8dd3c7", col = "white"))
+			)[ind],
+			grid_width = unit(0.6, "cm"),
 			labels_gp = gpar(fontsize = legend_fontsize))
 	}
 
@@ -243,14 +274,10 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 				col = ifelse(x$pkg_available, "black", "#AAAAAA"),
 				fontface = ifelse(x$pkg_available, "plain", 'italic'))))
 	
-	n_total1 = length(unique(c(rownames(x$mat), colnames(x$mat))))
-	l1 = x$pkg_category %in% c("Depends", "Imports")
-	l2 = apply(x$mat[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
-	n_total2 = length(unique(unlist(dimnames(x$mat[l1, l2, drop = FALSE]))))
 	ht = draw(ht, 
 		heatmap_legend_side = "bottom", 
 		adjust_annotation_extension = FALSE,
-		column_title = GetoptLong::qq("In total @{n_total2} namespaces are loaded directly or indirectly (@{n_total1}) when loading '@{x$package}' (@{x$version})"),
+		column_title = GetoptLong::qq("In total @{x$n_by_depends_imports} packages are loaded directly or indirectly (@{x$n_by_all}) when loading '@{x$package}' (@{x$version})"),
 		column_title_gp = gpar(fontsize = title_fontsize),
 		heatmap_legend_list = lgd_list)
 
@@ -302,10 +329,10 @@ anno_nimports_barplot = function(x, category,
 			axis = axis, axis_param = axis_param)@fun
 		fun(index, k, n)
 
+		n = length(index)
+		pushViewport(viewport(xscale = c(0, 1), yscale = c(0.5, n + 0.5)))
+			
 		if(category[index[1]] %in% c("Imports", "Depends")) {
-			n = length(index)
-			pushViewport(viewport(xscale = c(0, 1), yscale = c(0.5, n + 0.5)))
-				
 			v = x[index, , drop = FALSE]
 			l = v[, 1] == 0 & v[, 2] == 0 & v[, 3] == 0
 			if(any(l)) {
@@ -319,8 +346,8 @@ anno_nimports_barplot = function(x, category,
 			if(any(l)) {
 				grid.segments(0, n - which(l) + 1, 1, n - which(l) + 1, gp = gpar(lty = 2, col = "#808080"), default.units = "native")
 			}
-			popViewport()
 		}
+		popViewport()
 	}
 
 	fun = row_fun

@@ -23,6 +23,13 @@ html_main_page = function(js_lib = "") {
 			0
 		}
 	})
+	df$n_children = sapply(lt, function(x) {
+		tb = children_dependency(x)
+		nrow(tb)
+	})
+	df$heaviness_by_parents = sapply(lt, function(x) {
+		mean(x$heaviness)
+	})
 
 	df = df[order(df$n_by_depends_imports, df$n_by_all, decreasing = TRUE), ]
 

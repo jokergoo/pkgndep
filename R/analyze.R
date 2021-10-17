@@ -48,36 +48,36 @@ load_all_pkg_dep = function() {
 heaviness = function(x, rel = FALSE, a = 10, reverse = FALSE) {
 
 	if(!reverse) {
-		m = x$mat[x$pkg_category %in% c("Imports", "Depends"), , drop = FALSE]
-		nm = rownames(m)
+		
+		v1 = length(loaded_namespaces(x, FALSE))
+		nr = nrow(x$m)
+		v = numeric(nr)
+		for(i in seq_len(nr)) {
+			x2 = x
 
-		v1 = sum(apply(m, 2, function(x) any(!is.na(x))))
-		v = numeric(0)
-		for(i in seq_along(nm)) {
-			v2 = sum(apply(m[rownames(m) != nm[i], , drop = FALSE], 2, function(x) any(!is.na(x))))
-			if(rel) {
-				v[i] = (v1 + a)/(v2 + a)
+			if(x$pkg_category[i] %in% c("Depends", "Imports")) {
+				x2$pkg_category[i] = "Suggests"
+				x2$which_imported[i] = FALSE
+				x2$which_imported_but_not_loaded[i] = FALSE
+				v2 = length(loaded_namespaces(x2, FALSE))
+				if(rel) {
+					v[i] = (v1 + a)/(v2 + a)
+				} else {
+					v[i] = v1 - v2
+				}
 			} else {
-				v[i] = v1 - v2
+				x2$pkg_category[i] = "Imports"
+				x2$which_imported[i] = TRUE
+				v2 = length(loaded_namespaces(x2, FALSE))
+				if(rel) {
+					v[i] = (v2 + a)/(v1 + a)
+				} else {
+					v[i] = v2 - v1
+				}
 			}
 		}
-		names(v) = nm
+		v
 
-		mi = x$mat[!x$pkg_category %in% c("Imports", "Depends"), , drop = FALSE]
-		nm = rownames(mi)
-		vi = numeric(0)
-		for(i in seq_along(nm)) {
-			v2 = sum(apply(x$mat[c(rownames(m), nm[i]), , drop = FALSE], 2, function(x) any(!is.na(x))))
-			if(rel) {
-				vi[i] = (v2 + a)/(v1 + a)
-			} else {
-				vi[i] = v2 - v1
-			}
-		}
-		names(vi) = nm
-
-		v = c(v, vi)
-		v[rownames(x$mat)]
 	} else {
 
 		load_all_pkg_dep()
@@ -246,6 +246,10 @@ heaviness_on_children = function(package) {
 	}
 }
 
+heaviness_on_downstream = function(package) {
+
+}
+
 adjust_all_by_removing_to_suggests = function(package = NULL) {
 
 	load_all_pkg_dep()
@@ -264,7 +268,7 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 				v = pkg$heaviness
 				v = v[x]
 				move = rownames(m) == x[which.max(v)]
-				# qqcat("package '@{pkg$package}': move '@{x[which.max(v)]}' to Suggesets\n")
+				qqcat("package '@{pkg$package}': move '@{x[which.max(v)]}' to Suggesets\n")
 				pkg$pkg_category[move] = "Suggests"
 				lt2[[i]] = pkg
 			}
@@ -274,7 +278,7 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 			x = rownames(m)
 			move = which(rownames(m) == package)
 			if(length(move)) {
-				# qqcat("package '@{pkg$package}': move '@{package}' to Suggesets\n")
+				qqcat("package '@{pkg$package}': move '@{package}' to Suggesets\n")
 				pkg$pkg_category[move] = "Suggests"
 				lt2[[i]] = pkg
 			}
@@ -304,14 +308,14 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 			for(nm in rownames(m)) {
 				l = setdiff(colnames(pkg$m), imp_lt[[nm]])
 				if(length(l)) {
-					# qqcat("round @{round} @{pkg$package} (i = @{i}): removed @{sum(l)} namespaces for '@{nm}'\n")
+					qqcat("round @{round} @{pkg$package} (i = @{i}): removed @{length(l)} namespaces for '@{nm}'\n")
 					pkg$m[nm, l] = NA
 				}	
 			}
 			
 			n_by_depends_imports = sum(apply(pkg$m[pkg$which_imported, , drop = FALSE], 2, function(x) any(!is.na(x))))
 			if(n_by_depends_imports != pkg$n_by_depends_imports) {
-				# qqcat("  - @{pkg$package}: n_by_depends_imports has been adjusted from @{pkg$n_by_depends_imports} to @{n_by_depends_imports}\n")
+				qqcat("  - @{pkg$package}: n_by_depends_imports has been adjusted from @{pkg$n_by_depends_imports} to @{n_by_depends_imports}\n")
 			}
 			pkg$n_by_depends_imports = n_by_depends_imports
 			lt2[[i]] = pkg

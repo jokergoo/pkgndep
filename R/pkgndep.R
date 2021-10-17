@@ -91,12 +91,17 @@ pkgndep = function(pkg, verbose = TRUE) {
 			version = x$Version,
 			mat = matrix(nrow = 0, ncol = 0), 
 			pkg_category = character(0),
-			which_enhances = logical(0),
+			which_imported = logical(0),
+			which_imported_but_not_loaded = logical(0),
+			which_suggsted_but_also_loaded = logical(0),
+			which_enhanced = logical(0),
 			pkg_available = logical(0),
+			loading_time = numeric(0),
 			n_by_depends_imports = 0,
 			n_by_all = 0,
 			bioc = !is.null(x$biocViews),
-			df_imports = NULL
+			df_imports = NULL,
+			heaviness = numeric(0)
 		)
 
 		class(obj) = "pkgndep"
@@ -152,25 +157,6 @@ pkgndep = function(pkg, verbose = TRUE) {
 	pkg_available = pkg_available[row_order]
 	tm = tm[row_order]
 
-	n_total1 = length(unique(c(rownames(m), colnames(m))))
-	l1 = pkg_category %in% c("Depends", "Imports")
-	l2 = apply(m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
-	n_total2 = length(unique(unlist(dimnames(m[l1, l2, drop = FALSE]))))
-	
-	obj = list(
-		package = x$Package,
-		version = x$Version,
-		mat = m, 
-		pkg_category = pkg_category,
-		which_imported = pkg_category %in% c("Depends", "Imports"),
-		which_enhanced = rownames(m) %in% enhances,
-		pkg_available = pkg_available,
-		loading_time = tm,
-		n_by_depends_imports = n_total2,
-		n_by_all = n_total1,
-		bioc = !is.null(x$biocViews)
-	)
-
 	df_imports = matrix(0, nrow = nrow(m), ncol = 3)
 	colnames(df_imports) = c("imports", "importMethods", "importClasses")
 	rownames(df_imports) = rownames(m)
@@ -191,16 +177,34 @@ pkgndep = function(pkg, verbose = TRUE) {
 		}
 	}
 
-	not_used = setdiff(rownames(df_imports), c(unlist(lapply(lt_imports, names)), rownames(m)[!obj$which_imported]))
+	not_used = setdiff(rownames(df_imports), c(unlist(lapply(lt_imports, names)), rownames(m)[!pkg_category %in% c("Depends", "Imports")]))
 	if(length(not_used)) {
 		df_imports[not_used, 1] = -Inf
 	}
-	obj$df_imports = df_imports
 
-	obj$which_imported_but_not_loaded = is.infinite(df_imports[, 1])
+	tb = r(load_pkg, args = list(pkg = x$Package), user_profile = FALSE)
+
+	obj = list(
+		package = x$Package,
+		version = x$Version,
+		mat = m, 
+		pkg_category = pkg_category,
+		which_imported = pkg_category %in% c("Depends", "Imports"),
+		which_imported_but_not_loaded = is.infinite(df_imports[, 1]) & !(rownames(df_imports) %in% tb$pkg),
+		which_suggested_but_also_loaded = rownames(m) %in% tb$pkg & !(pkg_category %in% c("Depends", "Imports")),
+		which_enhanced = rownames(m) %in% enhances,
+		pkg_available = pkg_available,
+		loading_time = tm,
+		n_by_depends_imports = 0,
+		n_by_all = 0,
+		bioc = !is.null(x$biocViews),
+		df_imports = df_imports
+	)
 
 	class(obj) = "pkgndep"
 
+	obj$n_by_depends_imports = length(loaded_namespaces(obj, FALSE))
+	obj$n_by_all = length(loaded_namespaces(obj, TRUE))
 	obj$heaviness = heaviness(obj)
 	return(obj)
 }
@@ -302,6 +306,9 @@ print.pkgndep = function(x, ...) {
 #
 loaded_namespaces = function(x, include_all = FALSE) {
 	m = x$mat
+	if(nrow(m) == 0) {
+		return(NULL)
+	}
 	if(include_all) {
 		unique(c(rownames(m), colnames(m)))
 	} else {
