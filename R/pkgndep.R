@@ -85,6 +85,8 @@ pkgndep = function(pkg, verbose = TRUE) {
 
 	all_pkg = c(depends, imports, suggests)
 
+	tb = r(load_pkg, args = list(pkg = x$Package), user_profile = FALSE)
+
 	if(length(all_pkg) == 0) {
 		obj = list(
 			package = x$Package,
@@ -101,7 +103,8 @@ pkgndep = function(pkg, verbose = TRUE) {
 			n_by_all = 0,
 			bioc = !is.null(x$biocViews),
 			df_imports = NULL,
-			heaviness = numeric(0)
+			heaviness = numeric(0),
+			pkg_from_session_info = tb$pkg
 		)
 
 		class(obj) = "pkgndep"
@@ -182,8 +185,6 @@ pkgndep = function(pkg, verbose = TRUE) {
 		df_imports[not_used, 1] = -Inf
 	}
 
-	tb = r(load_pkg, args = list(pkg = x$Package), user_profile = FALSE)
-
 	obj = list(
 		package = x$Package,
 		version = x$Version,
@@ -191,14 +192,15 @@ pkgndep = function(pkg, verbose = TRUE) {
 		pkg_category = pkg_category,
 		which_imported = pkg_category %in% c("Depends", "Imports"),
 		which_imported_but_not_loaded = is.infinite(df_imports[, 1]) & !(rownames(df_imports) %in% tb$pkg),
-		which_suggested_but_also_loaded = rownames(m) %in% tb$pkg & !(pkg_category %in% c("Depends", "Imports")),
+		which_suggested_but_also_loaded = rownames(m) %in% setdiff(tb$pkg, DEFAULT_LOADED_BASE_PKGS) & !(pkg_category %in% c("Depends", "Imports")),
 		which_enhanced = rownames(m) %in% enhances,
 		pkg_available = pkg_available,
 		loading_time = tm,
 		n_by_depends_imports = 0,
 		n_by_all = 0,
 		bioc = !is.null(x$biocViews),
-		df_imports = df_imports
+		df_imports = df_imports,
+		pkg_from_session_info = tb$pkg
 	)
 
 	class(obj) = "pkgndep"
@@ -286,11 +288,11 @@ parse_imports_from_namespace = function(x) {
 #
 print.pkgndep = function(x, ...) {
 	GetoptLong::qqcat("@{x$package}, version @{x$version}\n")
-	GetoptLong::qqcat("@{x$n_by_depends_imports} namespaces loaded if only loading packages in Depends and Imports\n")
+	GetoptLong::qqcat("@{x$n_by_depends_imports} packages loaded after `library(@{x$package})`\n")
 	if(any(x$which_enhanced)) {
-		GetoptLong::qqcat("@{x$n_by_all} namespaces loaded after loading all packages in Depends, Imports and Suggests/Enhances\n")
+		GetoptLong::qqcat("@{x$n_by_all} packages loaded after loading all packages in Depends, Imports and Suggests/Enhances\n")
 	} else {
-		GetoptLong::qqcat("@{x$n_by_all} namespaces loaded after loading all packages in Depends, Imports and Suggests\n")
+		GetoptLong::qqcat("@{x$n_by_all} packages loaded after loading all packages in Depends, Imports and Suggests\n")
 	}
 }
 
@@ -307,14 +309,14 @@ print.pkgndep = function(x, ...) {
 loaded_namespaces = function(x, include_all = FALSE) {
 	m = x$mat
 	if(nrow(m) == 0) {
-		return(NULL)
+		return(DEFAULT_LOADED_BASE_PKGS)
 	}
 	if(include_all) {
-		unique(c(rownames(m), colnames(m)))
+		unique(c(rownames(m), colnames(m), DEFAULT_LOADED_BASE_PKGS))
 	} else {
-		l1 = x$which_imported & !x$which_imported_but_not_loaded
+		l1 = (x$which_imported & !x$which_imported_but_not_loaded) | x$which_suggested_but_also_loaded
 		l2 = apply(m[l1, , drop = FALSE], 2, function(x) any(!is.na(x)))
-		unique(unlist(dimnames(m[l1, l2, drop = FALSE])))
+		unique(c(unlist(dimnames(m[l1, l2, drop = FALSE])), DEFAULT_LOADED_BASE_PKGS))
 	}
 }
 

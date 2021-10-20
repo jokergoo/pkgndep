@@ -10,6 +10,7 @@ load_all_pkg_dep = function() {
 			p = rownames(pkg$m)
 			data.frame(pkg = rep(pkg$package, length(p)), dep = p, category = pkg_category(pkg), stringsAsFactors = FALSE)
 		}))
+		rownames(nt) = NULL
 
 		env$nt = nt
 	}
@@ -256,8 +257,11 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 	lt = env$lt
 	nt = env$nt
 
+	nt = nt[nt$category %in% c("Depends", "Imports"), , drop = FALSE]
+
 	lt2 = lt
 	# assign value
+	adjusted = FALSE
 	for(i in seq_along(lt2)) {
 		if(is.null(package)) { 
 			pkg = lt2[[i]]
@@ -280,14 +284,18 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 			if(length(move)) {
 				qqcat("package '@{pkg$package}': move '@{package}' to Suggesets\n")
 				pkg$pkg_category[move] = "Suggests"
+				pkg$which_imported[move] = FALSE
+				pkg$which_imported_but_not_loaded = FALSE
+				pkg$df_imports[move, ] = 0
 				lt2[[i]] = pkg
+				adjusted = TRUE
 			}
 		}
 	}
 
 	prev_hash = ""
 	round = 0
-	while(1) {
+	while(1 && adjusted) {
 		round = round + 1
 		# now adjust m and n_by_imports_suggests
 		imp_lt = lapply(lt2, function(pkg) {
@@ -303,17 +311,17 @@ adjust_all_by_removing_to_suggests = function(package = NULL) {
 
 		for(i in seq_along(lt2)) {
 			pkg = lt2[[i]]
-			m = pkg$m[pkg$which_imported, , drop = FALSE]
+			m = pkg$mat[pkg$which_imported, , drop = FALSE]
 
 			for(nm in rownames(m)) {
-				l = setdiff(colnames(pkg$m), imp_lt[[nm]])
-				if(length(l)) {
-					qqcat("round @{round} @{pkg$package} (i = @{i}): removed @{length(l)} namespaces for '@{nm}'\n")
-					pkg$m[nm, l] = NA
+				l = !colnames(pkg$mat) %in% imp_lt[[nm]] & !is.na(pkg$mat[nm, ])
+				if(sum(l)) {
+					qqcat("round @{round} @{pkg$package} (i = @{i}): removed @{sum(l)} namespaces for '@{nm}'\n")
+					pkg$mat[nm, l] = NA
 				}	
 			}
 			
-			n_by_depends_imports = sum(apply(pkg$m[pkg$which_imported, , drop = FALSE], 2, function(x) any(!is.na(x))))
+			n_by_depends_imports = length(loaded_namespaces(pkg, FALSE))
 			if(n_by_depends_imports != pkg$n_by_depends_imports) {
 				qqcat("  - @{pkg$package}: n_by_depends_imports has been adjusted from @{pkg$n_by_depends_imports} to @{n_by_depends_imports}\n")
 			}

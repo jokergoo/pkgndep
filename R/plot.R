@@ -135,6 +135,7 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		l = colnames(x$m) %in% setdiff(colnames(m2), colnames(x$m)[apply(x$m[x$pkg_category %in% c("Depends", "Imports"), , drop = FALSE], 2, function(x) any(!is.na(x)))])
 		package_loaded[l] = "others"
 	}
+	package_loaded[colnames(m) %in% DEFAULT_LOADED_BASE_PKGS] = "yes"
 	pch = rep(NA, length(package_loaded))
 	pch[package_loaded == "others"] = 16
 
@@ -318,8 +319,11 @@ anno_nimports_barplot = function(x, category,
 	l = x[, 1] > 0 | x[, 2] > 0 | x[, 3] > 0
 	if(!any(l) && is.null(ylim)) ylim = c(0, 1)
 
-	data_scale = c(0, max(rowSums(x[l, , drop = FALSE])))
-	if(data_scale[2] == 0) data_scale[2] = 1
+	if(any(l)) {
+		data_scale = c(0, max(rowSums(x[l, , drop = FALSE])))
+	} else {
+		data_scale = c(0, 1)
+	}
 
 	if(is.null(ylim)) ylim = data_scale
 

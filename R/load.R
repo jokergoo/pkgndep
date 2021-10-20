@@ -38,9 +38,10 @@ load_pkg = function(pkg) {
 		df1 = base::data.frame(pkg = foo$basePkgs, type = rep("basePkgs", length(foo$basePkgs)))
 		df2 = base::data.frame(pkg = names(foo$loadedOnly), type = rep("loadedOnly", length(foo$loadedOnly)))
 		df3 = base::data.frame(pkg = names(foo$otherPkgs), type = rep("otherPkgs", length(foo$otherPkgs)))
+
 		df = base::rbind(df1, df2, df3)
 		df = df[df[, 1] != pkg ,]
 		df$tm = tm[3]
-		print(df, row.names = FALSE)
+		base::print.data.frame(df, row.names = FALSE)
 	}
 }
