@@ -1,10 +1,10 @@
 \name{plot.pkgndep}
 \alias{plot.pkgndep}
 \title{
-Plot method
+Make the dependency heatmap
 }
 \description{
-Plot method
+Make the dependency heatmap
 }
 \usage{
 \method{plot}{pkgndep}(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,

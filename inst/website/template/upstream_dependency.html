@@ -1,0 +1,40 @@
+<% if(n_total > 0) { %>
+<% if(n_used > 0) { %>
+<p>In total there are <%=n_total%> upstream packages. Only <%=n_used%> upstream packages with heaviness on '<%=pkg$package%>' larger than 5 are listed in the following table. Note nine base packages (<code>c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
+        "parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")</code>) are removed from this table.</p>
+<% 
+  el = upstream_dependency(pkg$package)
+  g = igraph::graph.edgelist(as.matrix(unique(el[, 1:2])))
+    
+for(i in seq_len(nrow(upstream_tb))) {
+
+      sp = igraph::all_shortest_paths(g, upstream_tb[i, 1], pkg$package)$res
+      upstream_tb[i, "path"] = paste(sapply(sp, function(x) {
+        p = names(x)
+        txt = paste0("<div><span style='display:inline-block;vertical-align:top;'>", p[1], "</span>")
+        for(i in seq_len(length(p) - 1)) {
+          txt = paste0(txt, "<span style='display:inline-block;vertical-align:top;padding:0px 4px;'>", "&#8594;<br><span style='font-size:0.8em;'>", df[["hv_downstream_values"]][[ p[i] ]][ p[i+1] ], "</span></span><span style='display:inline-block;vertical-align:top;'>", p[i+1], "</span>")
+        }
+        paste0(txt, "</div>")
+      }), collapse = "")
+      upstream_tb[i, "path_len"] = max(sapply(sp, length))
+    }
+upstream_tb$package = qq("<a href='?package=@{upstream_tb$package}'>@{upstream_tb$package}</a>", collapse = FALSE)
+    %>
+<%= as.character(knitr::kable(upstream_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Upstream package", "Dependency path", "Dependency depth", qq("Heaviness from upstream on '@{pkg$package}'")), table.attr = "class='table table-striped'")) %>
+
+  <% nr = n_used
+  if(nr > 25) { %>
+    <%= page_select2(page, ceiling(nr/25), "upstream_dependency", pkg$package) %>
+  <% } %>
+
+<% } else { %>
+<p>In total there are <%=n_total%> upstream dependencied, but no upstream package has heaviness larger than 5 on '<%=pkg$package%>'.</p>
+
+<% } %>
+
+<% } else { %>
+
+<p>No upstream dependency (not including base packages) found.</p>
+
+<% } %>

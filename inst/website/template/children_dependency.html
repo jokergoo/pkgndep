@@ -1,0 +1,112 @@
+<% if(n_total > 0) { %>
+
+<details><summary>Dependency plot</summary>
+
+<% tmp_file = tempfile(fileext = ".png")
+  if(nrow(rev_tb) > 5) {
+    png(tmp_file, width = 1200*1.5, height = 500*1.5, res = 72*2)
+    l = df$package == pkg$package
+    repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+    color = ifelse(l, "highlight", "no")
+    suppressMessages(suppressWarnings({
+      p1 = ggplot2::ggplot(df, ggplot2::aes(n_children, heaviness_on_children, pch = repo, color = color, label = ifelse(l, df$package, ""))) +
+        ggplot2::geom_point() + 
+        ggplot2::scale_color_manual(values = c("highlight" = "red", "no" = "grey")) +
+        ggplot2::scale_shape_manual(values = c("Bioconductor" = 16, "CRAN" = 4)) +
+        ggplot2::scale_x_continuous(trans='log10') +
+        ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
+        ggplot2::labs(x = "Number of child packages", y = "Heaviness") +
+        ggplot2::ggtitle("Heaviness on child packages")
+
+      p2 = ggplot2::ggplot(rev_tb, ggplot2::aes(heaviness)) + geom_histogram() +
+        ggplot2::labs(x = "Number of child packages", y = "Frequency") +
+        ggplot2::ggtitle(qq("Histogram of heaviness of '@{pkg$package}' on its child packages"))
+
+      print(cowplot::plot_grid(p1, p2, rel_widths = c(1.2, 1)))
+    }))
+     dev.off() 
+  } else {
+    png(tmp_file, width = 600*1.5, height = 600*1.5, res = 72*1.5)
+    l = df$package == pkg$package
+    repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+    color = ifelse(l, "highlight", "no")
+    suppressWarnings({
+      p1 = ggplot2::ggplot(df, ggplot2::aes(n_children, heaviness_on_children, pch = repo, color = color, label = ifelse(l, df$package, ""))) +
+        ggplot2::geom_point() + 
+        ggplot2::scale_color_manual(values = c("highlight" = "red", "no" = "grey")) +
+        ggplot2::scale_shape_manual(values = c("Bioconductor" = 16, "CRAN" = 4)) +
+        ggplot2::scale_x_continuous(trans='log10') +
+        ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
+        ggplot2::labs(x = "Number of children packages", y = "Heaviness") +
+        ggplot2::ggtitle("Heaviness on child packages")
+      ggplot2:::print.ggplot(p1)
+    })
+    dev.off() 
+  }
+ %>
+<%= img(tmp_file, style="height:500px")%>
+<% file.remove(tmp_file) %>
+
+</details>
+
+<style>
+details summary {
+    cursor: pointer;
+}
+summary {
+    display: list-item;
+}
+details > summary:first-of-type {
+    display: list-item;
+    counter-increment: list-item 0;
+    list-style: inside disclosure-closed;
+}
+details[open] > summary:first-of-type {
+    list-style-type: disclosure-open;
+}
+</style>
+
+<% if(n_used > 0) { %>
+<% 
+l = grepl("(bioc|books|annotation|experiment|workflow)", env$pkg_db_snapshot$meta[rev_tb[, 1], "Repository"])
+namespace_link = paste0("https://github.com/cran/", rev_tb[, 1], "/blob/master/NAMESPACE")
+namespace_link[l] = paste0("https://code.bioconductor.org/browse/", rev_tb[l, 1], "/blob/master/NAMESPACE")
+l = rev_tb[, 1] %in% BASE_PKGS
+namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/library/", rev_tb[l, 1], "/NAMESPACE")
+%>
+
+<br>
+<p>In total there are <%=n_total%> child packages, only <%=n_used%> child packages with heaviness on '<%=pkg$package%>' larger than 10 are listed in the following table.</p>
+<p><b>imports:</b> number of imported functions/variables; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+
+<% rev_tb$package = qq("<a href='?package=@{rev_tb$package}'>@{rev_tb$package}</a>", collapse = FALSE)
+  rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a href='@{namespace_link}' target='_blank'>link</a>", collapse = FALSE), rev_tb[, 6, drop = FALSE])
+    html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "imports", "importMethods", "importClasses", "Namespace file", "Heaviness"), table.attr = "class='table table-striped'"))
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3>The whole namespace of '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Depends' but no object from the namespace is imported.</td>\n", html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3>The whole namespace of '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_rev_tb)
+%>
+<%= html_rev_tb %>
+
+  <% nr = n_used
+  if(nr > 25) { %>
+    <%= page_select2(page, ceiling(nr/25), "children_dependency", pkg$package) %>
+  <% } %>
+
+<% } else { %>
+
+<p>In total there are <%=n_total%> children dependencies, but no package that '<%=pkg$package%>' has heaviness larger than 10 on it.</p>
+
+<% } %>
+
+<% } else { %>
+
+<p>No children dependency found</p>
+
+<% } %>

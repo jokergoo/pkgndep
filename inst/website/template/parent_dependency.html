@@ -1,0 +1,42 @@
+<% if(n_total > 0) { %>
+
+<% 
+if(grepl("(bioc|books|annotation|experiment|workflow)", pkg$repository)) {
+  namespace_link = paste0("https://code.bioconductor.org/browse/", pkg$package, "/blob/master/NAMESPACE")
+} else if(pkg$package %in% BASE_PKGS) {
+  namespace_link = paste0("https://github.com/wch/r-source/blob/trunk/src/library/", pkg$package, "/NAMESPACE")
+} else {
+  namespace_link = paste0("https://github.com/cran/", pkg$package, "/blob/master/NAMESPACE")
+}
+%>
+
+<p>"Import" information is from <a href="<%= namespace_link %>">NAMESPACE</a> of '<%=pkg$package%>'.</p>
+<p><b>imports:</b> number of imported functions/variables; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+
+<% tb[, 1] = qq("<a href='?package=@{tb[, 1]}'>@{tb[, 1]}</a>", collapse = FALSE)
+    html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Required packages", qq("Heaviness from parent on '@{pkg$package}'")), table.attr = "class='table table-striped'"))
+    html_tb = gsub("(<td[^>]*?> Suggests </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Namespace is not imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Enhances </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Namespace is not imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Depends' but no object from the namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_tb)
+%>
+
+<%= html_tb %>
+
+  <% nr = n_total
+  if(nr > 25) { %>
+    <%= page_select2(page, ceiling(nr/25), "parent_dependency", pkg$package) %>
+  <% } %>
+
+<% } else { %>
+
+<p>No dependency found</p>
+
+<% } %>

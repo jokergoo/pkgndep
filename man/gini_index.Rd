@@ -1,22 +1,20 @@
 \name{gini_index}
 \alias{gini_index}
 \title{
-Gini index on the heaviness
+Gini index
 }
 \description{
-Gini index on the heaviness
+Gini index
 }
 \usage{
-gini_index(x, a = 2)
+gini_index(v)
 }
 \arguments{
 
-  \item{x}{An object returned by \code{\link{pkgndep}}.}
-  \item{a}{A constant added to heaviness.}
+  \item{v}{A numeric vector.}
 
 }
 \examples{
-# There is no example
-NULL
-
+x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+gini_index(x$heaviness[x$which_required] + 2)
 }

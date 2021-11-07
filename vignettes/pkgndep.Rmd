@@ -7,48 +7,73 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, echo = FALSE}
+library(pkgndep)
+pkgndep:::load_all_pkg_dep()
+```
+
 
 When developing R packages, we should try to avoid directly setting
 dependencies on "heavy packages". The "heaviness" for a package means, the
-number of additional dependent packages it brings to. If your package directly depends
+number of additional dependency packages it brings to. If your package directly depends
 on a heavy package, it would bring several consequences:
 
 1. Users need to install a lot of additional packages when installing your
-   package (which brings the risk that installation of some packages
-   may fail and it makes your package cannot be installed neither). 
-2. The namespaces that are loaded into your R session after loading your package (by
-   `library(your-pkg)`) will be huge (you can see the loaded namespaces by `sessionInfo()`).
+   package which brings the risk that installation of some packages
+   may fail and it makes your package cannot be installed. 
+2. The namespaces that are loaded into your R session after loading your package will be huge (you can see the loaded namespaces by `sessionInfo()`).
 3. You package will be "heavy" as well and it may take long time to load your package.
 
-In the DESCRIPTION file of your package, those "directly dependent pakcages"
-are always listed in the `Depends` and `Imports` fields. To get rid of the heavy
-packages that are not often used in your package, it is better to move them
-into the `Suggests`/`Enhances` fields and to load them only when they are needed.
+In the DESCRIPTION file of your package, there are "direct dependency
+pakcages" listed in the `Depends`, `Imports` and `LinkingTo` fields. There are
+also "indirect dependency packages" that can be found recursively for each of
+the direct dependency packages. Here what we called "dependency packages" are
+the union of the direct and indirect dependency packages.
 
-Here the **pkgndep** package checks the heaviness of the dependency packages of your
-package. For each package listed in the `Depends`, `Imports` and
-`Suggests`/`Enhances` fields in the DESCRIPTION file, it opens a new R session, only loads the
-package and counts the number of namespaces that are loaded. The summary of
-the dependency is visualized by a customized heatmap.
+There are also packages listed in `Suggsts` and `Enhances` fields in
+DESCRIPTION file, but they are not enforced to be installed when installing
+your package. Of course, they also have "indirect dependency packages". To get
+rid of the heavy packages that are not often used in your package, it is
+better to move them into the `Suggests`/`Enhances` fields and to load/install
+them only when they are needed.
+
+Here the **pkgndep** package checks the heaviness of the dependency packages
+of your package. For each package listed in the `Depends`, `Imports`,
+`LinkingTo` and `Suggests`/`Enhances` fields in the DESCRIPTION file,
+**pkgndep** checks how many additional packages your package requires. The
+summary of the dependency is visualized by a customized heatmap.
 
 As an example, I am developing a package called
 [**cola**](https://github.com/jokergoo/cola/) which depends on [a lot of other
 packages](https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
-The dependency heatmap looks like (please drag the figure to a new tab to see it in the actual size):
+The dependency heatmap looks like follows (please drag the figure to a new tab to see it in its actual size):
 
-<p><img src='cola.png' width="1000px" /></p>
+```{r, echo = FALSE}
+x = pkgndep:::env$all_pkg_dep[["cola"]]
+pdf(NULL)
+size = plot(x, help = FALSE)
+invisible(dev.off())
+```
 
-In the heatmap, rows are the packages listed in `Depends`, `Imports` and `Suggests` fields,
-columns are the namespaces that are loaded if each of the dependency package is only loaded to a new R session.
-The two barplots on the right show the number of additional namespaces that are loaded by each dependency package
-and the number of imported functions/methods/classes from each dependency package.
+```{r, fig.width = size[1], fig.height = size[2], out.width = "1000px", echo = FALSE}
+plot(x)
+```
 
-We can see if all the packages are put in the `Depends` or `Imports` field, 210 namespaces
-will be loaded after `library(cola)`. Some of the heavy packages such as
-**WGCNA**, **clusterProfiler** and **ReactomePA** (the last three packages in the heatmap rows) are not very frequently used in **cola**,
-moving them to `Suggests` field and loading them only when they are needed
-helps to speed up loading **cola**. Now the number of namespaces are reduced
-to only 50 after executing `library(cola)`.
+In the heatmap, rows are the packages listed in `Depends`, `Imports` and
+`Suggests` fields, columns are the additional dependency packages required for
+each row package. The barplots on the right show the number of required
+package, the number of imported functions/methods/classes (parsed from
+NAMESPACE file) and the quantitative measure "heaviness" (the definition of
+heaviness will be introduced later).
+
+We can see if all the packages are put in the `Depends` or `Imports` field
+(i.e. movig all suggsted packages to `Imports`), in total `r x$n_by_all`
+packages are required, which are really a lot. Actually some of the heavy
+packages such as **WGCNA**, **clusterProfiler** and **ReactomePA** (the last
+three packages in the heatmap rows) are not very frequently used in **cola**,
+moving them to `Suggests` field and using them only when they are needed
+greatly helps to reduce the heaviness of **cola**. Now the number of required
+packages are reduced to only `r x$n_by_strong`.
 
 ## Usage
 
@@ -56,64 +81,118 @@ To use this package:
 
 ```r
 library(pkgndep)
-x = pkgndep("package-name")  # if the package is already installed
-plot(x)
+pkg = pkgndep("package-name")  # if the package is already installed
+plot(pkg)
 ```
 
 or
 
 ```r
-x = pkgndep("path-of-the-package")  # if the package has not been installed yet
-plot(x)
+pkg = pkgndep("path-of-the-package")  # if the package has not been installed yet
+plot(pkg)
 ```
 
 Executable examples:
 
 ```{r}
 library(pkgndep)
-x = pkgndep("ComplexHeatmap")
-x
+pkg = pkgndep("ComplexHeatmap")
+pkg
 ```
+
+`pkgndep()` first needs to retrieve package databases both from remote repositories and local libraries, as you
+can see the message from above code. This only happens once and the database is internally
+saved and re-used.
+
+We can directly use `plot()` function to create the dependency heatmap:
 
 ```{r, echo = FALSE}
 pdf(NULL)
-size = plot(x, help = FALSE)
+size = plot(pkg, help = FALSE)
 invisible(dev.off())
 ```
 
 ```{r, fig.width = size[1], fig.height = size[2], out.width = "1000px"}
-plot(x)
+plot(pkg)
 ```
 
 You can set the `file` argument to directly save the image into a figure where the figure
 size is automatically calculated. Supported image formats are `png`/`jpg`/`svg`.
 
 ```{r, eval = FALSE}
-plot(x, file = "test.png")
+plot(pkg, file = "test.png")
+```
+
+`html_report()` function can generate a html report for the dependency analysis on the package:
+
+```{r, eval = FALSE}
+html_report(pkg)
 ```
 
 ## Heaviness
 
-The heaviness can be measures quantitatively. **pkgndep** provides two measures: the absolute
+The heaviness of package dependency can be measured quantitatively. **pkgndep** provides two measures: the absolute
 measure and the relative measure.
 
 The heaviness of a dependency package is calculated as follows. If package B
-is in the `Depends`/`Imports` fields of package A, which means, package B will
-be loaded when loading package A, denote `v1` as the total number of namespaces when
-loading package A, and denote `v2` as the total number of namespaces if moving package
-B to `Suggests` (which means, now B is not loaded when loading A). The
-absolute measure is simply `v1 - v2` and relative measure is `(v1 + a)/(v2 + a)` where `a` is a small constant, e.g. 10.
+is in the `Depends`/`Imports`/`LinkingTo` fields of package A, which means, package B 
+is directly required for package A, denote `v1` as the total number of packages for package A, 
+and denote `v2` as the total number of required packages if moving package
+B to `Suggests` in package A (which means, now B is not enforced to be installed for package A). The
+absolute measure of heaviness is simply `v1 - v2` and relative measure is `(v1 + a)/(v2 + a)` where `a` is a small constant, e.g. 10.
+So here the absolute heaviness for package B on package A is the number of additional packages
+that package B brings in.
 
-In the second scenario, if B is in the `Suggests`/`Enhances` fields of package
-A, now `v2` is the total number of namespaces if moving B to `Depends`/`Imports`,
-the absolute measure is `v2 - v1` and relative measure is `(v2 + a)/(v1 + a)`.
+In the second scenario, if package B is in the `Suggests`/`Enhances` fields of package
+A, now `v2` is the total number of required packages if moving package B to `Imports` in package A,
+the absolute measure of heaviness is `v2 - v1` and relative measure is `(v2 + a)/(v1 + a)`.
 
 The heaviness score can be calculated by the function `heaviness()`:
 
 ```{r}
-heaviness(x)
-heaviness(x, rel = TRUE)
+heaviness(pkg)
+heaviness(pkg, rel = TRUE)
 ```
+
+## A fast version of `tools::package_dependencies()`
+
+The package dependencies are based on "package database" which is normally retrieved by `available.packages()`.
+In **tools** package, there is a `package_dependencies()` function that can be used to get a list of dependency packages.
+In the following example code, we retrieve the dependency packages for package **cola**.
+
+```{r}
+db = available.packages(repos = BiocManager::repositories())
+system.time(p1 <- tools::package_dependencies("cola", db = db, recursive = TRUE)[[1]])
+```
+
+In **pkgndep**, we implement a faster version of `package_dependencies()` function. First the database needs
+to be reformatted by `reformat_db()` function. The returned variable `db2` is a reference class object and
+its method `db2$package_dependencies()` can be used to retrieve dependency packages.
+
+```{r}
+db2 = reformat_db(db)
+db2
+system.time(p2 <- db2$package_dependencies("cola", recursive = TRUE, simplify = TRUE))
+```
+
+`p1` and `p2` are actually identical:
+
+```{r}
+identical(sort(p1), sort(p2))
+```
+
+## A global dependency analysis on all packages on CRAN/Bioconductor
+
+**pkgndep** also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages
+of the analysis were retrieved on 2021-10-28. The database can be opened by the `open_website()` function.
+
+```{r, eval = FALSE}
+open_website()
+```
+
+Following is a screenshot of the database.
+
+<p><img src="screenshot.png" width="1000px" /></p>
 
 ## Session info
 

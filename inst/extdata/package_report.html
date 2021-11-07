@@ -1,0 +1,87 @@
+<html>
+<head>
+<% add_js = function(f) {
+	code = readLines(base64::encode(system.file("www", "_js", f, package = "pkgndep"), linebreaks= FALSE))
+
+	paste0('<script src="data:application/javascript;base64,', code, '"></script>')
+}
+add_css = function(f) {
+	suppressWarnings(code <- paste(readLines(system.file("www", "_css", f, package = "pkgndep")), collapse = "\n"))
+	paste0("<style>\n", code, "\n</style>")
+}
+%>
+<title>Dependency information for package '<%=pkg$package%>'</title>
+
+<%= add_js("jquery.min.js") %>
+<%= add_js("jquery-ui.min.js") %>
+<%= add_js("bootstrap.min.js") %>
+<%= add_css("bootstrap.min.css") %>
+<%= add_css("jquery-ui.min.css") %>
+<%= add_js("pkgndep.js") %>
+<%= add_css("pkgndep.css") %>
+
+</head>
+<body>
+<div style='width:1600px; margin-left:20px;' id="main">
+
+<h2>Dependency information for package '<%=pkg$package%>'</h2>
+
+<table class="table table-striped" style="width:600px">
+<tr><th>Package version</th><td><%= pkg$version%></td></tr>
+<tr><th>Strong dependencies</th><td><%= pkg$n_by_strong%></td></tr>
+<tr><th>All dependencies</th><td><%= pkg$n_by_all%></td></tr>
+<tr><th>Number of parent dependencies</th><td><%= sum(pkg$which_required)%></td></tr>
+<tr><th>Gini index of parent heaviness</th><td><%= round(gini_index(pkg$heaviness[pkg$which_required] + 2), 2)%></td></tr>
+</table>
+
+<h3>Dependency heatmap</h3>
+<div id='ht_container'>
+
+<% tmp_file = tempfile(fileext = ".svg")
+    plot(pkg, file = tmp_file) 
+%>
+<%= paste0(readLines(tmp_file), collapse = "\n")%>
+<% file.remove(tmp_file) %>
+</div>
+
+<br><br>
+
+<h3>Parent dependency table</h3>
+
+
+<% if(n_total > 0) { %>
+
+
+<p>"Import" information is from <code>NAMESPACE</code> of '<%=pkg$package%>'.</p>
+<p><b>imports:</b> number of imported functions/variables; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+
+<% 
+    html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Required packages", qq("Heaviness from parent on '@{pkg$package}'")), table.attr = "class='table table-striped'"))
+    html_tb = gsub("(<td[^>]*?> Suggests </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Namespace is not imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Enhances </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Namespace is not imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Depends' but no object from the namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> Imports </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_tb)
+    html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_tb)
+%>
+
+<%= html_tb %>
+
+<% } else { %>
+
+<p>No dependency found</p>
+
+<% } %>
+
+
+<hr>
+<p>Analysis was done with <a href=" https://CRAN.R-project.org/package=pkgndep">pkgndep</a>.</p>
+
+</div>
+</body>
+</html>

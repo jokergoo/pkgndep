@@ -1,0 +1,98 @@
+
+
+<h2>Dependency information for package '<%=pkg$package%>'</h2>
+
+<table class="table table-striped" style="width:600px">
+<% if(grepl("bioconductor", pkg$repository)) { %>
+  <tr><th>Bioconductor link</th><td style="width:100px"> <a href='https://bioconductor.org/packages/<%=pkg$package%>/' target='_blank'>link</a></td></tr>
+<% } else { %>
+  <tr><th>CRAN link</th><td style="width:100px"> <a href='https://CRAN.R-project.org/package=<%=pkg$package%>/' target='_blank'>link</a></td></tr>
+<% } %>
+<tr><th>Package version</th><td><%= pkg$version%></td></tr>
+<tr><th>Strong dependencies</th><td><%= df[pkg$package, "n_by_strong"]%></td></tr>
+<tr><th>All dependencies</th><td><%= df[pkg$package, "n_by_all"]%></td></tr>
+<tr><th>Number of parent dependencies</th><td><%= df[pkg$package, "n_parents"]%></td></tr>
+<tr><th>Gini index of parent heaviness</th><td><%= round(df[pkg$package, "gini_index"], 2)%></td></tr>
+<tr><th>Heaviness on child packages</th><td><%= round(df[pkg$package, "heaviness_on_children"], 1)%></td></tr>
+<tr><th>Number of child packages</th><td><%= df[pkg$package, "n_children"]%></td></tr>
+<tr><th>Heaviness on downstream packages</th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
+<tr><th>Number of downstream packages</th><td><%= df[pkg$package, "n_downstream"]%></td></tr>
+</table>
+
+<h3>Dependency heatmap</h3>
+<div id='ht_container'>
+
+<% tmp_file = paste0(env$figure_dir, "/", pkg$package, "_dependency_heatmap.svg")
+
+if(!file.exists(tmp_file)) {
+   plot(pkg, file = tmp_file) 
+} %>
+<%= paste0(readLines(tmp_file), collapse = "\n")%>
+</div>
+
+<br><br>
+
+<h3>Dependency table</h3>
+
+<div id="tabs">
+
+  <ul>
+    <li><a href="#parent_dependency">Parent dependency</a></li>
+    <li><a href="#upstream_dependency">Upstream dependency</a></li>
+    <li><a href="#children_dependency">Children dependencies</a></li>
+    <li><a href="#downstream_dependency">Downstream dependencies</a></li>
+  </ul>
+
+<div id="parent_dependency">
+<div id="parent_dependency_content"><p>Loading table...</p></div>
+
+<script>
+$.ajax({
+  url: "parent_dependency?package=<%=pkg$package%>"
+}).done(function(html) {
+  $("#parent_dependency_content").html(html);
+});
+</script>
+</div>
+
+<div id="upstream_dependency">
+  <div id="upstream_dependency_content"><p>Loading table...</p></div>
+<script>
+$.ajax({
+  url: "upstream_dependency?package=<%=pkg$package%>"
+}).done(function(html) {
+  $("#upstream_dependency_content").html(html);
+});
+</script>
+</div>
+
+<div id="children_dependency">
+  <div id="children_dependency_content"><p>Loading table...</p></div>
+<script>
+$.ajax({
+  url: "children_dependency?package=<%=pkg$package%>"
+}).done(function(html) {
+  $("#children_dependency_content").html(html);
+});
+</script>
+</div>
+
+<div id="downstream_dependency">
+  <div id="downstream_dependency_content"><p>Loading table...</p></div>
+<script>
+$.ajax({
+  url: "downstream_dependency?package=<%=pkg$package%>"
+}).done(function(html) {
+  $("#downstream_dependency_content").html(html);
+});
+</script>
+</div>
+
+</div>
+
+  <script>
+  $( function() {
+    $( "#tabs" ).tabs();
+  } );
+  </script>
+

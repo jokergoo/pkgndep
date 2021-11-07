@@ -1,6 +1,8 @@
-CHANGES in VERSION 1.0.4
+CHANGES in VERSION 1.1.0
 
 * also include packages in Enhances.
+* now dependency is calculated from the package database from `available_packages()`.
+* add a online website for package dependency analysis for all packages on CRAN/Bioconductor.
 
 ====================================
 

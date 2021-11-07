@@ -1,0 +1,242 @@
+
+<h2>Analysis on the heaviness of R package dependencies</h2>
+<p>R packages under analysis were retrieved from CRAN/Biocoductor on 2021-10-28. There are <b><%=sum(!grepl('bioconductor', df$repository))%></b> packages from CRAN and <b><%=length(grep('bioconductor', df$repository))%></b> packages from Bioconductor (<a href='https://bioconductor.org/packages/3.14/BiocViews.html#___Software' target='_blank'>bioc version 3.14</a>).</p>
+
+<div id="tabs">
+
+  <ul>
+    <li><a href="#table">Dependency table</a></li>
+    <li><a href="#plot">Dependency plot</a></li>
+      </ul>
+
+<div id="table">
+<details><summary>Measures in the table</summary>
+<br>
+<p>In the <code>DESCRIPTION</code> file of a package denoted as P, its direct dependency packages are listed in the <code>Depends</code>, <code>Imports</code>, <code>LinkingTo</code>, <code>Suggestes</code> and <code>Enhances</code> fields. We define the following dependency categories for package P:</p>
+
+<ul>
+<li><b>Parent packages</b>: the packages listed in the <code>Depends</code>, <code>Imports</code>and <code>LinkingTo</code> fields (package category <b>B</b> in the following diagram, the same as the packages in the red box).</li>
+<li><b>Strong dependency packages</b>: the total packages by recursively looking for parent packages (package category <b>A</b> and <b>B</b>). They are also called <b>upstream packages</b>.</li>
+<li><b>All dependency packages</b>: the total packages by recursively looking for parent packages, but on the level of package P, parents for packages in <code>Suggests</code> and <code>Enhances</code> are also included (package category <b>A</b>, <b>B</b>, <b>C</b> and <b>D</b>). It simulates when all packages are put into <code>Depends</code>/<code>Imports</code>, the number of strong dependencies.</li>
+<li><b>Child packages</b>: the packages whose parent packages include package P (package category <b>E</b>).</li>
+<li><b>Downstream packages</b>: the total packages by recursively looking for child packages (package category <b>E</b> and <b>F</b>).</li>
+</ul>
+
+<div style="padding:20px 206px;">
+<%= paste(readLines("~/project/development/pkgndep/inst/website/dependency_diagram.svg"), collapse = "\n") %>
+</div>
+
+<p>Next we define various measures for heaviness:</p>
+
+<ul>
+<li><b>Heaviness of a package on its child package</b>: If package A is a parent of package P (i.e. package P strongly and directly depends on
+A), <b>the heaviness of A on P</b> is calcualted as <code>n1 - n2</code> where <code>n1</code> is
+the number of parent packages for P and <code>n2</code> is the number of
+parent packages for P if moving A to <code>Suggests</code>. In
+other words, <b>the heaviness measures the number of additional required packages that A
+brings to P</b>.</li>
+
+<li><b>Heaviness of a package on all its child packages</b>: For
+package P, assume it has <i>K</i> child packages and the k<sup>th</sup> child is denoted as A_k, denote <code>n_1k</code> as the number of parent packages for package A_k and <code>n_2k</code> as the number of parent packages for A_k if moving P to its <code>Suggesets</code>, the heaviness
+of P on its child packages is calculated as <code>sum(n_1k - n_2k)/K</code>. So here the heaviness measures the average number of additional packages P brings to its child packages.</li>
+
+<li><b>Heaviness of a package on all its downstream packages</b>: The definition is similar to the heaviness of a package on all its child packages, except here "child pakages" are replaced
+with "downstream packages".</li>
+
+</ul>
+
+<p>When plotting the heaviness on child packages verse the number of child
+packages (see the <b>"Dependency plot" tab</b>), since the heaviness here is
+an averaged measure, it is easy to gain large value for small number of
+child packages. Thus, when ordering the dependency table, packages on the top
+with the highest heaviness values are most likely those with small number of
+child dependencies (You can try to order the dependency table below by the
+column "Heaviness on child packages"). These packages, although with high
+heaviness, only contain very few child packages, which means, their effects on
+other packages are very small. What is more important for this analysis is to pick those
+packages which affect more other packages. Therefore, we adjusted the original
+definition of "heaviness on children" to <code>sum(n_1k - n_2k)/(10 + K)</code> where 10 is
+an empirical value and it greatly decreases the heaviness for packages with small number of
+children. The adjustment is done similarly for the heaviness on downsteam
+packages.</p>
+
+<p>Other measures are:</p>
+
+<ul> <li><b>Gini index:</b> Gini index on the heaviness from the parent
+packages. To get rid of the scenario where majority of the values are zero and only a few
+are 1, the heaviness are added with 2 for calculating the Gini index. If the
+Gini index is close to 1 for a package, it most likely means there might be a
+few heavy parent packages.</li> <li><span class="heaviness-high"><a>High
+heaviness</a></span> Packages with adjusted heaviness on child packages higher
+than 20.</li> <li><span class="heaviness-median"><a>Median
+heaviness</a></span> Packages with adjusted heaviness on child packages
+between 10 and 20.</li> </ul>
+
+</details>
+
+<style>
+details summary {
+    cursor: pointer;
+}
+summary {
+    display: list-item;
+}
+details > summary:first-of-type {
+    display: list-item;
+    counter-increment: list-item 0;
+    list-style: inside disclosure-closed;
+}
+details[open] > summary:first-of-type {
+    list-style-type: disclosure-open;
+}
+</style>
+
+<br>
+
+<form method="get" class="form-inline">
+<div class="checkbox">
+	<label>
+      <input id="input-default-order-by" type="checkbox" name="order_by" value="adjusted_heaviness_on_children" <%=ifelse(order_by == 'adjusted_heaviness_on_children', 'checked=1', '')%>> Default ordering
+    </label>
+    <label>
+      <input id="input-improvable" type="checkbox" name="improvable" <%=ifelse(only_improvable, 'checked=1', '')%>> Only show packages whose parent's heaviness can be reduced
+    </label>
+  </div>
+ </form>
+
+<script type="text/javascript">
+
+  $(function() {
+    $('#input-default-order-by').change(function() {
+        this.form.submit();
+    });
+    $('#input-improvable').change(function() {
+        this.form.submit();
+    });
+});
+</script>
+
+<% improvable_str = ifelse(only_improvable, 'on', '') %>
+
+<%= as.character(knitr::kable(df2, format = "html", row.names = FALSE, escape = FALSE, table.attr = "id='dependency-table' class='table table-striped'",
+			col.names = c(qq("<a href='?order_by=package&improvable=@{improvable_str}'>Package</a>"), 
+			             "Repository",
+				          qq("<a href='?order_by=n_by_strong&improvable=@{improvable_str}'>Number of strong dependency packages</a>"), 
+				          qq("<a href='?order_by=n_by_all&improvable=@{improvable_str}'>Number of all dependency packages</a>"), 
+				          qq("<a href='?order_by=n_parents&improvable=@{improvable_str}'>Number of parent packages</a>"), 
+				          qq("<a href='?order_by=max_heaviness_from_parent&improvable=@{improvable_str}'>Max heaviness from parent packages</a>"), 
+				          qq("<a href='?order_by=heaviness_on_children&improvable=@{improvable_str}'>Heaviness on child packages</a>"), 
+				          qq("<a href='?order_by=n_children&improvable=@{improvable_str}'>Number of child packages</a>"), 
+				          qq("<a href='?order_by=heaviness_on_downstream&improvable=@{improvable_str}'>Heaviness on downstream packages</a>"), 
+				          qq("<a href='?order_by=n_downstream&improvable=@{improvable_str}'>Number of downstream packages</a>")),
+			align = c("l", rep("r", ncol(df2) - 1)))) %>
+<style>
+.heaviness-high {
+	padding: 2px 4px;
+	background-color: red;
+	border-radius:  4px;
+}
+
+.heaviness-high a {
+	color: white;
+}
+
+.heaviness-median {
+	padding: 2px 4px;
+	background-color: orange;
+	border-radius:  4px;
+}
+
+.heaviness-median a {
+	color: white;
+}
+
+.improvable {
+	padding: 2px 4px;
+	background-color: purple;
+	border-radius:  4px;
+	color:  white;
+	font-size: 10px;
+	vertical-align: middle;
+}
+
+.improvable a {
+	color: white;
+}
+
+</style>
+<script>
+$(function() {
+	$("#dependency-table thead th").filter( ":nth-child(3)" ).css("background-color", "#FFFF10");
+	$("#dependency-table thead th").filter( ":nth-child(4)" ).css("background-color", "#FFFF10");
+	$("#dependency-table thead th").filter( ":nth-child(5)" ).css("background-color", "#FFFF10");
+	$("#dependency-table thead th").filter( ":nth-child(6)" ).css("background-color", "#FFFF10");
+
+	$("#dependency-table thead th").filter( ":nth-child(7)" ).css("background-color", "#10FFFF");
+	$("#dependency-table thead th").filter( ":nth-child(8)" ).css("background-color", "#10FFFF");
+	$("#dependency-table thead th").filter( ":nth-child(9)" ).css("background-color", "#10FFFF");
+	$("#dependency-table thead th").filter( ":nth-child(10)" ).css("background-color", "#10FFFF");
+
+	$("#dependency-table a").tooltip();
+})
+</script>
+
+<% if(package == "") { %>
+
+<% if(order_by == "adjusted_heaviness_on_children") order_by = "" %>
+
+<div>
+<form method="get" class="form-inline">
+<select id="records_per_page" class="form-control" aria-label="Records per page" name="records_per_page">
+  <option value="20">20</option>
+  <option value="50">50</option>
+  <option value="100">100</option>
+</select> records per page, showing <%=ind[1]%> to <%=ind[length(ind)]%> of <%=nrow(df)%> pacakges.
+<input type="hidden" name="order_by" value="<%=order_by%>" />
+</form>
+
+ <script type="text/javascript">
+
+  $(function() {
+    $('#records_per_page').change(function() {
+        this.form.submit();
+    });
+});
+</script>
+
+</div>
+
+
+
+	<% nr = nrow(df)
+	if(nr > records_per_page) { %>
+		<%= page_select(page, ceiling(nr/records_per_page), qq("order_by=@{order_by}&improvable=@{improvable_str}")) %>
+	<% } %>
+
+<% } %>
+
+</div>
+
+<div id="plot">
+
+<div id="scatterplot">
+<p>Loading plot...</p>
+<script>
+$.ajax({
+  url: "global_heaviness_plot"
+}).done(function(html) {
+  $("#scatterplot").html(html);
+});
+</script>
+
+</div>
+</div>
+</div>
+
+<script>
+ $( function() {
+    $( "#tabs" ).tabs();
+  } );
+  </script>
+
+
