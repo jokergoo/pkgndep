@@ -62,7 +62,7 @@ jobs:
           do
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
-          sudo apt-get install -y libcurl-dev
+          sudo apt-get install -y libcurl4-openssl-dev
       - name: Install X11 dependencies on MacOS
         if: runner.os == 'macOS'
         run: |
