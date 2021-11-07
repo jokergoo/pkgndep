@@ -70,6 +70,7 @@ jobs:
       - name: Install dependencies
         run: |
           setRepositories(ind = 1:5)
+          install.packages('rcmdcheck')
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
