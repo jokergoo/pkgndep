@@ -56,7 +56,7 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 # == value
 # A ``pkg_db`` class object. There are the following methods:
 #
-# -``pkg_db$meta(package,field=NULL)`` ``field`` can take values in "Package", "Version" and "Repository".
+# -``pkg_db$get_meta(package,field=NULL)`` ``field`` can take values in "Package", "Version" and "Repository".
 # -``pkg_db$get_dependency_table(package)`` Get the dependency table.
 # -``pkg_db$get_rev_dependency_table(package)`` Get the reverse dependency table.
 # -``pkg_db$package_dependencies(package,recursive=FALSE,reverse=FALSE,which="strong",simplify=FALSE)`` All the arguments are the same as in `tools::package_dependencies`. Argument ``simplify`` controls whether to return a data frame or a simplied vector.
@@ -65,12 +65,17 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 # \dontrun{
 # db = available.packages()
 # db2 = reformat_db(db)
-# db2$meta("ComplexHeatmap")
+# }
+#
+# # a pkg_db object generated on 2021-10-28 can be loaded by load_pkg_db()
+# db2 = load_pkg_db(snapshot = TRUE)
+# db2
+# db2$get_meta("ComplexHeatmap")
 # db2$get_dependency_table("ComplexHeatmap")
 # db2$get_rev_dependency_table("ComplexHeatmap")
 # db2$package_dependencies("ComplexHeatmap")
 # db2$package_dependencies("ComplexHeatmap", recursive = TRUE)
-# }
+# 
 reformat_db = function(db) {
 
 	get_package_list_from_text = function(x) {

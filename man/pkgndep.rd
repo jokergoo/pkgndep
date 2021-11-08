@@ -1,10 +1,10 @@
 \name{pkgndep}
 \alias{pkgndep}
 \title{
-Number of Dependency Packages
+Number of dependency packages
 }
 \description{
-Number of Dependency Packages
+Number of dependency packages
 }
 \usage{
 pkgndep(package, load = FALSE)

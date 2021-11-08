@@ -22,5 +22,5 @@ The dependency information is based on packages retrieved from CRAN/Bioconductor
 A data frame with child packages as well as its heaviness on its child packages.
 }
 \examples{
-child_dependency("ggplot2")
+child_dependency("ComplexHeatmap")
 }

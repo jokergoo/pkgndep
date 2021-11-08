@@ -30,7 +30,7 @@ also "indirect dependency packages" that can be found recursively for each of
 the direct dependency packages. Here what we called "dependency packages" are
 the union of the direct and indirect dependency packages.
 
-There are also packages listed in `Suggsts` and `Enhances` fields in
+There are also packages listed in `Suggests` and `Enhances` fields in
 DESCRIPTION file, but they are not enforced to be installed when installing
 your package. Of course, they also have "indirect dependency packages". To get
 rid of the heavy packages that are not often used in your package, it is

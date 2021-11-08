@@ -9,6 +9,12 @@
 #
 # == value
 # The path of the HTML file of the report.
+#
+# == exaple
+# if(interactive()) {
+#     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+#     html_report(x)
+# }
 html_report = function(pkg, file = NULL) {
 	
 	if(identical(topenv(), .GlobalEnv)) {

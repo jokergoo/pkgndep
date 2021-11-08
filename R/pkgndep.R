@@ -1,6 +1,6 @@
 
 # == title
-# Number of Dependency Packages
+# Number of dependency packages
 #
 # == param
 # -package Package name if the package is already installed or the path of the package in the file system.

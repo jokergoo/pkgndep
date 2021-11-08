@@ -87,7 +87,7 @@
 <li>You package will be “heavy” as well and it may take long time to load your package.</li>
 </ol>
 <p>In the DESCRIPTION file of your package, there are “direct dependency pakcages” listed in the <code>Depends</code>, <code>Imports</code> and <code>LinkingTo</code> fields. There are also “indirect dependency packages” that can be found recursively for each of the direct dependency packages. Here what we called “dependency packages” are the union of the direct and indirect dependency packages.</p>
-<p>There are also packages listed in <code>Suggsts</code> and <code>Enhances</code> fields in DESCRIPTION file, but they are not enforced to be installed when installing your package. Of course, they also have “indirect dependency packages”. To get rid of the heavy packages that are not often used in your package, it is better to move them into the <code>Suggests</code>/<code>Enhances</code> fields and to load/install them only when they are needed.</p>
+<p>There are also packages listed in <code>Suggests</code> and <code>Enhances</code> fields in DESCRIPTION file, but they are not enforced to be installed when installing your package. Of course, they also have “indirect dependency packages”. To get rid of the heavy packages that are not often used in your package, it is better to move them into the <code>Suggests</code>/<code>Enhances</code> fields and to load/install them only when they are needed.</p>
 <p>Here the <strong>pkgndep</strong> package checks the heaviness of the dependency packages of your package. For each package listed in the <code>Depends</code>, <code>Imports</code>, <code>LinkingTo</code> and <code>Suggests</code>/<code>Enhances</code> fields in the DESCRIPTION file, <strong>pkgndep</strong> checks how many additional packages your package requires. The summary of the dependency is visualized by a customized heatmap.</p>
 <p>As an example, I am developing a package called <a href="https://github.com/jokergoo/cola/"><strong>cola</strong></a> which depends on <a href="https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION">a lot of other packages</a>. The dependency heatmap looks like follows (please drag the figure to a new tab to see it in its actual size):</p>
 <p><img src="pkgndep_files/figure-html/unnamed-chunk-3-1.png" width="1000px"></p>
@@ -110,7 +110,7 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/pkgndep">pkgndep</a></span><span class="op">)</span>
 <span class="va">pkg</span> <span class="op">=</span> <span class="fu"><a href="../reference/pkgndep.html">pkgndep</a></span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></code></pre></div>
 <pre><code>## retrieve package database from CRAN/Bioconductor...
-##   - 21067 remote packages on CRAN/Bioconductor.
+##   - 21065 remote packages on CRAN/Bioconductor.
 ##   - 728 packages installed locally.
 ## prepare dependency table...
 ## prepare reverse dependency table...</code></pre>
@@ -190,7 +190,7 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/package_dependencies.html">package_dependencies</a></span><span class="op">(</span><span class="st">"cola"</span>, db <span class="op">=</span> <span class="va">db</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.225   0.001   0.225</code></pre>
+##   0.235   0.002   0.238</code></pre>
 <p>In <strong>pkgndep</strong>, we implement a faster version of <code>package_dependencies()</code> function. First the database needs to be reformatted by <code><a href="../reference/reformat_db.html">reformat_db()</a></code> function. The returned variable <code>db2</code> is a reference class object and its method <code>db2$package_dependencies()</code> can be used to retrieve dependency packages.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db2</span> <span class="op">=</span> <span class="fu"><a href="../reference/reformat_db.html">reformat_db</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></code></pre></div>
@@ -198,8 +198,8 @@
 ## prepare reverse dependency table...</code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db2</span></code></pre></div>
-<pre><code>## A package database of 21764 packages.
-##   - 3416 Bioconductor / 18348 CRAN / 0 other packages.</code></pre>
+<pre><code>## A package database of 21762 packages.
+##   - 3416 Bioconductor / 18346 CRAN / 0 other packages.</code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">db2</span><span class="op">$</span><span class="fu">package_dependencies</span><span class="op">(</span><span class="st">"cola"</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
