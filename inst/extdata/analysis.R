@@ -21,10 +21,10 @@ for(i in seq_along(all_pkg)) {
 }
 
 saveRDS(lt, file = "all_pkgs.rds", compress = "xz")
-file.copy("all_pkgs.rds", "../pkgndep/inst/extdata/all_pkgs.rds", overwrite = TRUE)
+file.copy("all_pkgs.rds", "../pkgndep/docs/files/all_pkgs.rds", overwrite = TRUE)
 
 saveRDS(pkgndep:::env$pkg_db, file = "pkg_db_snapshot.rds", compress = "xz")
-file.copy("pkg_db_snapshot.rds", "../pkgndep/inst/extdata/pkg_db_snapshot.rds", overwrite = TRUE)
+file.copy("pkg_db_snapshot.rds", "../pkgndep/docs/files/pkg_db_snapshot.rds", overwrite = TRUE)
 
 
 ## a data frame that contains various statistics
@@ -108,7 +108,7 @@ df$adjusted_heaviness_on_downstream = sapply(score, function(x) {
 
 saveRDS(score, file = "pkg_stat_score.rds", compress = "xz")
 saveRDS(df, file = "pkg_stat_snapshot.rds", compress = "xz")
-file.copy("pkg_stat_snapshot.rds", "../pkgndep/inst/extdata/pkg_stat_snapshot.rds", overwrite = TRUE)
+file.copy("pkg_stat_snapshot.rds", "../pkgndep/docs/files/pkg_stat_snapshot.rds", overwrite = TRUE)
 
 
 
@@ -144,7 +144,7 @@ pl = lapply(lt, function(x) {
 })
 
 saveRDS(pl, file = "pkg_dependency_path_snapshot.rds", compress = "xz")
-file.copy("pkg_dependency_path_snapshot.rds", "../pkgndep/inst/extdata/pkg_dependency_path_snapshot.rds", overwrite = TRUE)
+file.copy("pkg_dependency_path_snapshot.rds", "../pkgndep/idocs/files/pkg_dependency_path_snapshot.rds", overwrite = TRUE)
 
 
 generate_ht = function(path_list) {
@@ -182,5 +182,5 @@ nt = lapply(pl, generate_ht)
 
 
 saveRDS(nt, file = "pkg_dependency_network_snapshot.rds", compress = "xz")
-file.copy("pkg_dependency_network_snapshot.rds", "../pkgndep/inst/extdata/pkg_dependency_network_snapshot.rds", overwrite = TRUE)
+file.copy("pkg_dependency_network_snapshot.rds", "../pkgndep/docs/files/pkg_dependency_network_snapshot.rds", overwrite = TRUE)
 

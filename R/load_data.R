@@ -16,7 +16,10 @@ load_pkg_stat_snapshot = function() {
 		if(identical(topenv(), .GlobalEnv)) {
 			df = readRDS("~/project/development/pkgndep/docs/files/pkg_stat_snapshot.rds")
 		} else {
-			df = readRDS(url("https://jokergoo.github.io/pkgndep/files/pkg_stat_snapshot.rds"))
+			tmpfile = tempfile()
+			on.exit(file.remove(tmpfile))
+			download.file("https://jokergoo.github.io/pkgndep/files/pkg_stat_snapshot.rds", tmpfile, quiet = TRUE)
+			df = readRDS(tmpfile)
 		}
 		env$pkg_stat_snapshot = df
 	}
@@ -45,7 +48,10 @@ load_all_pkg_dep = function() {
 		if(identical(topenv(), .GlobalEnv)) {
 			env$all_pkg_dep = readRDS("~/project/development/pkgndep/docs/files/all_pkgs.rds")
 		} else {
-			env$all_pkg_dep = readRDS(url("https://jokergoo.github.io/pkgndep/files/all_pkgs.rds"))
+			tmpfile = tempfile()
+			on.exit(file.remove(tmpfile))
+			download.file("https://jokergoo.github.io/pkgndep/files/all_pkgs.rds", tmpfile, quiet = TRUE)
+			env$all_pkg_dep = readRDS(tmpfile)
 		}
 		env$all_pkg_dep = hash::hash(names(env$all_pkg_dep), env$all_pkg_dep)
 	}
@@ -81,7 +87,10 @@ load_pkg_db = function(lib = NULL, snapshot = FALSE, verbose = TRUE) {
 			if(identical(topenv(), .GlobalEnv)) {
 				env$pkg_db_snapshot = readRDS("~/project/development/pkgndep/docs/files/pkg_db_snapshot.rds")
 			} else {
-				env$pkg_db_snapshot = readRDS(url("https://jokergoo.github.io/pkgndep/files/pkg_db_snapshot.rds"))
+				tmpfile = tempfile()
+				on.exit(file.remove(tmpfile))
+				download.file("https://jokergoo.github.io/pkgndep/files/pkg_db_snapshot.rds", tmpfile, quiet = TRUE)
+				env$pkg_db_snapshot = readRDS(tmpfile)
 			}
 		}
 		invisible(env$pkg_db_snapshot)

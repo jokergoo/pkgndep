@@ -5,6 +5,7 @@
 # == param
 # -package Package name if the package is already installed or the path of the package in the file system.
 # -load Whether also check which other packages are loaded into R session (directly or indirectly) when loading ``pkg``. 
+# -verbose Whether to show messages.
 #
 # == details
 # The package database for dependency analysis is always directly retrieved from CRAN/Bioconductor.
@@ -21,9 +22,9 @@
 # x
 # plot(x)
 # 
-pkgndep = function(package, load = FALSE) {
+pkgndep = function(package, load = FALSE, verbose = TRUE) {
 
-	load_pkg_db()
+	load_pkg_db(verbose = verbose)
 
 	pkg_db = env$pkg_db
 

@@ -7,12 +7,13 @@ Number of dependency packages
 Number of dependency packages
 }
 \usage{
-pkgndep(package, load = FALSE)
+pkgndep(package, load = FALSE, verbose = TRUE)
 }
 \arguments{
 
   \item{package}{Package name if the package is already installed or the path of the package in the file system.}
   \item{load}{Whether also check which other packages are loaded into R session (directly or indirectly) when loading \code{pkg}. }
+  \item{verbose}{Whether to show messages.}
 
 }
 \details{
