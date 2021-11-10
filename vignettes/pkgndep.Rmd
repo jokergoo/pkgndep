@@ -160,8 +160,15 @@ The package dependencies are based on "package database" which is normally retri
 In **tools** package, there is a `package_dependencies()` function that can be used to get a list of dependency packages.
 In the following example code, we retrieve the dependency packages for package **cola**.
 
-```{r}
+```{r, eval = FALSE}
 db = available.packages(repos = BiocManager::repositories())
+```
+
+```{r, echo = FALSE}
+db = available.packages(repos = BiocManager::repositories(version = BiocManager:::.version_choose_best()))
+```
+
+```{r}
 system.time(p1 <- tools::package_dependencies("cola", db = db, recursive = TRUE)[[1]])
 ```
 

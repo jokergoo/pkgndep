@@ -1,8 +1,7 @@
 
-
 prepare_db = function(lib = NULL, verbose = TRUE) {
 	if(verbose) cat("retrieve package database from CRAN/Bioconductor...\n")
-	suppressMessages(db_remote <- available.packages(repos = BiocManager::repositories()))
+	suppressMessages(db_remote <- available.packages(repos = BiocManager::repositories(version = getFromNamespace(".version_choose_best", ns = "BiocManager")())))
 
 	db_fields = c("Package", "Version", "Depends", "Imports", "LinkingTo", "Suggests", "Enhances", "Repository")
 		

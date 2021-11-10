@@ -25,6 +25,8 @@ The database object internaly is cached for repeated use of other functions in t
 A \code{pkg_db} class object.
 }
 \examples{
+\dontrun{
 pkg_db = load_pkg_db(lib = NA)
 pkg_db
+}
 }

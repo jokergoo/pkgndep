@@ -16,8 +16,10 @@ It loads the package dependency analysis for all CRAN/Biocondutor packages done 
 A list of \code{pkgndep} objects where each element corresponds to the analysis on one package.
 }
 \examples{
+\dontrun{
 lt = load_all_pkg_dep()
 length(lt)
 head(names(lt))
 lt[["ggplot2"]]
+}
 }

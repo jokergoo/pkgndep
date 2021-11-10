@@ -107,7 +107,9 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 # and ``v_2`` as the sum of required packages: ``v_1 = sum_i^n{p_i}``. The final heaviniss on downstream packages is ``(v_1 - v_2)/n``.
 #
 # == example
+# \dontrun{
 # heaviness_on_downstream("ComplexHeatmap")
+# }
 heaviness_on_downstream = function(package, move_to_suggests = TRUE, add_values_attr = FALSE) {
 
 	if(inherits(package, "pkgndep")) package = package$package

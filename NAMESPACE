@@ -29,6 +29,7 @@ importFrom("grDevices", "dev.off", "dev.size")
 importFrom("methods", "new")
 importFrom("utils", "available.packages", "download.file", "installed.packages")
 importFrom("utils", "browseURL")
+importFrom("utils", "getFromNamespace")
 importFrom("utils", "packageDescription", "read.table")
 importFrom("utils", "sessionInfo")
 

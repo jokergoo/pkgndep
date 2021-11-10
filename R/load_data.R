@@ -14,9 +14,9 @@
 load_pkg_stat_snapshot = function() {
 	if(is.null(env$pkg_stat_snapshot)) {
 		if(identical(topenv(), .GlobalEnv)) {
-			df = readRDS("~/project/development/pkgndep/inst/extdata/pkg_stat_snapshot.rds")
+			df = readRDS("~/project/development/pkgndep/docs/files/pkg_stat_snapshot.rds")
 		} else {
-			df = readRDS(system.file("extdata", "pkg_stat_snapshot.rds", package = "pkgndep"))
+			df = readRDS(url("https://jokergoo.github.io/pkgndep/files/pkg_stat_snapshot.rds"))
 		}
 		env$pkg_stat_snapshot = df
 	}
@@ -34,16 +34,18 @@ load_pkg_stat_snapshot = function() {
 # A list of ``pkgndep`` objects where each element corresponds to the analysis on one package.
 #
 # == example
+# \dontrun{
 # lt = load_all_pkg_dep()
 # length(lt)
 # head(names(lt))
 # lt[["ggplot2"]]
+# }
 load_all_pkg_dep = function() {
 	if(is.null(env$all_pkg_dep)) {
 		if(identical(topenv(), .GlobalEnv)) {
-			env$all_pkg_dep = readRDS("~/project/development/pkgndep/inst/extdata/all_pkgs.rds")
+			env$all_pkg_dep = readRDS("~/project/development/pkgndep/docs/files/all_pkgs.rds")
 		} else {
-			env$all_pkg_dep = readRDS(system.file("extdata", "all_pkgs.rds", package = "pkgndep"))
+			env$all_pkg_dep = readRDS(url("https://jokergoo.github.io/pkgndep/files/all_pkgs.rds"))
 		}
 		env$all_pkg_dep = hash::hash(names(env$all_pkg_dep), env$all_pkg_dep)
 	}
@@ -69,15 +71,17 @@ load_all_pkg_dep = function() {
 # A ``pkg_db`` class object.
 #
 # == example
+# \dontrun{
 # pkg_db = load_pkg_db(lib = NA)
 # pkg_db
+# }
 load_pkg_db = function(lib = NULL, snapshot = FALSE, verbose = TRUE) {
 	if(snapshot) {
 		if(is.null(env$pkg_db_snapshot)) {
 			if(identical(topenv(), .GlobalEnv)) {
-				env$pkg_db_snapshot = readRDS("~/project/development/pkgndep/inst/extdata/pkg_db_snapshot.rds")
+				env$pkg_db_snapshot = readRDS("~/project/development/pkgndep/docs/files/pkg_db_snapshot.rds")
 			} else {
-				env$pkg_db_snapshot = readRDS(system.file("extdata", "pkg_db_snapshot.rds", package = "pkgndep"))
+				env$pkg_db_snapshot = readRDS(url("https://jokergoo.github.io/pkgndep/files/pkg_db_snapshot.rds"))
 			}
 		}
 		invisible(env$pkg_db_snapshot)

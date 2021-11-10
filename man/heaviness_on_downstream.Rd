@@ -23,5 +23,7 @@ The value is the mean heaviness of the package on all its downstream packages. D
 and \code{v_2} as the sum of required packages: \code{v_1 = sum_i^n{p_i}}. The final heaviniss on downstream packages is \code{(v_1 - v_2)/n}.
 }
 \examples{
+\dontrun{
 heaviness_on_downstream("ComplexHeatmap")
+}
 }
