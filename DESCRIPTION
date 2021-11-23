@@ -7,7 +7,7 @@ Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 3.5.0)
 Imports: ComplexHeatmap (>= 2.0.0), GetoptLong, utils, grid, hash, methods, BiocManager, brew
-Suggests: knitr, rmarkdown, svglite, callr, rjson
+Suggests: knitr, rmarkdown, svglite, callr, rjson, Rook
 Description: It checks the heaviness of a package's dependencies, i.e. number of 
     additional packages that are required for each of the direct dependency packages. 
     For each package listed in the "Depends", "Imports", "LinkingTo", "Suggests" and
