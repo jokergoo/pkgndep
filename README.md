@@ -110,6 +110,20 @@ plot(pkg)
 
 ![image](https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png)
 
+## A global dependency analysis on all packages on CRAN/Bioconductor
+
+**pkgndep** also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages
+of the analysis were retrieved on 2021-10-28. The database can be opened by the `open_website()` function.
+
+```r
+open_website()
+```
+
+Following is a screenshot of the database.
+
+
+![image](https://user-images.githubusercontent.com/449218/143213426-990c7f5f-7264-4c30-b8ec-40a5e509aa36.png)
+
 
 ## License
 

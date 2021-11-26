@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -138,16 +138,12 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The path of the HTML file of the report.</p>
-    <h2 class="hasAnchor" id="exaple"><a class="anchor" href="#exaple"></a>Exaple</h2>
-
-    <p>if(interactive()) 
-    x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-    html_report(x)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># There is no example</span>
-<span class='cn'>NULL</span>
-</div><div class='output co'>#&gt; NULL</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>x</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"ComplexHeatmap_dep.rds"</span>, package <span class='op'>=</span> <span class='st'>"pkgndep"</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='fu'>html_report</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

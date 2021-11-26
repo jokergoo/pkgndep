@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -110,15 +110,16 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/pkgndep">pkgndep</a></span><span class="op">)</span>
 <span class="va">pkg</span> <span class="op">=</span> <span class="fu"><a href="../reference/pkgndep.html">pkgndep</a></span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></code></pre></div>
 <pre><code>## retrieve package database from CRAN/Bioconductor...
-##   - 21065 remote packages on CRAN/Bioconductor.
-##   - 728 packages installed locally.
+##   - 21189 remote packages on CRAN/Bioconductor.
+##   - 743 packages installed locally.
 ## prepare dependency table...
 ## prepare reverse dependency table...</code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pkg</span></code></pre></div>
-<pre><code>## ComplexHeatmap, version 2.9.4
-## 30 additional packages are required for installing 'ComplexHeatmap'
-## 117 additional packages are required if installing packages listed in all fields in DESCRIPTION</code></pre>
+<pre><code>## ComplexHeatmap, version 2.11.1
+## - 30 additional packages are required for installing 'ComplexHeatmap'.
+## - 117 additional packages are required if installing packages listed
+##   in all fields in DESCRIPTION.</code></pre>
 <p><code><a href="../reference/pkgndep.html">pkgndep()</a></code> first needs to retrieve package databases both from remote repositories and local libraries, as you can see the message from above code. This only happens once and the database is internally saved and re-used.</p>
 <p>We can directly use <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> function to create the dependency heatmap:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -190,7 +191,7 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/package_dependencies.html">package_dependencies</a></span><span class="op">(</span><span class="st">"cola"</span>, db <span class="op">=</span> <span class="va">db</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.235   0.002   0.238</code></pre>
+##   0.220   0.002   0.222</code></pre>
 <p>In <strong>pkgndep</strong>, we implement a faster version of <code>package_dependencies()</code> function. First the database needs to be reformatted by <code><a href="../reference/reformat_db.html">reformat_db()</a></code> function. The returned variable <code>db2</code> is a reference class object and its method <code>db2$package_dependencies()</code> can be used to retrieve dependency packages.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db2</span> <span class="op">=</span> <span class="fu"><a href="../reference/reformat_db.html">reformat_db</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></code></pre></div>
@@ -198,12 +199,12 @@
 ## prepare reverse dependency table...</code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db2</span></code></pre></div>
-<pre><code>## A package database of 21762 packages.
-##   - 3416 Bioconductor / 18346 CRAN / 0 other packages.</code></pre>
+<pre><code>## A package database of 21899 packages.
+##   - 3416 Bioconductor / 18483 CRAN / 0 other packages.</code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">db2</span><span class="op">$</span><span class="fu">package_dependencies</span><span class="op">(</span><span class="st">"cola"</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.006   0.000   0.006</code></pre>
+##   0.005   0.000   0.005</code></pre>
 <p><code>p1</code> and <code>p2</code> are actually identical:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -224,12 +225,12 @@
 <a href="#session-info" class="anchor"></a>Session info</h2>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.1.0 (2021-05-18)
+<pre><code>## R version 4.1.2 (2021-11-01)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Big Sur 10.16
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
@@ -239,28 +240,28 @@
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] pkgndep_1.1.0
+## [1] pkgndep_1.1.1
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.7           ComplexHeatmap_2.9.4 BiocManager_1.30.16 
-##  [4] highr_0.9            RColorBrewer_1.1-2   bslib_0.3.0         
-##  [7] compiler_4.1.0       jquerylib_0.1.4      iterators_1.0.13    
-## [10] tools_4.1.0          digest_0.6.27        clue_0.3-59         
-## [13] jsonlite_1.7.2       evaluate_0.14        memoise_2.0.0       
-## [16] png_0.1-7            rlang_0.4.11         foreach_1.5.1       
-## [19] magick_2.7.2         yaml_2.2.1           parallel_4.1.0      
-## [22] pkgdown_1.6.1        xfun_0.24            fastmap_1.1.0       
-## [25] cluster_2.1.2        stringr_1.4.0        knitr_1.33          
-## [28] S4Vectors_0.30.0     desc_1.3.0           fs_1.5.0            
-## [31] sass_0.4.0           GlobalOptions_0.1.2  systemfonts_1.0.2   
-## [34] IRanges_2.26.0       stats4_4.1.0         rprojroot_2.0.2     
-## [37] grid_4.1.0           R6_2.5.0             GetoptLong_1.0.3    
-## [40] textshaping_0.3.5    hash_2.2.6.1         rmarkdown_2.9       
-## [43] magrittr_2.0.1       codetools_0.2-18     htmltools_0.5.2     
-## [46] matrixStats_0.59.0   BiocGenerics_0.38.0  shape_1.4.6         
-## [49] colorspace_2.0-2     circlize_0.4.14      ragg_1.1.3          
-## [52] stringi_1.6.2        doParallel_1.0.16    cachem_1.0.5        
-## [55] crayon_1.4.1         rjson_0.2.20</code></pre>
+##  [1] Rcpp_1.0.7            ComplexHeatmap_2.11.1 BiocManager_1.30.16  
+##  [4] highr_0.9             RColorBrewer_1.1-2    bslib_0.3.0          
+##  [7] compiler_4.1.2        jquerylib_0.1.4       iterators_1.0.13     
+## [10] tools_4.1.2           digest_0.6.27         clue_0.3-59          
+## [13] jsonlite_1.7.2        evaluate_0.14         memoise_2.0.0        
+## [16] png_0.1-7             rlang_0.4.11          foreach_1.5.1        
+## [19] magick_2.7.2          yaml_2.2.1            parallel_4.1.2       
+## [22] pkgdown_1.6.1         xfun_0.24             fastmap_1.1.0        
+## [25] cluster_2.1.2         stringr_1.4.0         knitr_1.33           
+## [28] S4Vectors_0.30.0      desc_1.3.0            fs_1.5.0             
+## [31] sass_0.4.0            GlobalOptions_0.1.2   systemfonts_1.0.2    
+## [34] IRanges_2.26.0        stats4_4.1.2          rprojroot_2.0.2      
+## [37] grid_4.1.2            R6_2.5.0              GetoptLong_1.0.3     
+## [40] textshaping_0.3.5     hash_2.2.6.1          rmarkdown_2.9        
+## [43] magrittr_2.0.1        codetools_0.2-18      htmltools_0.5.2      
+## [46] matrixStats_0.59.0    BiocGenerics_0.38.0   shape_1.4.6          
+## [49] colorspace_2.0-2      circlize_0.4.14       ragg_1.1.3           
+## [52] stringi_1.6.2         doParallel_1.0.16     cachem_1.0.5         
+## [55] crayon_1.4.1          rjson_0.2.20</code></pre>
 </div>
   </div>
 

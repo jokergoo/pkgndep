@@ -22,6 +22,7 @@ export("upstream_dependency")
 
 import(ComplexHeatmap)
 import(GetoptLong)
+import(GlobalOptions)
 import(grid)
 import(hash)
 importFrom("grDevices", "dev.interactive", "png", "jpeg", "svg")

@@ -9,10 +9,9 @@
   <tr><th>CRAN link</th><td style="width:100px"> <a href='https://CRAN.R-project.org/package=<%=pkg$package%>/' target='_blank'>link</a></td></tr>
 <% } %>
 <tr><th>Package version</th><td><%= pkg$version%></td></tr>
-<tr><th>Strong dependencies</th><td><%= df[pkg$package, "n_by_strong"]%></td></tr>
-<tr><th>All dependencies</th><td><%= df[pkg$package, "n_by_all"]%></td></tr>
+<tr><th>Number of strong dependencies</th><td><%= df[pkg$package, "n_by_strong"]%></td></tr>
+<tr><th>Number of all dependencies</th><td><%= df[pkg$package, "n_by_all"]%></td></tr>
 <tr><th>Number of parent dependencies</th><td><%= df[pkg$package, "n_parents"]%></td></tr>
-<tr><th>Gini index of parent heaviness</th><td><%= round(df[pkg$package, "gini_index"], 2)%></td></tr>
 <tr><th>Heaviness on child packages</th><td><%= round(df[pkg$package, "heaviness_on_children"], 1)%></td></tr>
 <tr><th>Number of child packages</th><td><%= df[pkg$package, "n_children"]%></td></tr>
 <tr><th>Heaviness on downstream packages</th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
@@ -39,7 +38,7 @@ if(!file.exists(tmp_file)) {
   <ul>
     <li><a href="#parent_dependency">Parent dependency</a></li>
     <li><a href="#upstream_dependency">Upstream dependency</a></li>
-    <li><a href="#children_dependency">Children dependencies</a></li>
+    <li><a href="#child_dependency">Child dependencies</a></li>
     <li><a href="#downstream_dependency">Downstream dependencies</a></li>
   </ul>
 
@@ -66,13 +65,13 @@ $.ajax({
 </script>
 </div>
 
-<div id="children_dependency">
-  <div id="children_dependency_content"><p>Loading table...</p></div>
+<div id="child_dependency">
+  <div id="child_dependency_content"><p>Loading table...</p></div>
 <script>
 $.ajax({
-  url: "children_dependency?package=<%=pkg$package%>"
+  url: "child_dependency?package=<%=pkg$package%>"
 }).done(function(html) {
-  $("#children_dependency_content").html(html);
+  $("#child_dependency_content").html(html);
 });
 </script>
 </div>

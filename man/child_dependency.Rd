@@ -22,5 +22,7 @@ The dependency information is based on packages retrieved from CRAN/Bioconductor
 A data frame with child packages as well as its heaviness on its child packages.
 }
 \examples{
+\dontrun{
 child_dependency("ComplexHeatmap")
+}
 }

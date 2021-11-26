@@ -242,9 +242,28 @@ pkgndep_simplified = function(package, pkg_db) {
 # # See examples in `pkgndep()`.
 #
 print.pkgndep = function(x, ...) {
-	GetoptLong::qqcat("@{x$package}, version @{x$version}\n")
-	GetoptLong::qqcat("@{x$n_by_strong} additional packages are required for installing '@{x$package}'\n")
-	GetoptLong::qqcat("@{x$n_by_all} additional packages are required if installing packages listed in all fields in DESCRIPTION\n")
+	qqcat("@{x$package}, version @{x$version}\n")
+	qqcat("- @{x$n_by_strong} additional packages are required for installing '@{x$package}'.\n")
+	qqcat("- @{x$n_by_all} additional packages are required if installing packages listed\n  in all fields in DESCRIPTION.\n")
+
+	l = x$heaviness >= 20 & x$df_imports[, "imports"] > 0 & x$df_imports[, "importMethods"] == 0 & x$df_imports[, "importClasses"] == 0
+	if(any(l)) {
+		cat("\n")
+		cat("Following adjustment may be performed:\n")
+		for(i in which(l)) {
+			ni = x$df_imports[i, 'imports']
+			nm = rownames(x$df_imports)[i]
+			qqcat("- @{ni} function@{ifelse(ni == 1, ' is', 's are')} imported from '@{nm}'. Moving '@{nm}'' to 'Suggests'\n  will reduce @{x$heaviness[i]} dependencies.\n")
+		}
+
+		l1 = x$which_required
+		l1[l] = FALSE
+		m = x$dep_mat
+		l2 = colSums(m[l1, , drop = FALSE]) > 0
+		n_by_strong2 = length(unique(c(unlist(dimnames(m[l1, l2, drop = FALSE]))))) 
+		cat("\n")
+		qqcat("Moving all mentioned packages to 'Suggests' will reduce the dependency packages from @{x$n_by_strong} to @{n_by_strong2}.\n")
+	}
 }
 
 

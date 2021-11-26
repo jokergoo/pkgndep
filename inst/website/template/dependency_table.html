@@ -1,6 +1,11 @@
 
-<h2>Analysis on the heaviness of R package dependencies</h2>
-<p>R packages under analysis were retrieved from CRAN/Biocoductor on 2021-10-28. There are <b><%=sum(!grepl('bioconductor', df$repository))%></b> packages from CRAN and <b><%=length(grep('bioconductor', df$repository))%></b> packages from Bioconductor (<a href='https://bioconductor.org/packages/3.14/BiocViews.html#___Software' target='_blank'>bioc version 3.14</a>).</p>
+<h2>Analysis on the heaviness of R package dependencies</h2> <p>R packages
+under analysis were retrieved from CRAN/Biocoductor on 2021-10-28. There are
+<b><%=n_cran%></b> packages from CRAN and
+<b><%=n_bioc%></b> packages from
+Bioconductor (<a
+href='https://bioconductor.org/packages/3.14/BiocViews.html#___Software'
+target='_blank'>bioc version 3.14</a>).</p>
 
 <div id="tabs">
 
@@ -9,39 +14,58 @@
     <li><a href="#plot">Dependency plot</a></li>
       </ul>
 
-<div id="table">
-<details><summary>Measures in the table</summary>
-<br>
-<p>In the <code>DESCRIPTION</code> file of a package denoted as P, its direct dependency packages are listed in the <code>Depends</code>, <code>Imports</code>, <code>LinkingTo</code>, <code>Suggestes</code> and <code>Enhances</code> fields. We define the following dependency categories for package P:</p>
+<div id="table"> <details><summary>Measures in the table</summary> <br>
+For a package denoted as P, its direct
+dependency packages are listed in the <code>Depends</code>,
+<code>Imports</code>, <code>LinkingTo</code>, <code>Suggestes</code> and
+<code>Enhances</code> fields in the <code>DESCRIPTION</code> file. We define the following dependency categories
+for package P:</p>
 
-<ul>
-<li><b>Parent packages</b>: the packages listed in the <code>Depends</code>, <code>Imports</code>and <code>LinkingTo</code> fields (package category <b>B</b> in the following diagram, the same as the packages in the red box).</li>
-<li><b>Strong dependency packages</b>: the total packages by recursively looking for parent packages (package category <b>A</b> and <b>B</b>). They are also called <b>upstream packages</b>.</li>
-<li><b>All dependency packages</b>: the total packages by recursively looking for parent packages, but on the level of package P, parents for packages in <code>Suggests</code> and <code>Enhances</code> are also included (package category <b>A</b>, <b>B</b>, <b>C</b> and <b>D</b>). It simulates when all packages are put into <code>Depends</code>/<code>Imports</code>, the number of strong dependencies.</li>
-<li><b>Child packages</b>: the packages whose parent packages include package P (package category <b>E</b>).</li>
-<li><b>Downstream packages</b>: the total packages by recursively looking for child packages (package category <b>E</b> and <b>F</b>).</li>
-</ul>
+<ul> <li><b>Parent packages</b>: the packages listed in the
+<code>Depends</code>, <code>Imports</code>and <code>LinkingTo</code> fields
+(packages in the red box in the following diagram). They are also called the
+<b>strong</b> and <b>direct</b> dependency packages of P.</li> <li><b>Strong
+dependency packages</b>: the total packages by recursively looking for parent
+packages (package category <b>A</b> and <b>B</b>, plus packages in the red
+box). They are also called <b>upstream packages</b>. Note strong dependency
+packages contain parent packages.</li> <li><b>All dependency packages</b>: the
+total packages by recursively looking for parent packages, but on the level of
+package P, parents for packages in <code>Suggests</code> and
+<code>Enhances</code> are also included (package category <b>A</b>, <b>B</b>,
+<b>C</b> and <b>D</b>, plus all packages listed in the box of package P). It
+simulates when all packages are put into
+<code>Depends</code>/<code>Imports</code>, the number of strong dependency
+packages.</li> <li><b>Child packages</b>: the packages whose parent packages
+include package P (package category <b>E</b>).</li> <li><b>Downstream
+packages</b>: the total packages by recursively looking for child packages
+(package category <b>E</b> and <b>F</b>). Note downstream packages include
+child packages.</li> </ul>
 
 <div style="padding:20px 206px;">
 <%= paste(readLines("~/project/development/pkgndep/inst/website/dependency_diagram.svg"), collapse = "\n") %>
 </div>
 
-<p>Next we define various measures for heaviness:</p>
+<p>Next various measures for the heaviness are defined as follows:</p>
 
-<ul>
-<li><b>Heaviness of a package on its child package</b>: If package A is a parent of package P (i.e. package P strongly and directly depends on
-A), <b>the heaviness of A on P</b> is calcualted as <code>n1 - n2</code> where <code>n1</code> is
-the number of parent packages for P and <code>n2</code> is the number of
-parent packages for P if moving A to <code>Suggests</code>. In
-other words, <b>the heaviness measures the number of additional required packages that A
-brings to P</b>.</li>
+<ul> <li><b>Heaviness of a package on its child package</b>: If package A is a
+parent of package P (i.e. package P strongly and directly depends on A),
+<b>the heaviness of A on P</b> is calcualted as <code>n1 - n2</code> where
+<code>n1</code> is the number of parent packages of P and <code>n2</code> is
+the number of parent packages of P if moving A to <code>Suggests</code> for P. In
+other words, <b>the heaviness measures the number of additional required
+packages that A brings to P</b>.</li>
 
-<li><b>Heaviness of a package on all its child packages</b>: For
-package P, assume it has <i>K</i> child packages and the k<sup>th</sup> child is denoted as A_k, denote <code>n_1k</code> as the number of parent packages for package A_k and <code>n_2k</code> as the number of parent packages for A_k if moving P to its <code>Suggesets</code>, the heaviness
-of P on its child packages is calculated as <code>sum(n_1k - n_2k)/K</code>. So here the heaviness measures the average number of additional packages P brings to its child packages.</li>
+<li><b>Heaviness of a package on all its child packages</b>: For package P,
+assume it has <i>K</i> child packages and the k<sup>th</sup> child is denoted
+as A<sub>k</sub>, denote <code>n_1k</code> as the number of parent packages of package
+A<sub>k</sub> and <code>n_2k</code> as the number of parent packages of A<sub>k</sub> if moving P
+to its <code>Suggesets</code>, the heaviness of P on its child packages is
+calculated as <code>sum(n_1k - n_2k)/K</code>. So here the heaviness measures
+the average number of additional packages P brings to its child packages.</li>
 
-<li><b>Heaviness of a package on all its downstream packages</b>: The definition is similar to the heaviness of a package on all its child packages, except here "child pakages" are replaced
-with "downstream packages".</li>
+<li><b>Heaviness of a package on all its downstream packages</b>: The
+definition is similar to the heaviness of a package on all its child packages,
+except here "child pakages" are replaced with "downstream packages".</li>
 
 </ul>
 
@@ -101,6 +125,8 @@ details[open] > summary:first-of-type {
     <label>
       <input id="input-improvable" type="checkbox" name="improvable" <%=ifelse(only_improvable, 'checked=1', '')%>> Only show packages whose parent's heaviness can be reduced
     </label>
+    <span style="width:20px;background-color:#FFFF10;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Heaviness from parents
+    <span style="width:20px;background-color:#10FFFF;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Heaviness on children
   </div>
  </form>
 

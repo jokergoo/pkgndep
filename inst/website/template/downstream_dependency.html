@@ -1,6 +1,6 @@
 <% if(n_total > 0) { %>
 <details><summary>Dependency plot</summary>
-
+<br>
 <% tmp_file = tempfile(fileext = ".png")
   if(nrow(downstream_tb) > 5) {
     png(tmp_file, width = 1200*1.5, height = 500*1.5, res = 72*2)
@@ -69,7 +69,7 @@ details[open] > summary:first-of-type {
 
 <% if(n_used > 0) { %>
 <br>
-<p>In total there are <%=n_total%> downstream dependency packages, only <%=n_used%> downstream packages with heaviness on '<%=pkg$package%>' larger than 10 are listed in the following table.</p>
+<p>In total there are <%=n_total%> downstream dependency packages. Only <%=n_used%> downstream packages with heaviness on '<%=pkg$package%>' larger than 10 are listed in the following table.</p>
 <% 
   el = downstream_dependency(pkg$package)
   g = igraph::graph.edgelist(as.matrix(unique(el[, 1:2])))
@@ -91,7 +91,7 @@ downstream_tb$package = qq("<a href='?package=@{downstream_tb$package}'>@{downst
     
 %>
 
-<%= as.character(knitr::kable(downstream_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Downstream package", "Dependency path", "Dependency depth", qq("Heaviness on '@{pkg$package}'")), table.attr = "class='table table-striped'")) %>
+<%= as.character(knitr::kable(downstream_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Downstream package", "Dependency path", "Dependency depth", qq("Heaviness of '@{pkg$package}' on downstream package")), table.attr = "class='table table-striped'")) %>
 
   <% nr = n_used
   if(nr > 25) { %>

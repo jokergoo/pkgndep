@@ -1,6 +1,6 @@
 <% if(n_total > 0) { %>
 <% if(n_used > 0) { %>
-<p>In total there are <%=n_total%> upstream packages. Only <%=n_used%> upstream packages with heaviness on '<%=pkg$package%>' larger than 5 are listed in the following table. Note nine base packages (<code>c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
+<p>In total there are <%=n_total%> upstream packages for '<%=pkg$package%>'. Only <%=n_used%> upstream packages with heaviness on '<%=pkg$package%>' larger than 5 are listed in the following table. Note nine base packages (<code>c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
         "parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")</code>) are removed from this table.</p>
 <% 
   el = upstream_dependency(pkg$package)

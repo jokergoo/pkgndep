@@ -8,3 +8,8 @@ BASE_PKGS = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "
 DEFAULT_LOADED_BASE_PKGS = c("base", "stats", "graphics", "grDevices", "utils", "datasets", "methods")
 
 FIELDS = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")
+
+
+pkgndep_opt = setGlobalOptions(
+    tmp_dir = "."
+)

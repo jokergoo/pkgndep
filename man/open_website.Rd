@@ -12,5 +12,4 @@ open_website()
 \examples{
 # There is no example
 NULL
-
 }

@@ -21,5 +21,4 @@ A vector of package names.
 \examples{
 # There is no example
 NULL
-
 }

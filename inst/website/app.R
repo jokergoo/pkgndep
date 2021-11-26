@@ -7,6 +7,7 @@ suppressPackageStartupMessages(library(igraph))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggrepel))
 
+
 load_all_pkg_dep()
 load_pkg_db(snapshot = TRUE, verbose = FALSE)
 
@@ -143,7 +144,7 @@ httpd$add(name = "downstream_dependency",
 	response$finish()
 })
 
-httpd$add(name = "children_dependency",
+httpd$add(name = "child_dependency",
 	app = function(env) {
 
 	request = Request$new(env)
@@ -159,7 +160,7 @@ httpd$add(name = "children_dependency",
 
 	response = Response$new()
 
-	html_children_dependency(response, package = package, page = page)
+	html_child_dependency(response, package = package, page = page)
 
 	response$finish()
 })

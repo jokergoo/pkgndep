@@ -28,10 +28,9 @@ add_css = function(f) {
 
 <table class="table table-striped" style="width:600px">
 <tr><th>Package version</th><td><%= pkg$version%></td></tr>
-<tr><th>Strong dependencies</th><td><%= pkg$n_by_strong%></td></tr>
-<tr><th>All dependencies</th><td><%= pkg$n_by_all%></td></tr>
+<tr><th>Number of strong dependencies</th><td><%= pkg$n_by_strong%></td></tr>
+<tr><th>Number of all dependencies</th><td><%= pkg$n_by_all%></td></tr>
 <tr><th>Number of parent dependencies</th><td><%= sum(pkg$which_required)%></td></tr>
-<tr><th>Gini index of parent heaviness</th><td><%= round(gini_index(pkg$heaviness[pkg$which_required] + 2), 2)%></td></tr>
 </table>
 
 <h3>Dependency heatmap</h3>
@@ -52,8 +51,10 @@ add_css = function(f) {
 <% if(n_total > 0) { %>
 
 
-<p>"Import" information is from <code>NAMESPACE</code> of '<%=pkg$package%>'.</p>
+<p>"Import" information is from the <code>NAMESPACE</code> file of '<%=pkg$package%>'.</p>
 <p><b>imports:</b> number of imported functions/variables; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+<p><b>Required packages:</b> number of strong dependency packages for each of the parent package.</p>
+<p><b>Heaviness from parent on '<%=pkg$package%>':</b> number of required packages that can be reduced if moving parent package to 'Suggests'.</p>
 
 <% 
     html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Required packages", qq("Heaviness from parent on '@{pkg$package}'")), table.attr = "class='table table-striped'"))

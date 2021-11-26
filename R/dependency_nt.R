@@ -65,7 +65,9 @@ parent_dependency = function(package, fields = NULL) {
 # A data frame with child packages as well as its heaviness on its child packages.
 #
 # == example
+# \dontrun{
 # child_dependency("ComplexHeatmap")
+# }
 child_dependency = function(package, fields = NULL) {
 
 	load_all_pkg_dep()

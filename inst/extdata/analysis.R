@@ -73,7 +73,7 @@ df$heaviness_on_children = sapply(lt, function(x) {
 })
 
 df$n_children = sapply(lt, function(x) {
-	tb = children_dependency(x, fields = c("Depends", "Imports", "LinkingTo"))
+	tb = child_dependency(x, fields = c("Depends", "Imports", "LinkingTo"))
 	v = nrow(tb)
 	if(is.null(v)) v = 0
 	v

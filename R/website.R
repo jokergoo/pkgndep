@@ -9,5 +9,7 @@ open_website = function() {
 			stop(paste0("Package ", p, " is needed for the website, please install it from CRAN."))
 		}
 	}
+
 	callr::rscript(system.file("website", "app.R", package = "pkgndep"))
 }
+

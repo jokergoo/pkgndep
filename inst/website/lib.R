@@ -93,6 +93,9 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		order_by = "adjusted_heaviness_on_children"
 	}
 
+	n_cran = sum(!grepl('bioconductor', df$repository))
+	n_bioc = sum(grepl('bioconductor', df$repository))
+
 	if(only_improvable) {
 		df = df[df$improvable, , drop = FALSE]
 	}
@@ -139,7 +142,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		df2$max_heaviness_from_parent = qq("<a href='package?package=@{pkgs}' title='@{df2$max_heaviness_parent_info}'>@{df2$max_heaviness_from_parent}</a>", collapse = FALSE)
 		l = grepl("functions/objects are imported", df2$max_heaviness_parent_info)
 		if(any(l)) {
-			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='improvable'><a title='This heaviness can be reduced by moving &lsquo;@{pkgs[l]}&rsquo; to &lsquo;Suggests&rsquo;.'>improvable</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
+			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='improvable'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo;.'>improvable</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
 		}
 
 		df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parent", 
@@ -152,6 +155,8 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 			vars = list(df = df,
 				        df2 = df2,
 				        ind = ind,
+				        n_cran = n_cran,
+				        n_bioc = n_bioc,
 				        records_per_page = records_per_page,
 				        page = page,
 				        package = package,
@@ -345,7 +350,7 @@ html_parent_dependency = function(response, package, page) {
 			        page = page)))
 }
 
-html_children_dependency = function(response, package, page) {
+html_child_dependency = function(response, package, page) {
 
 	pkg_db_snapshot = load_pkg_db(snapshot = TRUE)
 
@@ -400,7 +405,7 @@ html_children_dependency = function(response, package, page) {
 		rev_tb = NULL
 	}
 
-	response$write(html_template("children_dependency",
+	response$write(html_template("child_dependency",
 		vars = list(pkg = pkg,
 			        rev_tb = rev_tb, 
 			        n_total = n_total,

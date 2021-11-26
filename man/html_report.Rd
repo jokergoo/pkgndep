@@ -18,13 +18,9 @@ html_report(pkg, file = NULL)
 \value{
 The path of the HTML file of the report.
 }
-\section{Exaple}{
+\examples{
 if(interactive()) {
     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
     html_report(x)
-}}
-\examples{
-# There is no example
-NULL
-
+}
 }

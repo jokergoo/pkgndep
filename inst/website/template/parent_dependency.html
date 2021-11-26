@@ -10,8 +10,10 @@ if(grepl("(bioc|books|annotation|experiment|workflow)", pkg$repository)) {
 }
 %>
 
-<p>"Import" information is from <a href="<%= namespace_link %>">NAMESPACE</a> of '<%=pkg$package%>'.</p>
+<p>"Import" information is from the <a href="<%= namespace_link %>" target="_blank">NAMESPACE</a> file of '<%=pkg$package%>'.</p>
 <p><b>imports:</b> number of imported functions/variables; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+<p><b>Required packages:</b> number of strong dependency packages for each of the parent package.</p>
+<p><b>Heaviness from parent on '<%=pkg$package%>':</b> number of required packages that can be reduced if moving parent package to 'Suggests'.</p>
 
 <% tb[, 1] = qq("<a href='?package=@{tb[, 1]}'>@{tb[, 1]}</a>", collapse = FALSE)
     html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Required packages", qq("Heaviness from parent on '@{pkg$package}'")), table.attr = "class='table table-striped'"))
