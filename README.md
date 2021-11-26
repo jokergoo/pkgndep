@@ -119,10 +119,9 @@ of the analysis were retrieved on 2021-10-28. The database can be opened by the 
 open_website()
 ```
 
-Following is a screenshot of the database.
+Following is a demonstration of the database.
 
-
-![image](https://user-images.githubusercontent.com/449218/143213426-990c7f5f-7264-4c30-b8ec-40a5e509aa36.png)
+<p><img src="https://jokergoo.github.io/pkgndep/pkgndep_db.gif" width="1000px" /></p>
 
 
 ## License
