@@ -121,7 +121,7 @@ open_website()
 
 Following is a demonstration of the database.
 
-<p><img src="https://jokergoo.github.io/pkgndep/files/pkgndep_db.gif" width="1000px" /></p>
+![pkgndep_db](https://user-images.githubusercontent.com/449218/143590960-68efee7e-3d99-439c-aaec-573e6ef15ea4.gif)
 
 
 ## License
