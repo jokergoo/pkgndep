@@ -54,21 +54,23 @@ df$max_heaviness_parent_info = sapply(lt, function(x) {
 	if(any(x$which_required)) {
 		i = which.max(x$heaviness[x$which_required])
 		if(is.infinite(x$df_imports[i, 1])) {
-			qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. It is listed in &lsquo;Depends&rsquo but no object from parent is imported to the namespace of &lsquo;@{x$package}&rsquo;.")
+			info = qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. It is listed in &lsquo;Depends&rsquo but no object from parent is imported to the namespace of &lsquo;@{x$package}&rsquo;.")
 		} else if(x$df_imports[i, 1] < 0) {
-			qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. The whole set of functions/methods/classes from parent package excluding @{-x$df_imports[i, 1]} functions is imported to the namespace of &lsquo;@{x$package}&rsquo;.")
+			info = qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. The whole set of functions/methods/classes from parent package excluding @{-x$df_imports[i, 1]} functions is imported to the namespace of &lsquo;@{x$package}&rsquo;.")
 		} else if(x$df_imports[i, 2] > 0) {
-			qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. @{x$df_imports[i, 2]} S4 methods are imported to the namespace of &lsquo;@{x$package}&rsquo;.")
+			info = qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. @{x$df_imports[i, 2]} S4 methods are imported to the namespace of &lsquo;@{x$package}&rsquo;.")
 		} else if(x$df_imports[i, 3] > 0) {
-			qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. @{x$df_imports[i, 3]} S4 classes are imported to the namespace of &lsquo;@{x$package}&rsquo;.")
+			info = qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. @{x$df_imports[i, 3]} S4 classes are imported to the namespace of &lsquo;@{x$package}&rsquo;.")
 		} else if(x$df_imports[i, 1] == 0) {
-			qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. The whole set of functions/methods/classes from parent package is imported to the namespace of &lsquo;@{x$package}&rsquo;.")
+			info = qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. The whole set of functions/methods/classes from parent package is imported to the namespace of &lsquo;@{x$package}&rsquo;.")
 		} else {
-			qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. @{x$df_imports[i, 1]} functions/objects are imported to the namespace of &lsquo;@{x$package}&rsquo;.")
+			info = qq("Parent package &lsquo;@{rownames(x$df_imports)[i]}&rsquo; contibutes the highest heaviness on &lsquo;@{x$package}&rsquo;. @{x$df_imports[i, 1]} functions/objects are imported to the namespace of &lsquo;@{x$package}&rsquo;.")
 		}
 	} else {
-		"&lsquo;@{x$package}&rsquo has no parent package."
+		info = qq("&lsquo;@{x$package}&rsquo has no parent package.")
 	}
+	browser()
+	info
 })
 
 df$reducible = grepl("functions/objects are imported.", df$max_heaviness_parent_info)

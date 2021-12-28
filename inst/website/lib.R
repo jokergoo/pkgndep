@@ -128,9 +128,9 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		
 		pkgs = df2[, 1]
 		df2[, 1] = qq("<a href='package?package=@{pkgs}'>@{pkgs}</a>", collapse = FALSE)
-		l = df2[, "adjusted_heaviness_on_children"] >= 10 & df2[, "adjusted_heaviness_on_children"] < 20
+		l = df2[, "adjusted_heaviness_on_children"] >= 15 & df2[, "adjusted_heaviness_on_children"] < 30
 		df2[l, 1] = paste0("<span class='heaviness-median'>", df2[l, 1], "</span>")
-		l = df2[, "adjusted_heaviness_on_children"] >= 20
+		l = df2[, "adjusted_heaviness_on_children"] >= 30
 		df2[l, 1] = paste0("<span class='heaviness-high'>", df2[l, 1], "</span>")
 
 		df2[, "max_heaviness_from_parent"] = round(df2[, "max_heaviness_from_parent"], 1)
