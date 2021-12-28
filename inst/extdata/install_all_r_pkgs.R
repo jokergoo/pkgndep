@@ -12,7 +12,6 @@ av = av_df[, 1]
 
 exc = dir("/Volumes/Elements/all_pkg_lib")
 
-# create loooong string
 ins <- av[!av %in% exc]
 
 for(i in seq_len(floor(length(ins)/50))) {

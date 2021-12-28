@@ -1,8 +1,10 @@
 
 
-<h2>Dependency information for package '<%=pkg$package%>'</h2>
+<h2>Dependency analysis for package '<%=pkg$package%>'</h2>
 
-<table class="table table-striped" style="width:600px">
+<h3>General information</h3>
+
+<table class="table table-striped" style="width:700px">
 <% if(grepl("bioconductor", pkg$repository)) { %>
   <tr><th>Bioconductor link</th><td style="width:100px"> <a href='https://bioconductor.org/packages/<%=pkg$package%>/' target='_blank'>link</a></td></tr>
 <% } else { %>
@@ -11,7 +13,9 @@
 <tr><th>Package version</th><td><%= pkg$version%></td></tr>
 <tr><th>Number of strong dependencies</th><td><%= df[pkg$package, "n_by_strong"]%></td></tr>
 <tr><th>Number of all dependencies</th><td><%= df[pkg$package, "n_by_all"]%></td></tr>
-<tr><th>Number of parent dependencies</th><td><%= df[pkg$package, "n_parents"]%></td></tr>
+<tr><th>Number of parent packages</th><td><%= df[pkg$package, "n_parents"]%></td></tr>
+<tr><th>Max heaviness from parent packages</th><td><%= if(any(pkg$which_required)) max(pkg$heaviness[pkg$which_required]) else 0 %></td></tr>
+<tr><th>Number of parent packages (including <code>Suggests</code> and <code>Enhances</code>)</th><td><%= length(pkg$heaviness) %></td></tr>
 <tr><th>Heaviness on child packages</th><td><%= round(df[pkg$package, "heaviness_on_children"], 1)%></td></tr>
 <tr><th>Number of child packages</th><td><%= df[pkg$package, "n_children"]%></td></tr>
 <tr><th>Heaviness on downstream packages</th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
@@ -19,7 +23,12 @@
 </table>
 
 <h3>Dependency heatmap</h3>
-<div id='ht_container'>
+<div style="padding-bottom: 0.5em;">Adjust heatmap size:   
+                    <button type="button" class="btn btn-default btn-xs" onclick="increase_ht_size()">increase</button>
+                    <button type="button" class="btn btn-default btn-xs" onclick="decrease_ht_size()">decrease</button>
+                    <button type="button" class="btn btn-default btn-xs" onclick="reset_ht_size()">reset</button>
+</div>
+<div id='ht_container' style="border: 1px solid #c5c5c5;border-radius: 3px; padding:3px;">
 
 <% tmp_file = paste0(env$figure_dir, "/", pkg$package, "_dependency_heatmap.svg")
 
@@ -91,7 +100,13 @@ $.ajax({
 
   <script>
   $( function() {
-    $( "#tabs" ).tabs();
+    $( "#tabs" ).tabs({
+      activate: function(event, ui) {
+        if(ui.newTab.text() === "Upstream dependency") {
+          load_upstream_dep_nt();
+        }
+      }
+    });
   } );
   </script>
 

@@ -28,7 +28,7 @@ page_select = function(current_page, n_page, param_str = '') {
 	paste(pages_html, collapse = " ")
 }
 
-page_select2 = function(current_page, n_page, which_table, package) {
+page_select2 = function(current_page, n_page, which_table, package, records_per_page = 20, other_param = "") {
 	pages = seq(current_page - 4, current_page + 4)
 	n_select = length(pages)
 
@@ -45,12 +45,12 @@ page_select2 = function(current_page, n_page, which_table, package) {
 	} else {
 		l = pages == current_page
 		i = which(l)
-		pages_html = ifelse(l, qq("<li class='active'><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", @{pages});false;'>@{pages}</a></li>\n", collapse = FALSE),
-			qq("<li><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", @{pages});false;'>@{pages}</a></li>\n", collapse = FALSE))
+		pages_html = ifelse(l, qq("<li class='active'><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", @{pages}, @{records_per_page}, \"@{other_param}\");false;'>@{pages}</a></li>\n", collapse = FALSE),
+			qq("<li><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", @{pages}, @{records_per_page}, \"@{other_param}\");false;'>@{pages}</a></li>\n", collapse = FALSE))
 
-		pages_html = c(qq("<li><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", 1);false;'>First</a></li>\n"),
+		pages_html = c(qq("<li><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", 1, @{records_per_page}, \"@{other_param}\");false;'>First</a></li>\n"),
 			pages_html,
-			qq("<li><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", @{n_page});false;'>Last</a></li>\n"))
+			qq("<li><a style='cursor: pointer;' onclick='update_ajax_table(\"@{which_table}\", \"@{package}\", @{n_page}, @{records_per_page}, \"@{other_param}\");false;'>Last</a></li>\n"))
 	}
 	pages_html = c("<nav><ul class='pagination'>", pages_html, "</ul></nav>\n")
 	paste(pages_html, collapse = " ")
@@ -71,7 +71,7 @@ html_template = function(template, vars = list()) {
 }
 
 # html for main page
-html_main_page = function(response, package = "", order_by = NULL, page = 1, records_per_page = 20, only_improvable = FALSE) {
+html_main_page = function(response, package = "", order_by = NULL, page = 1, records_per_page = 20, only_reducible = FALSE) {
 	
 	load_all_pkg_dep()
 	df = load_pkg_stat_snapshot()
@@ -96,8 +96,8 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 	n_cran = sum(!grepl('bioconductor', df$repository))
 	n_bioc = sum(grepl('bioconductor', df$repository))
 
-	if(only_improvable) {
-		df = df[df$improvable, , drop = FALSE]
+	if(only_reducible) {
+		df = df[df$reducible, , drop = FALSE]
 	}
 
 	if(package != "") {
@@ -142,7 +142,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		df2$max_heaviness_from_parent = qq("<a href='package?package=@{pkgs}' title='@{df2$max_heaviness_parent_info}'>@{df2$max_heaviness_from_parent}</a>", collapse = FALSE)
 		l = grepl("functions/objects are imported", df2$max_heaviness_parent_info)
 		if(any(l)) {
-			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='improvable'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo;.'>improvable</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
+			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='reducible'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo;.'>reducible</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
 		}
 
 		df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parent", 
@@ -161,7 +161,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 				        page = page,
 				        package = package,
 				        order_by = order_by,
-				        only_improvable = only_improvable
+				        only_reducible = only_reducible
 				        )))
 	} else {
 		response$write(html_template("error",
@@ -231,8 +231,11 @@ html_upstream_dependency = function(response, package, page) {
 	upstream_pkgs = setdiff(upstream_pkgs, BASE_PKGS)
 	n_total = length(upstream_pkgs)	
 
-	records_per_page = 25
+	records_per_page = 100
 
+	nt = NULL
+	min_depth = 2
+	max_depth = 0
 	if(length(upstream_pkgs)) {
 		upstream_tb = data.frame(package = upstream_pkgs, path = "", path_len = 0, heaviness = 0)
 		for(i in seq_along(upstream_pkgs)) {
@@ -246,6 +249,28 @@ html_upstream_dependency = function(response, package, page) {
 
 		n_used = sum(upstream_tb$heaviness > 5)
 		upstream_tb = upstream_tb[upstream_tb$heaviness > 5, , drop = FALSE]
+
+		## construct the network
+		el = upstream_dependency(pkg$package)
+	  	g = igraph::graph.edgelist(as.matrix(unique(el[, 1:2])))
+	  	nt_parent = character(0)
+	  	nt_child = character(0)
+	  	nt_heaviness = numeric(0)
+	    for(i in seq_len(nrow(upstream_tb))) {
+
+	    	sp = igraph::all_shortest_paths(g, upstream_tb[i, 1], pkg$package)$res
+	    	min_depth = min(min_depth, length(sp[[1]]))
+	    	max_depth = max(max_depth, length(sp[[1]]))
+	    	for(k in seq_along(sp)) {
+	    		nodes = names(sp[[k]])
+	    		nn = length(nodes)
+	    		nt_parent = c(nt_parent, nodes[1:(nn-1)])
+	    		nt_child = c(nt_child, nodes[2:nn])
+	    		nt_heaviness = c(nt_heaviness, sapply(1:(nn-1), function(i) df[["hv_downstream_values"]][[ nodes[i] ]][ nodes[i+1] ]))
+	    	}
+	    }
+	    nt = data.frame(parent = nt_parent, child = nt_child, heaviness = nt_heaviness)
+		
 	} else {
 		upstream_tb = NULL
 		n_used = 0
@@ -257,18 +282,21 @@ html_upstream_dependency = function(response, package, page) {
 		ind = seq_len(records_per_page)
 	}
 	upstream_tb = upstream_tb[ind, , drop = FALSE]
-	
+
 	response$write(html_template("upstream_dependency",
 		vars = list(pkg = pkg,
 			        upstream_tb = upstream_tb, 
 			        n_total = n_total,
 			        n_used = n_used,
+			        nt = nt,
+			        min_depth = min_depth,
+			        max_depth = max_depth,
 			        page = page,
 			        df = df)))
 }
 
 
-html_downstream_dependency = function(response, package, page) {
+html_downstream_dependency = function(response, package, page, records_per_page = 20) {
 
 	lt = load_all_pkg_dep()
 	pkg = lt[[package]]
@@ -278,7 +306,8 @@ html_downstream_dependency = function(response, package, page) {
 	downstream_hv = df[["hv_downstream_values"]][[pkg$package]]
 	n_total = length(downstream_hv)
 
-	records_per_page = 25
+	min_depth = 2
+	max_depth = 10
 
 	if(length(downstream_hv)) {
 		downstream_tb = data.frame(package = names(downstream_hv), path = "", path_len = 0, heaviness = downstream_hv)
@@ -287,24 +316,30 @@ html_downstream_dependency = function(response, package, page) {
 
 		n_used = sum(downstream_tb$heaviness > 10)
 		downstream_tb = downstream_tb[downstream_tb$heaviness > 10, , drop = FALSE]
+		all_heaviness = downstream_tb$heaviness 
+		
+		ind = (page - 1)*records_per_page + seq_len(records_per_page)
+		ind = intersect(ind, 1:nrow(downstream_tb))
+		if(length(ind) == 0) {
+			ind = seq_len(records_per_page)
+		}
+		downstream_tb = downstream_tb[ind, , drop = FALSE]
 	} else {
 		downstream_tb = NULL
 		n_used = 0
+		all_heaviness = NULL
 	}
-
-	ind = (page - 1)*records_per_page + seq_len(records_per_page)
-	ind = intersect(ind, 1:nrow(downstream_tb))
-	if(length(ind) == 0) {
-		ind = seq_len(records_per_page)
-	}
-	downstream_tb = downstream_tb[ind, , drop = FALSE]
 	
 	response$write(html_template("downstream_dependency",
 		vars = list(pkg = pkg,
 			        downstream_tb = downstream_tb, 
+			        all_heaviness = all_heaviness,
 			        n_total = n_total,
 			        n_used = n_used,
+			        min_depth = min_depth,
+			        max_depth = max_depth,
 			        page = page,
+			        records_per_page = records_per_page,
 			        df = df)))
 }
 
@@ -318,7 +353,7 @@ html_parent_dependency = function(response, package, page) {
 	tb = NULL
 	n_total = nrow(pkg$df_imports)
 
-	records_per_page = 25
+	records_per_page = 50
 
 	df = load_pkg_stat_snapshot()
 
@@ -347,10 +382,11 @@ html_parent_dependency = function(response, package, page) {
 		vars = list(pkg = pkg,
 			        tb = tb, 
 			        n_total = n_total,
-			        page = page)))
+			        page = page,
+			        records_per_page = records_per_page)))
 }
 
-html_child_dependency = function(response, package, page) {
+html_child_dependency = function(response, package, page, records_per_page = 20, child_dep_prioritize_reducible = FALSE, child_dep_internal_ordering = FALSE) {
 
 	pkg_db_snapshot = load_pkg_db(snapshot = TRUE)
 
@@ -362,8 +398,6 @@ html_child_dependency = function(response, package, page) {
 	rev_pkg_tb = pkg_db_snapshot$package_dependencies(package, reverse = TRUE)
 	n_total = nrow(rev_pkg_tb)
 	n_used = 0
-
-	records_per_page = 25
 
 	if(n_total > 0) {
 
@@ -387,11 +421,26 @@ html_child_dependency = function(response, package, page) {
 			unname(pkg$heaviness[which(rownames(pkg$dep_mat) == package)])
 		})[rev_pkg]
 
-		row_order = order(factor(rev_tb$field, levels = FIELDS), -rev_tb$heaviness)
+		rev_tb$required_pkgs = sapply(rev_tb$package, function(x) {
+			sum(lt[[x]]$which_required)
+		})
+
+		if(child_dep_prioritize_reducible && child_dep_internal_ordering) {
+			row_order = order(ifelse(rev_tb$import > 0 & rev_tb$importMethods == 0 & rev_tb$importClasses == 0, 1, 2), -rev_tb$heaviness*rev_tb$required_pkgs)
+		} else if(!child_dep_prioritize_reducible && child_dep_internal_ordering) {
+			row_order = order(-rev_tb$heaviness*rev_tb$required_pkgs, factor(rev_tb$field, levels = FIELDS), -rev_tb$heaviness, -rev_tb$required_pkgs)
+		} else if(child_dep_prioritize_reducible && !child_dep_internal_ordering) {
+			row_order = order(ifelse(rev_tb$import > 0 & rev_tb$importMethods == 0 & rev_tb$importClasses == 0, 1, 2), factor(rev_tb$field, levels = FIELDS), -rev_tb$heaviness, -rev_tb$required_pkgs)
+		} else {
+			row_order = order(factor(rev_tb$field, levels = FIELDS), -rev_tb$heaviness, -rev_tb$required_pkgs)
+		}
+
 		rev_tb$field = paste0("Reverse ", rev_tb$field)
 		rev_tb = rev_tb[row_order, , drop = FALSE]
 
 		n_used = sum(rev_tb$heaviness > 10)
+		all_heaviness = rev_tb$heaviness
+		rev_tb = rev_tb[rev_tb$heaviness > 10, , drop = FALSE]
 
 		ind = (page - 1)*records_per_page + seq_len(records_per_page)
 		ind = intersect(ind, 1:nrow(rev_tb))
@@ -399,18 +448,23 @@ html_child_dependency = function(response, package, page) {
 			ind = seq_len(records_per_page)
 		}
 		rev_tb = rev_tb[ind, , drop = FALSE]
-
-		rev_tb = rev_tb[rev_tb$heaviness > 10, , drop = FALSE]
+	
 	} else {
 		rev_tb = NULL
+		all_heaviness = NULL
 	}
 
 	response$write(html_template("child_dependency",
 		vars = list(pkg = pkg,
 			        rev_tb = rev_tb, 
+			        all_heaviness = all_heaviness,
+			        pkg_db_snapshot = pkg_db_snapshot,
 			        n_total = n_total,
 			        n_used = n_used,
 			        page = page,
+			    	records_per_page = records_per_page,
+			    	child_dep_prioritize_reducible = child_dep_prioritize_reducible,
+			    	child_dep_internal_ordering = child_dep_internal_ordering,
 			        df = df)))
 }
 
@@ -483,4 +537,19 @@ html_global_heaviness_plot = function(response) {
 \n", img(tmp_file, style="width:1200px"))
 
 	response$write(html)
+}
+
+
+network_in_json = function(edge) {
+	node = unique(c(edge[, 1], edge[, 2]))
+	node_lt = lapply(node, function(x) list(data = list(id = x)))
+	edge_lt = lapply(seq_len(nrow(edge)), function(i) {
+		list(data = list(id = paste(edge[i, 1], edge[i, 2], sep = "|"),
+			source = edge[i, 1],
+			target = edge[i, 2],
+			weight = edge[i, 3]))
+	})
+	nt_json = list(nodes = node_lt, edges = edge_lt)
+	nt_json = paste0("var nt = ", rjson::toJSON(nt_json), ";\n")
+	return(nt_json)
 }

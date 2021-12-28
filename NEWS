@@ -1,3 +1,7 @@
+CHANGES in VERSION 1.1.1
+
+* `pkgndep()` allows github repo as input.
+
 CHANGES in VERSION 1.1.0
 
 * also include packages in Enhances.

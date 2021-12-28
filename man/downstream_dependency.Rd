@@ -11,10 +11,12 @@ downstream_dependency(package)
 }
 \arguments{
 
-  \item{package}{Package name}
+  \item{package}{Package name.}
 
 }
 \details{
+Downstream packages with relations of \code{Depends}, \code{Imports} and \code{LinkingTo} are retrieved.
+
 The dependency information is based on packages retrieved from CRAN/Bioconductor on 2021-10-28.
 }
 \value{

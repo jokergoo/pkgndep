@@ -15,10 +15,15 @@ required_dependency_packages(x, all = FALSE)
   \item{all}{Whether to include the packages required if also including packages from "Suggests"/"Enhances" field.}
 
 }
+\details{
+The function returns all upstream packages.
+}
 \value{
 A vector of package names.
 }
 \examples{
-# There is no example
-NULL
+\dontrun{
+x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+required_dependency_packages(x)
+}
 }

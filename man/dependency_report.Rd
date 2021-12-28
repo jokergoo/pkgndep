@@ -1,5 +1,5 @@
-\name{html_report}
-\alias{html_report}
+\name{dependency_report}
+\alias{dependency_report}
 \title{
 HTML report for package dependency analysis
 }
@@ -7,7 +7,7 @@ HTML report for package dependency analysis
 HTML report for package dependency analysis
 }
 \usage{
-html_report(pkg, file = NULL)
+dependency_report(pkg, file = NULL)
 }
 \arguments{
 
@@ -21,6 +21,6 @@ The path of the HTML file of the report.
 \examples{
 if(interactive()) {
     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-    html_report(x)
+    dependency_report(x)
 }
 }

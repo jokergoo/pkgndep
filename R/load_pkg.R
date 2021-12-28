@@ -8,7 +8,7 @@
 # -verbose Whether to print messages.
 #
 # == details
-# It loads package ``pkg`` in a new R session and collects which other packages are loaded from `utils::sessionInfo`.
+# It loads ``pkg`` into a new R session and collects which other packages are loaded by parsing the output from `utils::sessionInfo`.
 #
 # == value
 # A data frame.

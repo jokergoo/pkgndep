@@ -1,10 +1,10 @@
 \name{load_all_pkg_dep}
 \alias{load_all_pkg_dep}
 \title{
-Load all package dependency data
+Load dependency data of all packages
 }
 \description{
-Load all package dependency data
+Load dependency data of all packages
 }
 \usage{
 load_all_pkg_dep()

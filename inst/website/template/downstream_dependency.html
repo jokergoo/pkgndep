@@ -17,9 +17,9 @@
         ggplot2::labs(x = "Number of downstream packages", y = "Heaviness") +
         ggplot2::ggtitle("Heaviness on downstream packages")
 
-      p2 = ggplot2::ggplot(downstream_tb, ggplot2::aes(heaviness)) + geom_histogram() +
-        ggplot2::labs(x = "Number of downstream packages", y = "Frequency") +
-        ggplot2::ggtitle("Histogram of heaviness on downstream packages")
+      p2 = ggplot2::ggplot(mapping = ggplot2::aes(all_heaviness)) + geom_histogram() +
+        ggplot2::labs(x = "Heaviness on downstream packages", y = "Frequency") +
+        ggplot2::ggtitle(qq("Histogram of heaviness of '@{pkg$package}' on its downstream packages"))
 
       print(cowplot::plot_grid(p1, p2, rel_widths = c(1.2, 1)))
     }))
@@ -69,7 +69,9 @@ details[open] > summary:first-of-type {
 
 <% if(n_used > 0) { %>
 <br>
-<p>In total there are <%=n_total%> downstream dependency packages. Only <%=n_used%> downstream packages with heaviness on '<%=pkg$package%>' larger than 10 are listed in the following table.</p>
+<p>In total '<%=pkg$package%>' has <%=n_total%> downstream dependency packages. Only <%=n_used%> downstream packages with heaviness on '<%=pkg$package%>' larger than 10 are listed in the following table.</p>
+<div>In <b>Dependency path</b> colunn, the form of <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span> means package A contribute a direct heaviness of <i>k</i> on package B.</div>
+
 <% 
   el = downstream_dependency(pkg$package)
   g = igraph::graph.edgelist(as.matrix(unique(el[, 1:2])))
@@ -79,9 +81,9 @@ for(i in seq_len(nrow(downstream_tb))) {
       sp = igraph::all_shortest_paths(g, pkg$package, downstream_tb[i, 1])$res
       downstream_tb[i, "path"] = paste(sapply(sp, function(x) {
         p = names(x)
-        txt = paste0("<div><span style='display:inline-block;vertical-align:top;'>", p[1], "</span>")
+        txt = paste0("<div><span style='display:inline-block;vertical-align:top;'><a href='package?package=", p[i], "'>", p[1], "</a></span>")
         for(i in seq_len(length(p) - 1)) {
-          txt = paste0(txt, "<span style='display:inline-block;vertical-align:top;padding:0px 4px;'>", "&#8594;<br><span style='font-size:0.8em;'>", df[["hv_downstream_values"]][[ p[i] ]][ p[i+1] ], "</span></span><span style='display:inline-block;vertical-align:top;'>", p[i+1], "</span>")
+          txt = paste0(txt, "<span style='display:inline-block;vertical-align:top;padding:0px 4px;'>", "&#8594;<br><span style='font-size:0.8em;'>", df[["hv_downstream_values"]][[ p[i] ]][ p[i+1] ], "</span></span><span style='display:inline-block;vertical-align:top;'><a href='package?package=", p[i+1], "'>", p[i+1], "</a></span>")
         }
         paste0(txt, "</div>")
       }), collapse = "")
@@ -91,11 +93,50 @@ downstream_tb$package = qq("<a href='?package=@{downstream_tb$package}'>@{downst
     
 %>
 
+<div style="display: inline-grid;">
+<div style="grid-column-start:1;"><span style="padding-right:10px;font-weight:bold;">Adjust range of dependency depth:</span></div>
+<div style="width:500px;grid-column-start:2;">
+<input type="text" id="downstream-dep-depth-slider" name="downstream_dep_depth_range" value="" />
+</div>
+</div>
+
+<script type="text/javascript">
+ $("#downstream-dep-depth-slider").ionRangeSlider({
+        skin: "round",
+        type: "double",
+        grid: true,
+        min: <%=min_depth%>,
+        max: <%=max_depth%>,
+        from: <%=min_depth%>,
+        to: <%=max_depth%>
+    });
+</script>
+
+
 <%= as.character(knitr::kable(downstream_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Downstream package", "Dependency path", "Dependency depth", qq("Heaviness of '@{pkg$package}' on downstream package")), table.attr = "class='table table-striped'")) %>
 
+
+<div>
+<form method="get" class="form-inline">
+<select id="downstream_dep_records_per_page" class="form-control" aria-label="Records per page" name="records_per_page">
+  <option value="20" <%= ifelse(records_per_page == 20, 'selected', '') %>>20</option>
+  <option value="50" <%= ifelse(records_per_page == 50, 'selected', '') %>>50</option>
+  <option value="100" <%= ifelse(records_per_page == 100, 'selected', '') %>>100</option>
+</select> records per page, showing <%=(page-1)*records_per_page+1%> to <%=min(page*records_per_page, n_used)%> of <%=n_used%> downstream pacakges.
+</form>
+
+ <script type="text/javascript">
+
+  $(function() {
+    $('#downstream_dep_records_per_page').change(function() {
+        update_ajax_table("downstream_dependency", "<%=pkg$package%>", 1, $('#downstream_dep_records_per_page').val());
+    });
+});
+</script>
+
   <% nr = n_used
-  if(nr > 25) { %>
-    <%= page_select2(page, ceiling(nr/25), "downstream_dependency", pkg$package) %>
+  if(nr > records_per_page) { %>
+    <%= page_select2(page, ceiling(nr/records_per_page), "downstream_dependency", pkg$package, records_per_page) %>
   <% } %>
 
 <% } else { %>

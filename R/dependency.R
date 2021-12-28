@@ -27,7 +27,7 @@ parent_dependency = function(package, fields = NULL) {
 
 	tb = env$pkg_db_snapshot$get_dependency_table(package)
 	if(is.null(tb)) {
-		return(tb)
+		return(data.frame(parents = character(0), children = character(0), dep_fields = character(0), heaviness = numeric(0)))
 	}
 	tb = tb[, c(2, 1, 3), drop = FALSE]
 	colnames(tb) = c("parents", "children", "dep_fields")
@@ -81,7 +81,7 @@ child_dependency = function(package, fields = NULL) {
 
 	tb = env$pkg_db_snapshot$get_rev_dependency_table(package)
 	if(is.null(tb)) {
-		return(tb)
+		return(data.frame(parents = character(0), children = character(0), dep_fields = character(0), heaviness = numeric(0)))
 	}
 	tb = tb[, c(2, 1, 3), drop = FALSE]
 	colnames(tb) = c("parents", "children", "dep_fields")
@@ -113,6 +113,8 @@ child_dependency = function(package, fields = NULL) {
 # -package Package name.
 #
 # == details
+# Upstream packages with relations of "Depends", "Imports" and "LinkingTo" are retrieved.
+#
 # The dependency information is based on packages retrieved from CRAN/Bioconductor on 2021-10-28.
 #
 # == value
@@ -149,9 +151,11 @@ upstream_dependency = function(package) {
 # Get downstream dependency for a package
 #
 # == param
-# -package Package name
+# -package Package name.
 #
 # == details
+# Downstream packages with relations of ``Depends``, ``Imports`` and ``LinkingTo`` are retrieved.
+#
 # The dependency information is based on packages retrieved from CRAN/Bioconductor on 2021-10-28.
 #
 # == value

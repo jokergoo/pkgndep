@@ -1,10 +1,10 @@
 
 # == title
-# Number of dependency packages
+# Package dependency analysis
 #
 # == param
-# -package Package name if the package is already installed or the path of the package in the file system.
-# -load Whether also check which other packages are loaded into R session (directly or indirectly) when loading ``pkg``. 
+# -package Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.
+# -load Check which other packages are loaded into R session (directly or indirectly) when loading ``pkg``. 
 # -verbose Whether to show messages.
 #
 # == details
@@ -24,15 +24,53 @@
 # 
 pkgndep = function(package, load = FALSE, verbose = TRUE) {
 
+	## check whether package is an CRAN/Bioc package, a installed package, a path or a github link
 	load_pkg_db(verbose = verbose)
-
 	pkg_db = env$pkg_db
 
-	depends =  pkg_db$package_dependencies(package, which = "Depends", simplify = TRUE)
-	imports =  pkg_db$package_dependencies(package, which = "Imports", simplify = TRUE); imports = setdiff(imports, depends)
-	linkingto = pkg_db$package_dependencies(package, which = "LinkingTo", simplify = TRUE); linkingto = setdiff(linkingto, c(imports, depends))
-	suggests = pkg_db$package_dependencies(package, which = "Suggests", simplify = TRUE); suggests = setdiff(suggests, c(depends, imports, linkingto))
-	enhances = pkg_db$package_dependencies(package, which = "Enhances", simplify = TRUE); enhances = setdiff(enhances, c(depends, imports, linkingto, suggests))
+	if(is.null(pkg_db$dep_ind_hash[[package]])) { 
+
+		if(pkg_installed(package)) {
+			package_name = package
+		} else if(file.exists(package)) {
+			package_name = basename(package)
+			if(load) message("`package` is specified as a path, reset `load` to `FALSE`.")
+			load = FALSE
+		} else if(grepl("^https://github.com/", package)) {
+			package_name = basename(package)
+			if(load) message("`package` is a GitHub URL, reset `load` to `FALSE`.")
+			load = FALSE
+		} else {
+			stop("`package` should be 1. a CRAN/Bioconductor package, 2. an installed package,\n3. a path of a local package, 4. URL of a GitHub repository.")
+		}
+		res = get_package_info_by_path(package)
+
+		version = res$version
+		repository = res$repository
+		depends = res$depends
+		imports = res$imports
+		linkingto = res$linkingto
+		suggests = res$suggests
+		enhances = res$enhances
+
+		imports = setdiff(imports, depends)
+		linkingto = setdiff(linkingto, c(imports, depends))
+		suggests = setdiff(suggests, c(depends, imports, linkingto))
+		enhances = setdiff(enhances, c(depends, imports, linkingto, suggests))
+
+	} else {
+
+		version = pkg_db$get_meta(package)[1, "Version"]
+		repository = pkg_db$get_meta(package)[1, "Repository"]
+
+		depends =  pkg_db$package_dependencies(package, which = "Depends", simplify = TRUE)
+		imports =  pkg_db$package_dependencies(package, which = "Imports", simplify = TRUE); imports = setdiff(imports, depends)
+		linkingto = pkg_db$package_dependencies(package, which = "LinkingTo", simplify = TRUE); linkingto = setdiff(linkingto, c(imports, depends))
+		suggests = pkg_db$package_dependencies(package, which = "Suggests", simplify = TRUE); suggests = setdiff(suggests, c(depends, imports, linkingto))
+		enhances = pkg_db$package_dependencies(package, which = "Enhances", simplify = TRUE); enhances = setdiff(enhances, c(depends, imports, linkingto, suggests))
+
+		package_name = package
+	}
 
 	dep_fields = c(rep("Depends", length(depends)),
 		           rep("Imports", length(imports)),
@@ -41,13 +79,12 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 		           rep("Enhances", length(enhances)))
 	all_pkgs = c(depends, imports, linkingto, suggests, enhances)
 
-
-	if(pkg_exists(package) && load) {
-		qqcat("loading @{package} into a new R session to test number of namespaces loaded...")
+	if(pkg_exists(package_name) && load) {
+		qqcat("loading @{package_name} into a new R session to test number of namespaces loaded...")
 		if(!requireNamespace("callr", quietly = TRUE)) {
 			stop("You need to install 'callr' package.")
 		}
-		tb = callr::r(load_pkg, args = list(pkg = package), user_profile = FALSE)
+		tb = callr::r(load_pkg, args = list(pkg = package_name), user_profile = FALSE)
 		cat(" done.\n")
 
 		if(is.null(tb)) {
@@ -59,9 +96,9 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 
 	if(length(all_pkgs) == 0) {
 		obj = list(
-			package = package,
-			version = pkg_db$get_meta(package)[1, "Version"],
-			repository = pkg_db$get_meta(package)[1, "Repository"],
+			package = package_name,
+			version = version,
+			repository = repository,
 			dep_mat = matrix(nrow = 0, ncol = 0), 
 			dep_fields = character(0),
 
@@ -99,7 +136,7 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 	colnames(df_imports) = c("imports", "importMethods", "importClasses")
 	rownames(df_imports) = rn
 
-	lt_imports = parse_imports_from_namespace(package)
+	lt_imports = parse_imports_from_namespace(package, package_name)
 	if(!is.null(lt_imports)) {
 		if(length(lt_imports$n_imports)) {
 			lt_imports$n_imports = lt_imports$n_imports[intersect(names(lt_imports$n_imports), rn)]
@@ -121,9 +158,9 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 	}
 
 	obj = list(
-		package = package,
-		version = pkg_db$get_meta(package)[1, "Version"],
-		repository = pkg_db$get_meta(package)[1, "Repository"],
+		package = package_name,
+		version = version,
+		repository = repository,
 		dep_mat = dep_mat, 
 		dep_fields = dep_fields,
 
@@ -149,7 +186,7 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 	column_order_by = colSums(dep_mat)
 	l2 = colSums(dep_mat[is_field_required(dep_fields), ,drop = FALSE]) > 0
 	column_order_by[l2] = column_order_by[l2] + 10000
-	column_order = order(column_order_by, -colSums(dep_mat[row_order, , drop = FALSE]), decreasing = TRUE)
+	column_order = order(column_order_by, -apply(dep_mat[row_order, , drop = FALSE], 2, function(x) which(x > 0)[1]), decreasing = TRUE)
 
 	obj$dep_mat = obj$dep_mat[row_order, column_order, drop = FALSE]
 	obj$which_required = obj$which_required[row_order]
@@ -274,9 +311,17 @@ print.pkgndep = function(x, ...) {
 # -x An object from `pkgndep`.
 # -all Whether to include the packages required if also including packages from "Suggests"/"Enhances" field.
 #
+# == details
+# The function returns all upstream packages.
+#
 # == value
 # A vector of package names.
 #
+# == example
+# \dontrun{
+# x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+# required_dependency_packages(x)
+# }
 required_dependency_packages = function(x, all = FALSE) {
 	m = x$dep_mat
 	if(nrow(m) == 0) {
@@ -305,45 +350,78 @@ pkg_exists = function(x) {
 	system.file(package = x) != ""
 }
 
-parse_imports_from_namespace = function(x) {
+pkg_installed = pkg_exists
 
-	lib_dir = dirname(system.file(package = x))
 
-	if(lib_dir != "") {
+# x can be 1. an installed package, 2. a path (local or github), 3. a cran/bioc package
+parse_imports_from_namespace = function(x, pkg = basename(x)) {
+
+	if(pkg %in% names(env$ns_data_list)) {
+		ns_data = env$ns_data_list[[pkg]]
+	} else if(pkg_installed(x)) {
+		lib_dir = dirname(system.file(package = x))
 		if(packageHasNamespace(x, lib_dir)) {
 			ns_data = parseNamespaceFile(x, lib_dir)
 		} else {
 			ns_data = NULL
 		}
+
+		env$ns_data_list[[pkg]] = ns_data
+	} else if(grepl("^https://github.com/", x)) {
+		x = gsub("https://github.com/", "https://raw.githubusercontent.com/", x)
+		namespace_link = paste0(x, "/master/NAMESPACE")
+		description_link = paste0(x, "/master/DESCRIPTION")
+
+		tmpfile1 = tempfile()
+		tmpfile2 = tempfile()
+		oe1 = try(download.file(namespace_link, tmpfile1, quiet = TRUE), silent = TRUE)
+		oe2 = try(download.file(description_link, tmpfile2, quiet = TRUE), silent = TRUE)
+		on.exit(file.remove(c(tmpfile1, tmpfile2)))
+
+		if(inherits(oe1, "try-error") || inherits(oe2, "try-error")) {
+			ns_data = NULL
+		} else {
+			ns_data = parseNamespaceFile_cp(x, tmpfile1, tmpfile2)
+		}
+
+		env$ns_data_list[[pkg]] = ns_data
+
+	} else if(file.exists(x)) {
+		namespace_link = paste0(x, "/NAMESPACE")
+		description_link = paste0(x, "/DESCRIPTION")
+
+		if(file.exists(namespace_link) && file.exists(description_link)) {
+			ns_data = parseNamespaceFile_cp(x, namespace_link, description_link)
+		} else {
+			ns_data = NULL
+		}
+
+		env$ns_data_list[[pkg]] = ns_data
 	} else {
 
-		if(x %in% names(env$ns_data_list)) {
-			ns_data = env$ns_data_list[[x]]
+		load_pkg_db()
+
+		if(grepl("(bioc|books|annotation|experiment|workflow)", env$pkg_db$meta[x, "Repository"])) {
+			namespace_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/NAMESPACE")
+			description_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/DESCRIPTION")
 		} else {
-			load_pkg_db()
-
-			if(grepl("(bioc|books|annotation|experiment|workflow)", env$pkg_db$meta[x, "Repository"])) {
-				namespace_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/NAMESPACE")
-				description_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/DESCRIPTION")
-			} else {
-				namespace_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/NAMESPACE")
-				description_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/DESCRIPTION")
-			}
-
-			tmpfile1 = tempfile()
-			tmpfile2 = tempfile()
-			oe1 = try(download.file(namespace_link, tmpfile1, quiet = TRUE), silent = TRUE)
-			oe2 = try(download.file(description_link, tmpfile2, quiet = TRUE), silent = TRUE)
-			on.exit(file.remove(c(tmpfile1, tmpfile2)))
-
-			if(inherits(oe1, "try-error") || inherits(oe2, "try-error")) {
-				ns_data = NULL
-			} else {
-				ns_data = parseNamespaceFile_cp(x, tmpfile1, tmpfile2)
-			}
-
-			env$ns_data_list[[x]] = ns_data
+			namespace_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/NAMESPACE")
+			description_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/DESCRIPTION")
 		}
+
+		tmpfile1 = tempfile()
+		tmpfile2 = tempfile()
+		oe1 = try(download.file(namespace_link, tmpfile1, quiet = TRUE), silent = TRUE)
+		oe2 = try(download.file(description_link, tmpfile2, quiet = TRUE), silent = TRUE)
+		on.exit(file.remove(c(tmpfile1, tmpfile2)))
+
+		if(inherits(oe1, "try-error") || inherits(oe2, "try-error")) {
+			ns_data = NULL
+		} else {
+			ns_data = parseNamespaceFile_cp(x, tmpfile1, tmpfile2)
+		}
+
+		env$ns_data_list[[pkg]] = ns_data
 	}
 
 	if(is.null(ns_data)) {
@@ -686,3 +764,76 @@ parseNamespaceFile_cp <- function(package, nsFile, descfile, mustExist = TRUE) {
          dynlibs = dynlibs, nativeRoutines = nativeRoutines,
          S3methods = unique(S3methods[seq_len(nS3), , drop = FALSE]) )
 } ## end{parseNamespaceFile}
+
+get_package_info_by_path = function(path) {
+	if(grepl("^https://github.com/", path)) {
+		dcf = tempfile()
+		path = gsub("https://github.com/", "https://raw.githubusercontent.com/", path)
+		download.file(paste0(path, "/master/DESCRIPTION"), dcf, quiet = TRUE)
+		on.exit(file.remove(dcf))
+	} else if(pkg_installed(path)) {
+		dcf = system.file("DESCRIPTION", package = path)
+	} else {
+		dcf = paste0(path, "/", "DESCRIPTION")
+	}
+	de = read.dcf(dcf)
+	if("Depends" %in% colnames(de)) {
+		depends = de[1, "Depends"]
+		depends = gsub("\\(.*?\\)", "", depends)
+		depends = gsub("\\s", "", depends)
+		depends = strsplit(depends, ",")[[1]]
+		depends = setdiff(depends, "R")
+	} else {
+		depends = character(0)
+	}
+
+	if("Imports" %in% colnames(de)) {
+		imports = de[1, "Imports"]
+		imports = gsub("\\(.*?\\)", "", imports)
+		imports = gsub("\\s", "", imports)
+		imports = strsplit(imports, ",")[[1]]
+	} else {
+		imports = character(0)
+	}
+
+	if("Suggests" %in% colnames(de)) {
+		suggests = de[1, "Suggests"]
+		suggests = gsub("\\(.*?\\)", "", suggests)
+		suggests = gsub("\\s", "", suggests)
+		suggests = strsplit(suggests, ",")[[1]]
+	} else {
+		suggests = character(0)
+	}
+
+	if("LinkingTo" %in% colnames(de)) {
+		linkingto = de[1, "LinkingTo"]
+		linkingto = gsub("\\(.*?\\)", "", linkingto)
+		linkingto = gsub("\\s", "", linkingto)
+		linkingto = strsplit(linkingto, ",")[[1]]
+	} else {
+		linkingto = character(0)
+	}
+
+	if("Enhances" %in% colnames(de)) {
+		enhances = de[1, "Enhances"]
+		enhances = gsub("\\(.*?\\)", "", enhances)
+		enhances = gsub("\\s", "", enhances)
+		enhances = strsplit(enhances, ",")[[1]]
+	} else {
+		enhances = character(0)
+	}
+
+	version = de[1, "Version"]
+	
+	if(grepl("^https://", path)) {
+		repository = "GitHub"
+	} else {
+		repository = "local"
+	}
+
+	list(depends = depends, imports = imports, linkingto = linkingto, suggests = suggests, enhances = enhances, 
+		version = version, repository = repository)
+
+}
+
+

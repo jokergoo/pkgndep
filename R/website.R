@@ -1,7 +1,11 @@
 # == title
 # Open the online website of package dependency analysis
 #
-open_website = function() {
+#
+# == details
+# The analyis is based on all CRAN/Bioconductor packages retrieved on 2021-10-28.
+#
+dependency_website = function() {
 
 	pkgs = c("knitr", "igraph", "ggrepel", "callr", "Rook")
 	for(p in pkgs) {

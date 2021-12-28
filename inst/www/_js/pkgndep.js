@@ -1,3 +1,4 @@
+
 $(function() {
 
 	var svg_width = $('svg').width();
@@ -17,7 +18,7 @@ $(function() {
 	$("#ht_container").height(svg_height);
 	$("#ht_container").css({"position":"relative"});
 
-	var gap = 6;
+	var gap = 4;
 
 	$('svg').mouseover(function(e) {
 		var parentOffset = $(this).offset();
@@ -60,13 +61,86 @@ $(function() {
 		$('#ht_top_curser').remove();
 		$('#ht_bottom_curser').remove();
 	});
+
 });
 
 
-function update_ajax_table(which_table, package, page) {
+function update_ajax_table(which_table, package, page, records_per_page = 20, other_param = "") {
+	if(typeof(other_param) === "string") {
+		if(other_param != "") {
+			other_param = other_param + "&"
+		}
+	} else {
+		keys = Object.keys(other_param);
+		values = Object.values(other_param);
+		other_param = ""
+		for(var i = 0; i < keys.length; i ++) {
+			other_param = other_param + "&" + keys[i] + "=" + values[i]
+		}
+	}
+
+	var url = which_table + "?package=" + package + "&page=" + page + "&records_per_page=" + records_per_page + other_param;
+	
 	$.ajax({
-	  url: which_table + "?package=" + package + "&page=" + page
+	  url: url
 	}).done(function(html) {
 	  $("#"+ which_table + "_content").html(html);
 	});
 }
+
+function increase_ht_size() {
+	var svg_width = $("#ht_container").width();
+	var svg_height = $("#ht_container").height();
+
+	var svg_asp = svg_width/svg_height;
+
+	svg_width = svg_width + 50;
+	svg_height = svg_width/svg_asp;
+
+	$('svg').width(svg_width);
+	$('svg').height(svg_height);
+
+	$("#ht_container").width(svg_width);
+	$("#ht_container").height(svg_height);
+
+}
+
+function decrease_ht_size() {
+	var svg_width = $("#ht_container").width();
+	var svg_height = $("#ht_container").height();
+
+	var svg_asp = svg_width/svg_height;
+
+	svg_width = svg_width - 50;
+	if(svg_width < 100) {
+		svg_width = 100;
+	}
+	svg_height = svg_width/svg_asp;
+
+	$('svg').width(svg_width);
+	$('svg').height(svg_height);
+
+	$("#ht_container").width(svg_width);
+	$("#ht_container").height(svg_height);
+}
+
+function reset_ht_size() {
+	var svg_width = $('svg').width();
+	var svg_height = $('svg').height();
+
+	var main_width = $("#main").width();
+
+	if(svg_width > main_width) {
+		svg_height = svg_height * main_width/svg_width;
+		svg_width = main_width;
+
+		$('svg').width(svg_width);
+		$('svg').height(svg_height);
+	}
+
+	$("#ht_container").width(svg_width);
+	$("#ht_container").height(svg_height);
+}
+
+
+

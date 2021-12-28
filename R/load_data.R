@@ -28,7 +28,7 @@ load_pkg_stat_snapshot = function() {
 
 
 # == title
-# Load all package dependency data
+# Load dependency data of all packages
 #
 # == details
 # It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.

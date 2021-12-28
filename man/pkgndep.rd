@@ -1,18 +1,18 @@
 \name{pkgndep}
 \alias{pkgndep}
 \title{
-Number of dependency packages
+Package dependency analysis
 }
 \description{
-Number of dependency packages
+Package dependency analysis
 }
 \usage{
 pkgndep(package, load = FALSE, verbose = TRUE)
 }
 \arguments{
 
-  \item{package}{Package name if the package is already installed or the path of the package in the file system.}
-  \item{load}{Whether also check which other packages are loaded into R session (directly or indirectly) when loading \code{pkg}. }
+  \item{package}{Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.}
+  \item{load}{Check which other packages are loaded into R session (directly or indirectly) when loading \code{pkg}. }
   \item{verbose}{Whether to show messages.}
 
 }

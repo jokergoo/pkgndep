@@ -18,7 +18,7 @@
         ggplot2::labs(x = "Number of child packages", y = "Heaviness") +
         ggplot2::ggtitle("Heaviness on child packages")
 
-      p2 = ggplot2::ggplot(rev_tb, ggplot2::aes(heaviness)) + geom_histogram() +
+      p2 = ggplot2::ggplot(mapping = ggplot2::aes(all_heaviness)) + geom_histogram() +
         ggplot2::labs(x = "Heaviness on child packages", y = "Frequency") +
         ggplot2::ggtitle(qq("Histogram of heaviness of '@{pkg$package}' on its child packages"))
 
@@ -68,7 +68,7 @@ details[open] > summary:first-of-type {
 
 <% if(n_used > 0) { %>
 <% 
-l = grepl("(bioc|books|annotation|experiment|workflow)", env$pkg_db_snapshot$meta[rev_tb[, 1], "Repository"])
+l = grepl("(bioc|books|annotation|experiment|workflow)", pkg_db_snapshot$meta[rev_tb[, 1], "Repository"])
 namespace_link = paste0("https://github.com/cran/", rev_tb[, 1], "/blob/master/NAMESPACE")
 namespace_link[l] = paste0("https://code.bioconductor.org/browse/", rev_tb[l, 1], "/blob/master/NAMESPACE")
 l = rev_tb[, 1] %in% BASE_PKGS
@@ -77,26 +77,100 @@ namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/libra
 
 <br>
 <p>In total there are <%=n_total%> child packages. Only <%=n_used%> child packages with heaviness on '<%=pkg$package%>' larger than 10 are listed in the following table.</p>
-<p><b>imports:</b> number of imported functions/variables; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
-<p><b>Heaviness of '<%=pkg$package%>' on child package:</b> number of required packages that can be reduced for each of the child packages if moving '<%=pkg$package%>'to their 'Suggests'.</p>
+<p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+<p><b>Heaviness of '<%=pkg$package%>' on child package:</b> number of required packages that can be reduced for each of the child packages if moving '<%=pkg$package%>'to their <code>Suggests</code>.</p>
 <% rev_tb$package = qq("<a href='?package=@{rev_tb$package}'>@{rev_tb$package}</a>", collapse = FALSE)
-  rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a href='@{namespace_link}' target='_blank'>link</a>", collapse = FALSE), rev_tb[, 6, drop = FALSE])
-    html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "imports", "importMethods", "importClasses", "NAMESPACE file", qq("Heaviness of '@{pkg$package}' on child package")), table.attr = "class='table table-striped'"))
-    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3>The whole namespace of '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Depends' but no object from the namespace is imported.</td>\n", html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3>The whole namespace of '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace is imported.</td>\n", html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>The whole namespace excluding \\2 objects is imported.</td>\n", html_rev_tb)
-    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", "\\1<td colspan=3>Package is listed in 'Imports' but no object from the namespace is imported.</td>\n", html_rev_tb)
+  rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a href='@{namespace_link}' target='_blank'>link</a>", collapse = FALSE), rev_tb[, 6:7, drop = FALSE])
+    html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "imports", "importMethods", "importClasses", "NAMESPACE file", qq("Heaviness of '@{pkg$package}' on child package"), "Number of parent packages"), table.attr = "class='table table-striped' id='child-dependency'", align = c("l", rep("r", ncol(rev_tb) - 1))))
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from '@{pkg$package}' is imported to the namespace of child package.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from '@{pkg$package}' excluding \\2 objects is imported to the namespace of child package.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>'@{pkg$package}' is listed in <code>Depends</code> of child package but no object from '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from '@{pkg$package}' is imported to the namespace of child package.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from '@{pkg$package}' excluding \\2 objects is imported to the namespace of child package.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse Imports </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>'@{pkg$package}' is listed in <code>Imports</code> of child package but no object from '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from '@{pkg$package}' is imported to the namespace of child package.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>he whole set of functions/methods/classes from '@{pkg$package}' excluding \\2 objects is imported to the namespace of child package.</td>\n"), html_rev_tb)
+    html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>'@{pkg$package}' is listed in <code>LinkingTo</code> of '@{pkg$package}' but no object from '@{pkg$package}' is imported.</td>\n"), html_rev_tb)
 %>
+
+<form method="get" class="form-inline">
+<div class="checkbox">
+  <label>
+      <input id="input-child-dep-prioritize-reducible" name="child_dep_prioritize_reducible" type="checkbox" <%=ifelse(child_dep_prioritize_reducible, 'checked=1', '')%>> Prioritize child packages of which '<%=pkg$package%>' can be moved to their <code>Suggests</code>. In other words, they only import a part of functions from '<%=pkg$package%>' and dependency from '<%=pkg$package%>' can be reduced.
+    </label>
+  <label>
+      <input id="input-child-dep-internal-ordering" name="child_dep_internal_ordering" type="checkbox" <%=ifelse(child_dep_internal_ordering, 'checked=1', '')%>> By default the table is ordered by <b>"the heaviness from '<%=pkg$package%>'"</b>. Normally, if a child package has fewer parent packages including '<%=pkg$package%>', it is more likely that '<%=pkg$package%>' contributes higher heaviness on it. By clicking this box, the table will be reordered by values of <b>"heaviness of '<%=pkg$package%>' * number of parent packages"</b>, which will prioritize the child packages with large numbers of parent packages and '<%=pkg$package%>' still contribute high heaviness on them.
+    </label>
+  </div>
+ </form>
+
+ <script type="text/javascript">
+
+  $(function() {
+    $('#input-child-dep-prioritize-reducible').change(function() {
+        update_ajax_table("child_dependency", "<%=pkg$package%>", 1, <%=records_per_page%>, {child_dep_prioritize_reducible:$('#input-child-dep-prioritize-reducible').prop("checked")+0,child_dep_internal_ordering:$('#input-child-dep-internal-ordering').prop("checked")+0});
+    });
+    $('#input-child-dep-internal-ordering').change(function() {
+        update_ajax_table("child_dependency", "<%=pkg$package%>", 1, <%=records_per_page%>, {child_dep_prioritize_reducible:$('#input-child-dep-prioritize-reducible').prop("checked")+0,child_dep_internal_ordering:$('#input-child-dep-internal-ordering').prop("checked")+0});
+    });
+});
+</script>
+
 <%= html_rev_tb %>
 
+
+<style>
+.row-depends {
+    border-left: 6px solid #d9534f;
+}
+.row-imports {
+    border-left: 6px solid #f0ad4e;
+}
+.row-linkingto {
+    border-left: 6px solid #337ab7;
+}
+.row-suggests {
+    border-left: 6px solid #5cb85c;
+}
+.row-enhances {
+    border-left: 6px solid #5bc0de;
+}
+</style>
+
+<script>
+$("#child-dependency tr td:nth-child(2)").each(function(index) {
+    if($(this).text() == " Reverse Depends ") {
+        $(this).parent().addClass("row-depends");
+    } else if($(this).text() == " Reverse Imports ") {
+        $(this).parent().addClass("row-imports");
+    } else if($(this).text() == " Reverse LinkingTo ") {
+        $(this).parent().addClass("row-linkingto");
+    }
+})
+</script>
+
+<div>
+<form method="get" class="form-inline">
+<select id="child_dep_records_per_page" class="form-control" aria-label="Records per page" name="records_per_page">
+  <option value="20" <%= ifelse(records_per_page == 20, 'selected', '') %>>20</option>
+  <option value="50" <%= ifelse(records_per_page == 50, 'selected', '') %>>50</option>
+  <option value="100" <%= ifelse(records_per_page == 100, 'selected', '') %>>100</option>
+</select> records per page, showing <%=(page-1)*records_per_page+1%> to <%=min(page*records_per_page, n_used)%> of <%=n_used%> child pacakges.
+</form>
+
+ <script type="text/javascript">
+
+  $(function() {
+    $('#child_dep_records_per_page').change(function() {
+        update_ajax_table("child_dependency", "<%=pkg$package%>", 1, $('#child_dep_records_per_page').val(), "&child_dep_prioritize_reducible=<%=child_dep_prioritize_reducible+0%>&child_dep_internal_ordering=<%=child_dep_internal_ordering+0%>");
+    });
+});
+</script>
+
+
   <% nr = n_used
-  if(nr > 25) { %>
-    <%= page_select2(page, ceiling(nr/25), "child_dependency", pkg$package) %>
+  if(nr > records_per_page) { %>
+    <%= page_select2(page, ceiling(nr/records_per_page), "child_dependency", pkg$package, records_per_page, qq("&child_dep_prioritize_reducible=@{child_dep_prioritize_reducible+0}&child_dep_internal_ordering=@{child_dep_internal_ordering+0}")) %>
   <% } %>
 
 <% } else { %>

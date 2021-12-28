@@ -7,20 +7,24 @@ Heaviness on all downstream packages
 Heaviness on all downstream packages
 }
 \usage{
-heaviness_on_downstream(package, move_to_suggests = TRUE, add_values_attr = FALSE)
+heaviness_on_downstream(package, add_values_attr = FALSE)
 }
 \arguments{
 
   \item{package}{A package name.}
-  \item{move_to_suggests}{Whether to move an \code{Imports} packages to \code{Suggests} or move a \code{Suggesets} package to \code{Imports}?}
   \item{add_values_attr}{Whether to include "values" attribute? Internally used.}
 
 }
 \value{
 The value is the mean heaviness of the package on all its downstream packages. Denote \code{n} as the number of all its downstream packages,
-\code{k_i} as the number of required packages for package i (i.e. total packages loaded when only loading packages in \code{Depends}, \code{Imports} and \code{LinkingTo}),
-\code{v_1} is the sum of required packages: \code{v_1 = sum_i^n{k_i}}. Denote \code{p_i} as the number of required packages if moving \code{package} to \code{Suggests}s,
-and \code{v_2} as the sum of required packages: \code{v_1 = sum_i^n{p_i}}. The final heaviniss on downstream packages is \code{(v_1 - v_2)/n}.
+\code{k_i} as the number of required packages for package i,
+\code{v_1} as the total number of required packages for all downstream packages, i.e. \code{v_1 = sum_i^n {k_i}}. Denote \code{p_i} as the number of required packages if moving \code{package} to \code{Suggests},
+and \code{v_2} as the total number of required packages, i.e. \code{v_1 = sum_i^n {p_i}}. The final heaviniss on downstream packages is \code{(v_1 - v_2)/n}.
+
+Note since the interaction from \code{package} to its downstream packages may go through several intermediate packages, which means, the reduction of required packages
+for a downstream package might be joint effects from all its upstream packages, thus, to properly calculate the heaviness of a package to its downstream packages, we first make 
+a copy of the package database and move \code{package} to \code{Suggests} for all packages which depends on \code{package}. Then for all downstream packages of \code{package}, dependency analysis
+by \code{\link{pkgndep}} is redone with the modified package database. Finally, the heaviness on downstream packages is collected and the mean heaviness is calculated.
 }
 \examples{
 \dontrun{

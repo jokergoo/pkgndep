@@ -92,6 +92,8 @@ pkg = pkgndep("path-of-the-package")  # if the package has not been installed ye
 plot(pkg)
 ```
 
+The value for `pkgndep()` should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.
+
 Executable examples:
 
 ```{r}
@@ -123,10 +125,10 @@ size is automatically calculated. Supported image formats are `png`/`jpg`/`svg`.
 plot(pkg, file = "test.png")
 ```
 
-`html_report()` function can generate a html report for the dependency analysis on the package:
+`dependency_report()` function can generate a html report for the dependency analysis on the package:
 
 ```{r, eval = FALSE}
-html_report(pkg)
+dependency_report(pkg)
 ```
 
 ## Heaviness
@@ -191,10 +193,10 @@ identical(sort(p1), sort(p2))
 ## A global dependency analysis on all packages on CRAN/Bioconductor
 
 **pkgndep** also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages
-of the analysis were retrieved on 2021-10-28. The database can be opened by the `open_website()` function.
+of the analysis were retrieved on 2021-10-28. The database can be opened by the `dependency_website()` function.
 
 ```{r, eval = FALSE}
-open_website()
+dependency_website()
 ```
 
 Following is a demonstration of the database.

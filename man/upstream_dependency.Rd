@@ -15,6 +15,8 @@ upstream_dependency(package)
 
 }
 \details{
+Upstream packages with relations of "Depends", "Imports" and "LinkingTo" are retrieved.
+
 The dependency information is based on packages retrieved from CRAN/Bioconductor on 2021-10-28.
 }
 \value{

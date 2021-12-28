@@ -11,3 +11,11 @@ body {
     text-decoration: none;
 }
 
+summary {
+    font-weight: bold;
+}
+
+
+.fake-link:hover {
+    cursor: pointer;
+}

@@ -1,4 +1,6 @@
 
+cat("- Load packages for building website.\n")
+
 suppressPackageStartupMessages(library(pkgndep))
 suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(GetoptLong))
@@ -8,8 +10,11 @@ suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggrepel))
 
 
-load_all_pkg_dep()
+cat("- Load package database.\n")
 load_pkg_db(snapshot = TRUE, verbose = FALSE)
+
+cat("- Load pre-calculated dependency results of all packages.\n")
+load_all_pkg_dep()
 
 source(system.file("website", "lib.R", package = "pkgndep"))
 # source("~/project/development/pkgndep/inst/website/lib.R")
@@ -22,7 +27,7 @@ FIELDS = pkgndep:::FIELDS
 env = new.env()
 env$figure_dir = tempdir()
 
-
+cat("- Load website components.\n")
 httpd = Rhttpd$new()
 suppressMessages(httpd$start(quiet = TRUE))
 
@@ -52,16 +57,16 @@ httpd$add(name = "main",
 	}
 	records_per_page = as.numeric(records_per_page)
 
-	only_improvable = param[["improvable"]]
-	if(is.null(only_improvable)) {
-		only_improvable = FALSE
+	only_reducible = param[["reducible"]]
+	if(is.null(only_reducible)) {
+		only_reducible = FALSE
 	} else {
-		only_improvable = TRUE
+		only_reducible = TRUE
 	}
 
 	response = Response$new()
 
-	html_main_page(response, package = package, order_by = order_by, page = page, records_per_page = records_per_page, only_improvable = only_improvable)
+	html_main_page(response, package = package, order_by = order_by, page = page, records_per_page = records_per_page, only_reducible = only_reducible)
 
 	response$finish()
 })
@@ -131,15 +136,21 @@ httpd$add(name = "downstream_dependency",
 
 	package = param[["package"]]
 	page = param[["page"]]
+	records_per_page = param[["records_per_page"]]
 	if(is.null(page)) {
 		page = 1
 	} else {
 		page = as.numeric(page)
 	}
+	if(is.null(records_per_page)) {
+		records_per_page = 20
+	} else {
+		records_per_page = as.numeric(records_per_page)
+	}
 
 	response = Response$new()
 
-	html_downstream_dependency(response, package = package, page = page)
+	html_downstream_dependency(response, package = package, page = page, records_per_page = records_per_page)
 
 	response$finish()
 })
@@ -152,15 +163,42 @@ httpd$add(name = "child_dependency",
 
 	package = param[["package"]]
 	page = param[["page"]]
+	records_per_page = param[["records_per_page"]]
 	if(is.null(page)) {
 		page = 1
 	} else {
 		page = as.numeric(page)
 	}
+	if(is.null(records_per_page)) {
+		records_per_page = 20
+	} else {
+		records_per_page = as.numeric(records_per_page)
+	}
+	child_dep_prioritize_reducible = param[["child_dep_prioritize_reducible"]]
+	if(is.null(child_dep_prioritize_reducible)) {
+		child_dep_prioritize_reducible = FALSE
+	} else {
+		if(child_dep_prioritize_reducible == "0") {
+			child_dep_prioritize_reducible = FALSE
+		} else {
+			child_dep_prioritize_reducible = TRUE
+		}
+	}
+	child_dep_internal_ordering = param[["child_dep_internal_ordering"]]
+	if(is.null(child_dep_internal_ordering)) {
+		child_dep_internal_ordering = FALSE
+	} else {
+		if(child_dep_internal_ordering == "0") {
+			child_dep_internal_ordering = FALSE
+		} else {
+			child_dep_internal_ordering = TRUE
+		}
+	}
 
 	response = Response$new()
 
-	html_child_dependency(response, package = package, page = page)
+	html_child_dependency(response, package = package, page = page, records_per_page = records_per_page,
+		child_dep_prioritize_reducible = child_dep_prioritize_reducible, child_dep_internal_ordering = child_dep_internal_ordering)
 
 	response$finish()
 })

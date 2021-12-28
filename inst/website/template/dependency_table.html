@@ -123,12 +123,13 @@ details[open] > summary:first-of-type {
       <input id="input-default-order-by" type="checkbox" name="order_by" value="adjusted_heaviness_on_children" <%=ifelse(order_by == 'adjusted_heaviness_on_children', 'checked=1', '')%>> Default ordering
     </label>
     <label>
-      <input id="input-improvable" type="checkbox" name="improvable" <%=ifelse(only_improvable, 'checked=1', '')%>> Only show packages whose parent's heaviness can be reduced
+      <input id="input-reducible" type="checkbox" name="reducible" <%=ifelse(only_reducible, 'checked=1', '')%>> Only show packages whose parent's heaviness can be reduced
     </label>
-    <span style="width:20px;background-color:#FFFF10;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Heaviness from parents
-    <span style="width:20px;background-color:#10FFFF;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Heaviness on children
+    <span style="width:20px;background-color:#FFFF10;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness from parents
+    <span style="width:20px;background-color:#10FFFF;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness on children
   </div>
  </form>
+ <p>Reorder the table by clicking on the column titles.</p>
 
 <script type="text/javascript">
 
@@ -136,25 +137,25 @@ details[open] > summary:first-of-type {
     $('#input-default-order-by').change(function() {
         this.form.submit();
     });
-    $('#input-improvable').change(function() {
+    $('#input-reducible').change(function() {
         this.form.submit();
     });
 });
 </script>
 
-<% improvable_str = ifelse(only_improvable, 'on', '') %>
+<% reducible_str = ifelse(only_reducible, 'on', '') %>
 
 <%= as.character(knitr::kable(df2, format = "html", row.names = FALSE, escape = FALSE, table.attr = "id='dependency-table' class='table table-striped'",
-			col.names = c(qq("<a href='?order_by=package&improvable=@{improvable_str}'>Package</a>"), 
+			col.names = c(qq("<a href='?order_by=package&reducible=@{reducible_str}'>Package</a>"), 
 			             "Repository",
-				          qq("<a href='?order_by=n_by_strong&improvable=@{improvable_str}'>Number of strong dependency packages</a>"), 
-				          qq("<a href='?order_by=n_by_all&improvable=@{improvable_str}'>Number of all dependency packages</a>"), 
-				          qq("<a href='?order_by=n_parents&improvable=@{improvable_str}'>Number of parent packages</a>"), 
-				          qq("<a href='?order_by=max_heaviness_from_parent&improvable=@{improvable_str}'>Max heaviness from parent packages</a>"), 
-				          qq("<a href='?order_by=heaviness_on_children&improvable=@{improvable_str}'>Heaviness on child packages</a>"), 
-				          qq("<a href='?order_by=n_children&improvable=@{improvable_str}'>Number of child packages</a>"), 
-				          qq("<a href='?order_by=heaviness_on_downstream&improvable=@{improvable_str}'>Heaviness on downstream packages</a>"), 
-				          qq("<a href='?order_by=n_downstream&improvable=@{improvable_str}'>Number of downstream packages</a>")),
+				          qq("<a href='?order_by=n_by_strong&reducible=@{reducible_str}'>Number of strong dependency packages</a>"), 
+				          qq("<a href='?order_by=n_by_all&reducible=@{reducible_str}'>Number of all dependency packages</a>"), 
+				          qq("<a href='?order_by=n_parents&reducible=@{reducible_str}'>Number of parent packages</a>"), 
+				          qq("<a href='?order_by=max_heaviness_from_parent&reducible=@{reducible_str}'>Max heaviness from parent packages</a>"), 
+				          qq("<a href='?order_by=heaviness_on_children&reducible=@{reducible_str}'>Heaviness on child packages</a>"), 
+				          qq("<a href='?order_by=n_children&reducible=@{reducible_str}'>Number of child packages</a>"), 
+				          qq("<a href='?order_by=heaviness_on_downstream&reducible=@{reducible_str}'>Heaviness on downstream packages</a>"), 
+				          qq("<a href='?order_by=n_downstream&reducible=@{reducible_str}'>Number of downstream packages</a>")),
 			align = c("l", rep("r", ncol(df2) - 1)))) %>
 <style>
 .heaviness-high {
@@ -177,7 +178,7 @@ details[open] > summary:first-of-type {
 	color: white;
 }
 
-.improvable {
+.reducible {
 	padding: 2px 4px;
 	background-color: purple;
 	border-radius:  4px;
@@ -186,7 +187,7 @@ details[open] > summary:first-of-type {
 	vertical-align: middle;
 }
 
-.improvable a {
+.reducible a {
 	color: white;
 }
 
@@ -214,9 +215,9 @@ $(function() {
 <div>
 <form method="get" class="form-inline">
 <select id="records_per_page" class="form-control" aria-label="Records per page" name="records_per_page">
-  <option value="20">20</option>
-  <option value="50">50</option>
-  <option value="100">100</option>
+  <option value="20" <%= ifelse(records_per_page == 20, 'selected', '') %>>20</option>
+  <option value="50" <%= ifelse(records_per_page == 50, 'selected', '') %>>50</option>
+  <option value="100" <%= ifelse(records_per_page == 100, 'selected', '') %>>100</option>
 </select> records per page, showing <%=ind[1]%> to <%=ind[length(ind)]%> of <%=nrow(df)%> pacakges.
 <input type="hidden" name="order_by" value="<%=order_by%>" />
 </form>
@@ -236,7 +237,7 @@ $(function() {
 
 	<% nr = nrow(df)
 	if(nr > records_per_page) { %>
-		<%= page_select(page, ceiling(nr/records_per_page), qq("order_by=@{order_by}&improvable=@{improvable_str}")) %>
+		<%= page_select(page, ceiling(nr/records_per_page), qq("order_by=@{order_by}&reducible=@{reducible_str}")) %>
 	<% } %>
 
 <% } %>

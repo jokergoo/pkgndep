@@ -16,7 +16,7 @@ loaded_packages(pkg, verbose = TRUE)
 
 }
 \details{
-It loads package \code{pkg} in a new R session and collects which other packages are loaded from \code{\link[utils]{sessionInfo}}.
+It loads \code{pkg} into a new R session and collects which other packages are loaded by parsing the output from \code{\link[utils]{sessionInfo}}.
 }
 \value{
 A data frame.

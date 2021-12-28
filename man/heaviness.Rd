@@ -17,13 +17,13 @@ heaviness(x, rel = FALSE, a = 10)
 
 }
 \details{
-The heaviness from a parent package is calculated as follows: If package B is in the "Depends"/"Imports"/"LinkingTo" fields of package A,
+The heaviness from a parent package is calculated as follows: If package B is in the \code{Depends}/\code{Imports}/\code{LinkingTo} fields of package A,
 which means, package B is necessary for package A, denote \code{v1} as the total numbers of packages required for package A,
-and \code{v2} as the total number of required packages if moving package B to "Suggests" (which means, now B is not necessary when for A).
+and \code{v2} as the total number of required packages if moving package B to \code{Suggests} (which means, now B is not necessary for A).
 The absolute measure is simply \code{v1 -  v2} and relative measure is \code{(v1 + a)/(v2 + a)}.
 
-In the second scenario, if B is in the "Suggests/Enhances" fields of package A, now \code{v2} is the total number of required packages if moving
-B to "Imports", the absolute measure is \code{v2 - v1} and relative measure is \code{(v2 + a)/(v1 + a)}.
+In the second scenario, if B is in the \code{Suggests}/\code{Enhances} fields of package A, now \code{v2} is the total number of required packages if moving
+B to \code{Imports}, the absolute measure is \code{v2 - v1} and relative measure is \code{(v2 + a)/(v1 + a)}.
 }
 \value{
 A numeric vector.
