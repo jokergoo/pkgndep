@@ -142,7 +142,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		df2$max_heaviness_from_parent = qq("<a href='package?package=@{pkgs}' title='@{df2$max_heaviness_parent_info}'>@{df2$max_heaviness_from_parent}</a>", collapse = FALSE)
 		l = grepl("functions/objects are imported", df2$max_heaviness_parent_info)
 		if(any(l)) {
-			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='reducible'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo;.'>reducible</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
+			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='reducible'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo; of @{pkgs}.'>reducible</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
 		}
 
 		df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parent", 
