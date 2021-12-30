@@ -142,7 +142,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		df2$max_heaviness_from_parent = qq("<a href='package?package=@{pkgs}' title='@{df2$max_heaviness_parent_info}'>@{df2$max_heaviness_from_parent}</a>", collapse = FALSE)
 		l = grepl("functions/objects are imported", df2$max_heaviness_parent_info)
 		if(any(l)) {
-			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='reducible'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo; of @{pkgs}.'>reducible</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
+			df2$max_heaviness_from_parent[l] = paste0(qq(" <span class='reducible'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo; of &lsquo;@{pkgs[l]}&rsquo;.'>reducible</a></span> ", collapse = FALSE), df2$max_heaviness_from_parent[l])
 		}
 
 		df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parent", 
@@ -481,62 +481,8 @@ html_global_heaviness_plot = function(response) {
 
 	df = load_pkg_stat_snapshot()
 
-	tmp_file = paste0(env$figure_dir, "/heaviness_scatterplot.png")
-
-	png(tmp_file, width = 1200*1.2, height = 600*1.2, res = 72*1.8)
-	heaviness = ifelse(df$adjusted_heaviness_on_children >= 30, "high", ifelse(df$adjusted_heaviness_on_children >= 15, "median", "low"))
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
-	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_children, heaviness_on_children, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_children >= 30, df$package, ""))) +
-			ggplot2::geom_point() + 
-			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
-			ggplot2::scale_x_continuous(trans='log10') +
-			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
-			ggplot2::labs(x = "Number of child packages", y = "Heaviness") +
-			ggplot2::ggtitle("Heaviness on child packages") +
-			ggplot2::facet_wrap(ggplot2::vars(repo))
-		ggplot2:::print.ggplot(p)
-	})
-	dev.off() 
-
-	html = img(tmp_file, style="width:1200px")
-
-	html = paste0("
-<p>The heaviness categories are based on the following criterions:</p>
-<ul>
-<li>Red: adjusted heaviness on child packages larger than 20.</li>
-<li>Orange: adjusted heaviness on child packages between 10 and 20.</li>
-<li>grey: adjusted heaviness on child packages less than 10.</li>
-</ul>
-", html)
-
-	tmp_file = paste0(env$figure_dir, "/heaviness_deepness.png")
-
-	png(tmp_file, width = 1200*1.2, height = 600*1.2, res = 72*1.8)
-	heaviness = ifelse(df$adjusted_heaviness_on_downstream >= 30, "high", ifelse(df$adjusted_heaviness_on_downstream >= 15, "median", "low"))
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
-	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_downstream, heaviness_on_downstream, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_downstream >= 30, df$package, ""))) +
-			ggplot2::geom_point() + 
-			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
-			ggplot2::scale_x_continuous(trans='log10') +
-			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
-			ggplot2::labs(x = "Number of downstream packages", y = "Heaviness") +
-			ggplot2::ggtitle("Heaviness on downstream packages") +
-			ggplot2::facet_wrap(ggplot2::vars(repo))
-		ggplot2:::print.ggplot(p)
-	})
-	dev.off() 
-
-	html = paste0(html, "
-<p>In the following plot, if a package has higher heaviness on downstream than on the child packages, it means it also affects more indirect downstream packages.</p>
-\n", img(tmp_file, style="width:1200px"))
-
-	response$write(html)
+	response$write(html_template("global_heaviness_plot",
+		vars = list(df = df)))
 }
 
 

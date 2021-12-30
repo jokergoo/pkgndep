@@ -34,7 +34,7 @@ file.copy("pkg_db_snapshot.rds", "../pkgndep/docs/files/pkg_db_snapshot.rds", ov
 
 ## a data frame that contains various statistics
 df = data.frame(
-	package = names(lt),
+	package = sapply(lt, function(x) x$package),
 	repository = sapply(lt, function(x) x$repository),
 	n_by_strong = sapply(lt, function(x) x$n_by_strong),
 	n_by_all = sapply(lt, function(x) x$n_by_all),
@@ -69,7 +69,6 @@ df$max_heaviness_parent_info = sapply(lt, function(x) {
 	} else {
 		info = qq("&lsquo;@{x$package}&rsquo has no parent package.")
 	}
-	browser()
 	info
 })
 
@@ -88,7 +87,9 @@ df$n_children = sapply(lt, function(x) {
 
 score = lapply(lt, function(x) {
 	qqcat("========= @{x$package} ===========\n")
-	heaviness_on_downstream(x, add_values_attr = TRUE)
+	v = heaviness_on_downstream(x, add_values_attr = TRUE)
+	attr(v, "package") = x
+	v
 })
 
 df$heaviness_on_downstream = sapply(score, function(x) {
@@ -110,6 +111,48 @@ df$adjusted_heaviness_on_children = sapply(lt, function(x) {
 
 df$adjusted_heaviness_on_downstream = sapply(score, function(x) {
 	sum(attr(x, "values"))/(attr(x, "all_downstream_pkgs") + 15)
+})
+
+
+### downstream without direct child packages
+df$heaviness_on_downstream2 = sapply(score, function(x) {
+	v = attr(x, "values")
+	children = child_dependency(attr(x, "package"), fields = c("Depends", "Imports", "LinkingTo"))[, 2]
+
+	p = setdiff(names(v), children)
+	if(length(p)) {
+		mean(v[p])
+	} else {
+		0
+	}
+})
+
+df$n_downstream2 = sapply(score, function(x) {
+	v = attr(x, "values")
+	children = child_dependency(attr(x, "package"), fields = c("Depends", "Imports", "LinkingTo"))[, 2]
+
+	p = setdiff(names(v), children)
+	length(p)
+})
+
+df$hv_downstream2_values = I(lapply(score, function(x) {
+	v = attr(x, "values")
+	children = child_dependency(attr(x, "package"), fields = c("Depends", "Imports", "LinkingTo"))[, 2]
+
+	p = setdiff(names(v), children)
+	v[p]
+}))
+
+df$adjusted_heaviness_on_downstream2 = sapply(score, function(x) {
+	v = attr(x, "values")
+	children = child_dependency(attr(x, "package"), fields = c("Depends", "Imports", "LinkingTo"))[, 2]
+
+	p = setdiff(names(v), children)
+	if(length(p)) {
+		sum(v[p])/(length(p) + 15)
+	} else {
+		0
+	}
 })
 
 
@@ -257,6 +300,7 @@ for(package in names(lt)) {
 }
 
 saveRDS(downstream_path_list, file = "pkg_downstream_dependency_path_snapshot.rds", compress = "xz")
+file.copy("pkg_downstream_dependency_path_snapshot.rds", "../pkgndep/docs/files/pkg_downstream_dependency_path_snapshot.rds", overwrite = TRUE)
 
 
 path_list_to_igraph = function(pl) {

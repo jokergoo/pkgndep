@@ -39,7 +39,7 @@ upstream_tb$package = qq("<a href='?package=@{upstream_tb$package}'>@{upstream_t
 }
 </style>
 
-<p>Dependency paths in the table are represented as the following graph. <span><a class='fake-link' onclick="load_upstream_dep_nt();" style="font-size: 0.8em;">Reset graph</a></span></p>
+<p>Dependency paths in the table are represented as the following graph. <span><a class='fake-link' onclick="load_upstream_dep_nt();" style="font-size: 0.8em;">Reset graph</a></span> | <span><a class='fake-link' onclick="load_upstream_dep_nt('LR');" style="font-size: 0.8em;">Horizontal layout</a></span></p>
 <div id='cy-upstream-dep'></div>
 
 
@@ -48,7 +48,7 @@ upstream_tb$package = qq("<a href='?package=@{upstream_tb$package}'>@{upstream_t
 <script src='js/cytoscape-dagre.js'></script>
 <script type='text/javascript'>
 
-load_upstream_dep_nt = function() {
+load_upstream_dep_nt = function(rankDir = "TB") {
 
 <%=network_in_json(nt)%>
 
@@ -60,7 +60,7 @@ load_upstream_dep_nt = function() {
     layout: {
       name: 'dagre',
       nodeSep: 5,
-      rankDir: 'TB'
+      rankDir: rankDir
     },
     style: [
       {
