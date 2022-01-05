@@ -121,7 +121,7 @@ dependency_website()
 
 Following is a demonstration of the database.
 
-![pkgndep_db](https://user-images.githubusercontent.com/449218/143590960-68efee7e-3d99-439c-aaec-573e6ef15ea4.gif)
+![pkgndep_db](https://user-images.githubusercontent.com/449218/148210483-78c3a07c-114b-4216-bcd3-fca45d707de7.gif)
 
 
 ## License
