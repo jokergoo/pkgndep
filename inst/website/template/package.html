@@ -1,6 +1,6 @@
 
 
-<h2>Dependency analysis for package '<%=pkg$package%>'</h2>
+<h2>Dependency analysis for package <span class="package"><%=pkg$package%></span></h2>
 
 <h3>General information</h3>
 
@@ -18,11 +18,25 @@
 <tr><th>Number of parent packages (including <code>Suggests</code> and <code>Enhances</code>)</th><td><%= length(pkg$heaviness) %></td></tr>
 <tr><th>Heaviness on child packages</th><td><%= round(df[pkg$package, "heaviness_on_children"], 1)%></td></tr>
 <tr><th>Number of child packages</th><td><%= df[pkg$package, "n_children"]%></td></tr>
-<tr><th>Heaviness on downstream packages</th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
+<tr><th>Heaviness on downstream packages <a id="downstream-package-note" class="fake-link" title="Note: downstream packages include child packages.">?</a></th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
 <tr><th>Number of downstream packages</th><td><%= df[pkg$package, "n_downstream"]%></td></tr>
+<tr><th>Heaviness on downstream packages (excluding child packages)</th><td><%= round(df[pkg$package, "heaviness_on_downstream_no_children"], 1)%></td></tr>
+<tr><th>Number of downstream packages (excluding child packages)</th><td><%= df[pkg$package, "n_downstream_no_children"]%></td></tr>
+
 </table>
 
+<script>
+$(function() {
+  $("#downstream-package-note").tooltip();
+});
+</script>
+
 <h3>Dependency heatmap</h3>
+
+<p>In the following dependency heatmap, rows are the parent packages of <span class="package"><%=pkg$package%></span> and columns are the dependency packages each parent package brings in.
+On the right side of the heatmap, there are three barplot annotations: 1. number of imported functions/S4 methods/S4 classes from parent packages; 2. number of
+dependency packages from each parent package; 3. heaviness of each parent package.</p>
+
 <div style="padding-bottom: 0.5em;">Adjust heatmap size:   
                     <button type="button" class="btn btn-default btn-xs" onclick="increase_ht_size()">increase</button>
                     <button type="button" class="btn btn-default btn-xs" onclick="decrease_ht_size()">decrease</button>
@@ -52,7 +66,7 @@ if(!file.exists(tmp_file)) {
   </ul>
 
 <div id="parent_dependency">
-<div id="parent_dependency_content"><p>Loading table...</p></div>
+<div id="parent_dependency_content"><p>Loading content...</p></div>
 
 <script>
 $.ajax({
@@ -64,7 +78,7 @@ $.ajax({
 </div>
 
 <div id="upstream_dependency">
-  <div id="upstream_dependency_content"><p>Loading table...</p></div>
+  <div id="upstream_dependency_content"><p>Loading content...</p></div>
 <script>
 $.ajax({
   url: "upstream_dependency?package=<%=pkg$package%>"
@@ -75,7 +89,7 @@ $.ajax({
 </div>
 
 <div id="child_dependency">
-  <div id="child_dependency_content"><p>Loading table...</p></div>
+  <div id="child_dependency_content"><p>Loading content...</p></div>
 <script>
 $.ajax({
   url: "child_dependency?package=<%=pkg$package%>"
@@ -86,7 +100,7 @@ $.ajax({
 </div>
 
 <div id="downstream_dependency">
-  <div id="downstream_dependency_content"><p>Loading table...</p></div>
+  <div id="downstream_dependency_content"><p>Loading content...</p></div>
 <script>
 $.ajax({
   url: "downstream_dependency?package=<%=pkg$package%>"
@@ -101,11 +115,13 @@ $.ajax({
   <script>
   $( function() {
     $( "#tabs" ).tabs({
-      activate: function(event, ui) {
-        if(ui.newTab.text() === "Upstream dependency") {
-          load_upstream_dep_nt();
-        }
-      }
+      // activate: function(event, ui) {
+      //   if(ui.newTab.text() === "Upstream dependency") {
+      //     load_upstream_dep_nt();
+      //   } else if(ui.newTab.text() === "Downstream dependency") {
+      //     load_downstream_dep_nt();
+      //   }
+      // }
     });
   } );
   </script>

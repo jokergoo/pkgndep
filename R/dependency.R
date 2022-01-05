@@ -92,6 +92,10 @@ child_dependency = function(package, fields = NULL) {
 	}
 
 	tb = as.data.frame(tb)
+	tb$dep_fields = factor(tb$dep_fields, levels = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances"))
+	tb = tb[order(tb$dep_fields, tb$children), , drop = FALSE]
+	tb = tb[!duplicated(tb$children), , drop = FALSE]
+
 	heaviness = numeric(nrow(tb))
 	for(i in seq_len(nrow(tb))) {
 		x = lt[[ tb[i, "children"] ]]

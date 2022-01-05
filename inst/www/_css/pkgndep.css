@@ -19,3 +19,46 @@ summary {
 .fake-link:hover {
     cursor: pointer;
 }
+
+
+h3 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+
+.form-box {
+    padding: 10px 10px;
+    border: 1px solid #c5c5c5;
+    border-radius: 4px;
+    background-color: #F9F9F9;
+    margin: 8px 0px;
+    font-weight: normal;
+}
+
+.package {
+    font-weight: bold;
+}
+
+.form-box label {
+    font-weight: normal
+    padding-right: 10px;
+}
+
+label {
+    font-weight: normal;
+    margin-right: 10px;
+}
+
+
+.method {
+    padding:20px;
+    border:1px solid #c5c5c5;
+    border-radius: 3px;
+    background-color: #f9f9f9;
+    margin: 10px 0px;
+}
+
+.method p {
+    margin: 0px;
+}

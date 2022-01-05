@@ -7,13 +7,14 @@ Load package database
 Load package database
 }
 \usage{
-load_pkg_db(lib = NULL, snapshot = FALSE, verbose = TRUE)
+load_pkg_db(lib = NULL, snapshot = FALSE, verbose = TRUE, online = TRUE)
 }
 \arguments{
 
   \item{lib}{Local library path. If the value is \code{NA}, only remote package database is used.}
   \item{snapshot}{Internally used. If it is \code{TRUE}, the package database generated on 2021-10-28 is used.}
   \item{verbose}{Whetehr to print messages.}
+  \item{online}{If the value is \code{TRUE}, it will directly use the package database file from CRAN/Bioconductor. If the  value is \code{FALSE}, it uses the cached package database retrieved on 2021-10-28.}
 
 }
 \details{

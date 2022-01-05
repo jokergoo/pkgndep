@@ -14,9 +14,9 @@ Make the dependency heatmap
 \arguments{
 
   \item{x}{An object from \code{\link{pkgndep}}.}
-  \item{pkg_fontsize}{Fontsize for the package names.}
-  \item{title_fontsize}{Fontsize for the title.}
-  \item{legend_fontsize}{Fontsize for the legends.}
+  \item{pkg_fontsize}{Font size for the package names.}
+  \item{title_fontsize}{Font size for the title.}
+  \item{legend_fontsize}{Font size for the legends.}
   \item{fix_size}{Should the rows and columns in the heatmap have fixed size?}
   \item{cex}{A factor multiplicated to all font sizes.}
   \item{help}{Whether to print help message?}

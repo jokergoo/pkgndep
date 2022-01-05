@@ -1,7 +1,12 @@
 
 prepare_db = function(lib = NULL, verbose = TRUE) {
 	if(verbose) cat("retrieve package database from CRAN/Bioconductor...\n")
-	suppressMessages(db_remote <- available.packages(repos = BiocManager::repositories(version = getFromNamespace(".version_choose_best", ns = "BiocManager")())))
+	oe = try(suppressMessages(db_remote <- available.packages(repos = BiocManager::repositories(version = getFromNamespace(".version_choose_best", ns = "BiocManager")()))))
+
+	if(inherits(oe, "try-error")) {
+		warning("Can not load package database from remote repositories, use the snapshot database from 'pkgndep.db' package.")
+		return(load_from_pkgndep_db("pkg_db_snapshot.rds"))
+	}
 
 	db_fields = c("Package", "Version", "Depends", "Imports", "LinkingTo", "Suggests", "Enhances", "Repository")
 		

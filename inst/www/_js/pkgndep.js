@@ -1,4 +1,7 @@
 
+var original_svg_width;
+var original_svg_height;
+
 $(function() {
 
 	var svg_width = $('svg').width();
@@ -17,6 +20,9 @@ $(function() {
 	$("#ht_container").width(svg_width);
 	$("#ht_container").height(svg_height);
 	$("#ht_container").css({"position":"relative"});
+
+	original_svg_width = svg_width;
+	original_svg_height = svg_height;
 
 	var gap = 4;
 
@@ -66,6 +72,9 @@ $(function() {
 
 
 function update_ajax_table(which_table, package, page, records_per_page = 20, other_param = "") {
+
+	$("#"+ which_table + "_content").html("<p>Loading content...</p>");
+
 	if(typeof(other_param) === "string") {
 		if(other_param != "") {
 			other_param = other_param + "&"
@@ -80,7 +89,7 @@ function update_ajax_table(which_table, package, page, records_per_page = 20, ot
 	}
 
 	var url = which_table + "?package=" + package + "&page=" + page + "&records_per_page=" + records_per_page + other_param;
-	
+
 	$.ajax({
 	  url: url
 	}).done(function(html) {
@@ -125,21 +134,12 @@ function decrease_ht_size() {
 }
 
 function reset_ht_size() {
-	var svg_width = $('svg').width();
-	var svg_height = $('svg').height();
-
-	var main_width = $("#main").width();
-
-	if(svg_width > main_width) {
-		svg_height = svg_height * main_width/svg_width;
-		svg_width = main_width;
-
-		$('svg').width(svg_width);
-		$('svg').height(svg_height);
-	}
-
-	$("#ht_container").width(svg_width);
-	$("#ht_container").height(svg_height);
+	
+	$('svg').width(original_svg_width);
+	$('svg').height(original_svg_height);
+	
+	$("#ht_container").width(original_svg_width);
+	$("#ht_container").height(original_svg_height);
 }
 
 

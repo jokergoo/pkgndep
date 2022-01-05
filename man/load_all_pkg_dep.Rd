@@ -7,13 +7,18 @@ Load dependency data of all packages
 Load dependency data of all packages
 }
 \usage{
-load_all_pkg_dep()
+load_all_pkg_dep(hash = TRUE)
+}
+\arguments{
+
+  \item{hash}{Whether to convert the named list to a hash table by \code{\link[hash]{hash}}.}
+
 }
 \details{
 It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
 }
 \value{
-A list of \code{pkgndep} objects where each element corresponds to the analysis on one package.
+A list (as a hash table) of \code{pkgndep} objects where each element corresponds to the analysis on one package.
 }
 \examples{
 \dontrun{

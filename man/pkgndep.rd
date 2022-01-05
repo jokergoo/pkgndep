@@ -7,13 +7,14 @@ Package dependency analysis
 Package dependency analysis
 }
 \usage{
-pkgndep(package, load = FALSE, verbose = TRUE)
+pkgndep(package, load = FALSE, verbose = TRUE, online = TRUE)
 }
 \arguments{
 
   \item{package}{Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.}
   \item{load}{Check which other packages are loaded into R session (directly or indirectly) when loading \code{pkg}. }
   \item{verbose}{Whether to show messages.}
+  \item{online}{If the value is \code{TRUE}, it will directly use the package database file from CRAN/Bioconductor. If the  value is \code{FALSE}, it uses the cached package database retrieved on 2021-10-28.}
 
 }
 \details{

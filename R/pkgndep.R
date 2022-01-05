@@ -6,6 +6,8 @@
 # -package Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.
 # -load Check which other packages are loaded into R session (directly or indirectly) when loading ``pkg``. 
 # -verbose Whether to show messages.
+# -online If the value is ``TRUE``, it will directly use the package database file from CRAN/Bioconductor. If the 
+#        value is ``FALSE``, it uses the cached package database retrieved on 2021-10-28.
 #
 # == details
 # The package database for dependency analysis is always directly retrieved from CRAN/Bioconductor.
@@ -22,10 +24,10 @@
 # x
 # plot(x)
 # 
-pkgndep = function(package, load = FALSE, verbose = TRUE) {
+pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 
 	## check whether package is an CRAN/Bioc package, a installed package, a path or a github link
-	load_pkg_db(verbose = verbose)
+	load_pkg_db(verbose = verbose, online = online)
 	pkg_db = env$pkg_db
 
 	if(is.null(pkg_db$dep_ind_hash[[package]])) { 
@@ -136,7 +138,7 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 	colnames(df_imports) = c("imports", "importMethods", "importClasses")
 	rownames(df_imports) = rn
 
-	lt_imports = parse_imports_from_namespace(package, package_name)
+	lt_imports2 = lt_imports = parse_imports_from_namespace(package, package_name)
 	if(!is.null(lt_imports)) {
 		if(length(lt_imports$n_imports)) {
 			lt_imports$n_imports = lt_imports$n_imports[intersect(names(lt_imports$n_imports), rn)]
@@ -171,6 +173,7 @@ pkgndep = function(package, load = FALSE, verbose = TRUE) {
 		n_by_all = 0,
 		heaviness = 0,
 		df_imports = df_imports,
+		lt_imports = lt_imports2,
 		pkg_from_session_info = tb$pkg
 	)
 
@@ -434,6 +437,7 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 		lt2 = lt[sapply(lt, is.list)]
 		n_imports = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
 			function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
+		import_fun_list = n_imports
 		n_imports = sapply(n_imports, length)
 		if(length(n_imports)) {
 			sign = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
@@ -444,6 +448,8 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 		  n_imports = NULL
 		}
 		n_imports = c(n_imports, structure(rep(0, length(lt1)), names = unlist(lt1)))
+
+		attr(n_imports, "fun_list") = import_fun_list
 	} else {
 		n_imports = NULL                
 	}
@@ -454,13 +460,14 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 		lt2 = lt[sapply(lt, is.list)]
 		n_import_methods = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
 			function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
+		import_method_list = n_import_methods
 		n_import_methods = sapply(n_import_methods, length)
 		if(length(n_import_methods) == 0) n_import_methods = NULL
 		n_import_methods = c(n_import_methods, structure(rep(0, length(lt1)), names = unlist(lt1)))
+		attr(n_import_methods, "method_list") = import_method_list
 	} else {
 		n_import_methods = NULL
 	}
-
 
 	lt = ns_data$importClasses
 	if(length(lt)) {
@@ -468,9 +475,11 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 		lt2 = lt[sapply(lt, is.list)]
 		n_import_classes = tapply(seq_along(lt2), unlist(sapply(lt2, function(x) x[1])), 
 			function(x) unique(unlist(lapply(lt2[x], function(y) y[2]))))
+		import_class_list = n_import_classes
 		n_import_classes = sapply(n_import_classes, length)
 		if(length(n_import_classes) == 0) n_import_classes = NULL
 		n_import_classes = c(n_import_classes, structure(rep(0, length(lt1)), names = unlist(lt1)))
+		attr(n_import_classes, "class_list") = import_class_list
 	} else {
 		n_import_classes = NULL
 	}

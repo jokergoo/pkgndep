@@ -1,4 +1,21 @@
 
+
+load_from_pkgndep_db = function(file) {
+	if(!requireNamespace("pkgndep.db", quietly = TRUE)) {
+		## to install pkgndep.db
+		link = "https://github.com/jokergoo/pkgndep.db/archive/refs/tags/0.0.1.tar.gz"
+		answer = readline("You will install package 'pkgndep.db' from GitHub? [y|n] ")
+		if(tolower(answer) %in% c("y", "yes")) {
+            install.packages(link, repos = NULL, type = "source")
+        } else {
+            stop("You need to install package 'pkgndep.db' to perform the analysis.")
+        }
+	}
+	if(!missing(file)) {
+		readRDS(system.file("extdata", file, package = "pkgndep.db"))
+	}
+}
+
 # == title
 # Load all package dependency statistics
 #
@@ -13,28 +30,45 @@
 # head(df)
 load_pkg_stat_snapshot = function() {
 	if(is.null(env$pkg_stat_snapshot)) {
-		if(identical(topenv(), .GlobalEnv)) {
-			df = readRDS("~/project/development/pkgndep/docs/files/pkg_stat_snapshot.rds")
-		} else {
-			tmpfile = tempfile()
-			on.exit(file.remove(tmpfile))
-			download.file("https://jokergoo.github.io/pkgndep/files/pkg_stat_snapshot.rds", tmpfile, quiet = TRUE)
-			df = readRDS(tmpfile)
-		}
+		df = load_from_pkgndep_db("pkg_stat_snapshot.rds")
 		env$pkg_stat_snapshot = df
 	}
 	invisible(env$pkg_stat_snapshot)
 }
 
-
 # == title
-# Load dependency data of all packages
+# Load downstream dependency paths for all packages
 #
 # == details
 # It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
 #
 # == value
-# A list of ``pkgndep`` objects where each element corresponds to the analysis on one package.
+# A list.
+#
+# == example
+# downstream_path_list = load_pkg_downstream_dependency_path_snapshot()
+# downstream_path_list[["ComplexHeatmap"]]
+load_pkg_downstream_dependency_path_snapshot = function() {
+	if(is.null(env$pkg_downstream_dependency_path_snapshot)) {
+		lt = load_from_pkgndep_db("pkg_downstream_dependency_path_snapshot.rds")
+		env$pkg_downstream_dependency_path_snapshot = lt
+	}
+	invisible(env$pkg_downstream_dependency_path_snapshot)
+}
+
+
+
+# == title
+# Load dependency data of all packages
+#
+# == param
+# -hash Whether to convert the named list to a hash table by `hash::hash`.
+#
+# == details
+# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
+#
+# == value
+# A list (as a hash table) of ``pkgndep`` objects where each element corresponds to the analysis on one package.
 #
 # == example
 # \dontrun{
@@ -43,17 +77,10 @@ load_pkg_stat_snapshot = function() {
 # head(names(lt))
 # lt[["ggplot2"]]
 # }
-load_all_pkg_dep = function() {
+load_all_pkg_dep = function(hash = TRUE) {
 	if(is.null(env$all_pkg_dep)) {
-		if(identical(topenv(), .GlobalEnv)) {
-			env$all_pkg_dep = readRDS("~/project/development/pkgndep/docs/files/all_pkgs.rds")
-		} else {
-			tmpfile = tempfile()
-			on.exit(file.remove(tmpfile))
-			download.file("https://jokergoo.github.io/pkgndep/files/all_pkgs.rds", tmpfile, quiet = TRUE)
-			env$all_pkg_dep = readRDS(tmpfile)
-		}
-		env$all_pkg_dep = hash::hash(names(env$all_pkg_dep), env$all_pkg_dep)
+		lt = load_from_pkgndep_db("all_pkgs.rds")
+		if(hash) env$all_pkg_dep = hash::hash(names(lt), lt)
 	}
 	invisible(invisible(env$all_pkg_dep))
 }
@@ -67,6 +94,8 @@ load_all_pkg_dep = function() {
 # -lib Local library path. If the value is ``NA``, only remote package database is used.
 # -snapshot Internally used. If it is ``TRUE``, the package database generated on 2021-10-28 is used.
 # -verbose Whetehr to print messages.
+# -online If the value is ``TRUE``, it will directly use the package database file from CRAN/Bioconductor. If the 
+#        value is ``FALSE``, it uses the cached package database retrieved on 2021-10-28.
 #
 # == details
 # It loads the package database from CRAN/Bioconductor and locally installed packages.
@@ -81,22 +110,19 @@ load_all_pkg_dep = function() {
 # pkg_db = load_pkg_db(lib = NA)
 # pkg_db
 # }
-load_pkg_db = function(lib = NULL, snapshot = FALSE, verbose = TRUE) {
+load_pkg_db = function(lib = NULL, snapshot = FALSE, verbose = TRUE, online = TRUE) {
 	if(snapshot) {
 		if(is.null(env$pkg_db_snapshot)) {
-			if(identical(topenv(), .GlobalEnv)) {
-				env$pkg_db_snapshot = readRDS("~/project/development/pkgndep/docs/files/pkg_db_snapshot.rds")
-			} else {
-				tmpfile = tempfile()
-				on.exit(file.remove(tmpfile))
-				download.file("https://jokergoo.github.io/pkgndep/files/pkg_db_snapshot.rds", tmpfile, quiet = TRUE)
-				env$pkg_db_snapshot = readRDS(tmpfile)
-			}
+			env$pkg_db_snapshot = load_from_pkgndep_db("pkg_db_snapshot.rds")
 		}
 		invisible(env$pkg_db_snapshot)
 	} else {
-		if(is.null(env$pkg_db)) {
-			env$pkg_db = prepare_db(lib = lib, verbose = verbose)
+		if(!online) {
+			env$pkg_db = load_from_pkgndep_db("pkg_db_snapshot.rds")
+		} else {
+			if(is.null(env$pkg_db)) {
+				env$pkg_db = prepare_db(lib = lib, verbose = verbose)
+			}
 		}
 		invisible(env$pkg_db)
 	}
