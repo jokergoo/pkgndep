@@ -72,6 +72,7 @@ jobs:
           setRepositories(ind = 1:5)
           install.packages('rcmdcheck')
           remotes::install_deps(dependencies = TRUE)
+          install.packages("https://github.com/jokergoo/pkgndep.db/archive/refs/tags/0.0.1.tar.gz", repos = NULL, type = "source")
         shell: Rscript {0}
 
       - name: Check
