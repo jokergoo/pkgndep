@@ -35,4 +35,4 @@ importFrom("utils", "getFromNamespace")
 importFrom("utils", "install.packages")
 importFrom("utils", "packageDescription", "read.table")
 importFrom("utils", "sessionInfo")
-
+importFrom("methods", "slotNames")

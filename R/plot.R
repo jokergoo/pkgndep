@@ -392,8 +392,13 @@ anno_nimports_barplot = function(x, category,
 		height = anno_size$height,
 		var_import = list(x, category, border, bar_width, axis, axis_param, anno_size, ylim, gp, is_field_required)
 	)
-		
-	anno@subsettable = TRUE
+	
+	cl = new("AnnotationFunction")
+	if("subsettable" %in% slotNames(cl)) {
+		anno@subsettable = TRUE
+	} else {
+		anno@subsetable = FALSE
+	}
 
 	axis_param = ComplexHeatmap:::validate_axis_param(axis_param, which)
 	axis_grob = if(axis) ComplexHeatmap:::construct_axis_grob(axis_param, which, data_scale) else NULL
