@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Number of dependency packages — pkgndep • pkgndep</title>
+<title>Package dependency analysis — pkgndep • pkgndep</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Number of dependency packages — pkgndep" />
-<meta property="og:description" content="Number of dependency packages" />
+<meta property="og:title" content="Package dependency analysis — pkgndep" />
+<meta property="og:description" content="Package dependency analysis" />
 
 
 
@@ -111,31 +111,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Number of dependency packages</h1>
+    <h1>Package dependency analysis</h1>
     
     <div class="hidden name"><code>pkgndep.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Number of dependency packages</p>
+    <p>Package dependency analysis</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pkgndep</span><span class='op'>(</span><span class='va'>package</span>, load <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>pkgndep</span><span class='op'>(</span><span class='va'>package</span>, load <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, online <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>package</th>
-      <td><p>Package name if the package is already installed or the path of the package in the file system.</p></td>
+      <td><p>Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.</p></td>
     </tr>
     <tr>
       <th>load</th>
-      <td><p>Whether also check which other packages are loaded into R session (directly or indirectly) when loading <code>pkg</code>.</p></td>
+      <td><p>Check which other packages are loaded into R session (directly or indirectly) when loading <code>pkg</code>.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
       <td><p>Whether to show messages.</p></td>
+    </tr>
+    <tr>
+      <th>online</th>
+      <td><p>If the value is <code>TRUE</code>, it will directly use the package database file from CRAN/Bioconductor. If the  value is <code>FALSE</code>, it uses the cached package database retrieved on 2021-10-28.</p></td>
     </tr>
     </table>
 

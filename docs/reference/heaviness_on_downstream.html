@@ -120,7 +120,7 @@
     <p>Heaviness on all downstream packages</p>
     </div>
 
-    <pre class="usage"><span class='fu'>heaviness_on_downstream</span><span class='op'>(</span><span class='va'>package</span>, move_to_suggests <span class='op'>=</span> <span class='cn'>TRUE</span>, add_values_attr <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>heaviness_on_downstream</span><span class='op'>(</span><span class='va'>package</span>, add_values_attr <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,10 +128,6 @@
     <tr>
       <th>package</th>
       <td><p>A package name.</p></td>
-    </tr>
-    <tr>
-      <th>move_to_suggests</th>
-      <td><p>Whether to move an <code>Imports</code> packages to <code>Suggests</code> or move a <code>Suggesets</code> package to <code>Imports</code>?</p></td>
     </tr>
     <tr>
       <th>add_values_attr</th>
@@ -142,9 +138,13 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The value is the mean heaviness of the package on all its downstream packages. Denote <code>n</code> as the number of all its downstream packages,
-<code>k_i</code> as the number of required packages for package i (i.e. total packages loaded when only loading packages in <code>Depends</code>, <code>Imports</code> and <code>LinkingTo</code>),
-<code>v_1</code> is the sum of required packages: <code>v_1 = sum_i^n{k_i}</code>. Denote <code>p_i</code> as the number of required packages if moving <code>package</code> to <code>Suggests</code>s,
-and <code>v_2</code> as the sum of required packages: <code>v_1 = sum_i^n{p_i}</code>. The final heaviniss on downstream packages is <code>(v_1 - v_2)/n</code>.</p>
+<code>k_i</code> as the number of required packages for package i,
+<code>v_1</code> as the total number of required packages for all downstream packages, i.e. <code>v_1 = sum_i^n {k_i}</code>. Denote <code>p_i</code> as the number of required packages if moving <code>package</code> to <code>Suggests</code>,
+and <code>v_2</code> as the total number of required packages, i.e. <code>v_1 = sum_i^n {p_i}</code>. The final heaviniss on downstream packages is <code>(v_1 - v_2)/n</code>.</p>
+<p>Note since the interaction from <code>package</code> to its downstream packages may go through several intermediate packages, which means, the reduction of required packages
+for a downstream package might be joint effects from all its upstream packages, thus, to properly calculate the heaviness of a package to its downstream packages, we first make 
+a copy of the package database and move <code>package</code> to <code>Suggests</code> for all packages which depends on <code>package</code>. Then for all downstream packages of <code>package</code>, dependency analysis
+by <code><a href='pkgndep.html'>pkgndep</a></code> is redone with the modified package database. Finally, the heaviness on downstream packages is collected and the mean heaviness is calculated.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>

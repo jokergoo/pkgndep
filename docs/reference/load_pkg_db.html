@@ -120,7 +120,7 @@
     <p>Load package database</p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_pkg_db</span><span class='op'>(</span>lib <span class='op'>=</span> <span class='cn'>NULL</span>, snapshot <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>load_pkg_db</span><span class='op'>(</span>lib <span class='op'>=</span> <span class='cn'>NULL</span>, snapshot <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, online <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,6 +137,10 @@
       <th>verbose</th>
       <td><p>Whetehr to print messages.</p></td>
     </tr>
+    <tr>
+      <th>online</th>
+      <td><p>If the value is <code>TRUE</code>, it will directly use the package database file from CRAN/Bioconductor. If the  value is <code>FALSE</code>, it uses the cached package database retrieved on 2021-10-28.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -151,12 +155,12 @@
     <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>
 <span class='va'>pkg_db</span> <span class='op'>=</span> <span class='fu'>load_pkg_db</span><span class='op'>(</span>lib <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; retrieve package database from CRAN/Bioconductor...
-#&gt;   - 21899 remote packages on CRAN/Bioconductor.
+#&gt;   - 22074 remote packages on CRAN/Bioconductor.
 #&gt; prepare dependency table...
 #&gt; prepare reverse dependency table...</div><div class='input'><span class='va'>pkg_db</span>
-</div><div class='output co'>#&gt; A package database of 21899 packages.
-#&gt;   - 0 local / 21899 remote packages.
-#&gt;   - 3416 Bioconductor / 18483 CRAN / 0 other packages.</div><div class='input'><span class='co'># }</span>
+</div><div class='output co'>#&gt; A package database of 22074 packages.
+#&gt;   - 0 local / 22074 remote packages.
+#&gt;   - 3417 Bioconductor / 18657 CRAN / 0 other packages.</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

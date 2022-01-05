@@ -135,14 +135,26 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The function returns all upstream packages.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A vector of package names.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># There is no example</span>
-<span class='cn'>NULL</span>
-</div><div class='output co'>#&gt; NULL</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># \dontrun{</span>
+<span class='va'>x</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"ComplexHeatmap_dep.rds"</span>, package <span class='op'>=</span> <span class='st'>"pkgndep"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>required_dependency_packages</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] "grDevices"     "graphics"      "grid"          "stats"        
+#&gt;  [5] "methods"       "RColorBrewer"  "png"           "matrixStats"  
+#&gt;  [9] "digest"        "foreach"       "colorspace"    "GlobalOptions"
+#&gt; [13] "clue"          "doParallel"    "GetoptLong"    "circlize"     
+#&gt; [17] "IRanges"       "utils"         "tools"         "crayon"       
+#&gt; [21] "parallel"      "compiler"      "BiocGenerics"  "S4Vectors"    
+#&gt; [25] "stats4"        "codetools"     "iterators"     "shape"        
+#&gt; [29] "rjson"         "cluster"      </div><div class='input'><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -105,13 +105,14 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pkg</span> <span class="op">=</span> <span class="fu"><a href="../reference/pkgndep.html">pkgndep</a></span><span class="op">(</span><span class="st">"path-of-the-package"</span><span class="op">)</span>  <span class="co"># if the package has not been installed yet</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">pkg</span><span class="op">)</span></code></pre></div>
+<p>The value for <code><a href="../reference/pkgndep.html">pkgndep()</a></code> should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.</p>
 <p>Executable examples:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/pkgndep">pkgndep</a></span><span class="op">)</span>
 <span class="va">pkg</span> <span class="op">=</span> <span class="fu"><a href="../reference/pkgndep.html">pkgndep</a></span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></code></pre></div>
 <pre><code>## retrieve package database from CRAN/Bioconductor...
-##   - 21189 remote packages on CRAN/Bioconductor.
-##   - 743 packages installed locally.
+##   - 21351 remote packages on CRAN/Bioconductor.
+##   - 758 packages installed locally.
 ## prepare dependency table...
 ## prepare reverse dependency table...</code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -128,9 +129,9 @@
 <p>You can set the <code>file</code> argument to directly save the image into a figure where the figure size is automatically calculated. Supported image formats are <code>png</code>/<code>jpg</code>/<code>svg</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">pkg</span>, file <span class="op">=</span> <span class="st">"test.png"</span><span class="op">)</span></code></pre></div>
-<p><code><a href="../reference/html_report.html">html_report()</a></code> function can generate a html report for the dependency analysis on the package:</p>
+<p><code><a href="../reference/dependency_report.html">dependency_report()</a></code> function can generate a html report for the dependency analysis on the package:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/html_report.html">html_report</a></span><span class="op">(</span><span class="va">pkg</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/dependency_report.html">dependency_report</a></span><span class="op">(</span><span class="va">pkg</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="heaviness" class="section level2">
 <h2 class="hasAnchor">
@@ -191,7 +192,7 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/package_dependencies.html">package_dependencies</a></span><span class="op">(</span><span class="st">"cola"</span>, db <span class="op">=</span> <span class="va">db</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.220   0.002   0.222</code></pre>
+##   0.223   0.004   0.228</code></pre>
 <p>In <strong>pkgndep</strong>, we implement a faster version of <code>package_dependencies()</code> function. First the database needs to be reformatted by <code><a href="../reference/reformat_db.html">reformat_db()</a></code> function. The returned variable <code>db2</code> is a reference class object and its method <code>db2$package_dependencies()</code> can be used to retrieve dependency packages.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db2</span> <span class="op">=</span> <span class="fu"><a href="../reference/reformat_db.html">reformat_db</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></code></pre></div>
@@ -199,12 +200,12 @@
 ## prepare reverse dependency table...</code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">db2</span></code></pre></div>
-<pre><code>## A package database of 21899 packages.
-##   - 3416 Bioconductor / 18483 CRAN / 0 other packages.</code></pre>
+<pre><code>## A package database of 22074 packages.
+##   - 3417 Bioconductor / 18657 CRAN / 0 other packages.</code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.time.html">system.time</a></span><span class="op">(</span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="va">db2</span><span class="op">$</span><span class="fu">package_dependencies</span><span class="op">(</span><span class="st">"cola"</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.005   0.000   0.005</code></pre>
+##   0.006   0.000   0.006</code></pre>
 <p><code>p1</code> and <code>p2</code> are actually identical:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/identical.html">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -213,12 +214,13 @@
 <div id="a-global-dependency-analysis-on-all-packages-on-cranbioconductor" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-global-dependency-analysis-on-all-packages-on-cranbioconductor" class="anchor"></a>A global dependency analysis on all packages on CRAN/Bioconductor</h2>
-<p><strong>pkgndep</strong> also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages of the analysis were retrieved on 2021-10-28. The database can be opened by the <code><a href="../reference/open_website.html">open_website()</a></code> function.</p>
+<p><strong>pkgndep</strong> also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages of the analysis were retrieved on 2021-10-28. The database can be opened by the <code><a href="../reference/dependency_website.html">dependency_website()</a></code> function.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/open_website.html">open_website</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>Following is a screenshot of the database.</p>
-<p>
-<img src="screenshot.png" width="1000px"></p>
+<code class="sourceCode R"><span class="fu"><a href="../reference/dependency_website.html">dependency_website</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>Following is a demonstration of the database.</p>
+<script>
+document.write('<img width="1000px" src="https://user-images.githubusercontent.com/449218/148210483-78c3a07c-114b-4216-bcd3-fca45d707de7.gif" />');
+</script>
 </div>
 <div id="session-info" class="section level2">
 <h2 class="hasAnchor">
@@ -251,17 +253,18 @@
 ## [16] png_0.1-7             rlang_0.4.11          foreach_1.5.1        
 ## [19] magick_2.7.2          yaml_2.2.1            parallel_4.1.2       
 ## [22] pkgdown_1.6.1         xfun_0.24             fastmap_1.1.0        
-## [25] cluster_2.1.2         stringr_1.4.0         knitr_1.33           
-## [28] S4Vectors_0.30.0      desc_1.3.0            fs_1.5.0             
-## [31] sass_0.4.0            GlobalOptions_0.1.2   systemfonts_1.0.2    
-## [34] IRanges_2.26.0        stats4_4.1.2          rprojroot_2.0.2      
-## [37] grid_4.1.2            R6_2.5.0              GetoptLong_1.0.3     
-## [40] textshaping_0.3.5     hash_2.2.6.1          rmarkdown_2.9        
-## [43] magrittr_2.0.1        codetools_0.2-18      htmltools_0.5.2      
-## [46] matrixStats_0.59.0    BiocGenerics_0.38.0   shape_1.4.6          
-## [49] colorspace_2.0-2      circlize_0.4.14       ragg_1.1.3           
-## [52] stringi_1.6.2         doParallel_1.0.16     cachem_1.0.5         
-## [55] crayon_1.4.1          rjson_0.2.20</code></pre>
+## [25] pkgndep.db_0.0.1      cluster_2.1.2         stringr_1.4.0        
+## [28] knitr_1.33            S4Vectors_0.30.0      desc_1.3.0           
+## [31] fs_1.5.0              sass_0.4.0            GlobalOptions_0.1.2  
+## [34] systemfonts_1.0.2     IRanges_2.26.0        stats4_4.1.2         
+## [37] rprojroot_2.0.2       grid_4.1.2            R6_2.5.0             
+## [40] GetoptLong_1.0.3      textshaping_0.3.5     hash_2.2.6.1         
+## [43] rmarkdown_2.9         magrittr_2.0.1        codetools_0.2-18     
+## [46] htmltools_0.5.2       matrixStats_0.59.0    BiocGenerics_0.38.0  
+## [49] shape_1.4.6           colorspace_2.0-2      circlize_0.4.14      
+## [52] ragg_1.1.3            stringi_1.6.2         doParallel_1.0.16    
+## [55] cachem_1.0.5          crayon_1.4.1          rjson_0.2.20         
+## [58] Cairo_1.5-12.2</code></pre>
 </div>
   </div>
 

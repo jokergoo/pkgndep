@@ -140,27 +140,41 @@
 #&gt; a4Core           a4Core https://bioconductor.org/packages/3.14/bioc/src/contrib
 #&gt; a4Preproc     a4Preproc https://bioconductor.org/packages/3.14/bioc/src/contrib
 #&gt; a4Reporting a4Reporting https://bioconductor.org/packages/3.14/bioc/src/contrib
-#&gt;             n_by_strong n_by_all n_parents gini_index max_heaviness_from_parent
-#&gt; a4                   81      161         5  0.7803030                        48
-#&gt; a4Base               72      153        13  0.2276423                         4
-#&gt; a4Classif            30       84        11  0.2914286                         6
-#&gt; a4Core               17       36         4  0.5555556                        11
-#&gt; a4Preproc             6       62         2  0.2000000                         1
-#&gt; a4Reporting           4       24         2  0.2500000                         3
-#&gt;                                                                                                                                             max_heaviness_parent_info
-#&gt; a4          Parent package &amp;lsquo;a4Base&amp;rsquo; contibutes the highest heaviness. It is listed in &amp;lsquo;Depends&amp;rsquo; but no object from the namespace is imported.
-#&gt; a4Base                                                    Parent package &amp;lsquo;genefilter&amp;rsquo; contibutes the highest heaviness. 5 functions/objects are imported.
-#&gt; a4Classif                                                       Parent package &amp;lsquo;ROCR&amp;rsquo; contibutes the highest heaviness. 3 functions/objects are imported.
-#&gt; a4Core                                                         Parent package &amp;lsquo;glmnet&amp;rsquo; contibutes the highest heaviness. The whole namespace is imported.
-#&gt; a4Preproc                                                    Parent package &amp;lsquo;Biobase&amp;rsquo; contibutes the highest heaviness. 7 functions/objects are imported.
-#&gt; a4Reporting                                                   Parent package &amp;lsquo;xtable&amp;rsquo; contibutes the highest heaviness. 1 functions/objects are imported.
-#&gt;             improvable heaviness_on_children n_children heaviness_on_downstream
-#&gt; a4               FALSE             0.0000000          0                       0
-#&gt; a4Base            TRUE            48.0000000          1                      48
-#&gt; a4Classif         TRUE             7.0000000          1                       7
-#&gt; a4Core           FALSE             1.7500000          4                       2
-#&gt; a4Preproc         TRUE             0.6666667          3                       1
-#&gt; a4Reporting       TRUE             1.0000000          1                       1
+#&gt;             n_by_strong n_by_all n_parents gini_index
+#&gt; a4                   81      161         5  0.7803030
+#&gt; a4Base               72      153        13  0.2276423
+#&gt; a4Classif            30       84        11  0.2914286
+#&gt; a4Core               17       36         4  0.5555556
+#&gt; a4Preproc             6       62         2  0.2000000
+#&gt; a4Reporting           4       24         2  0.2500000
+#&gt;             max_heaviness_from_parents adjusted_max_heaviness_from_parents
+#&gt; a4                                  48                          3.11688312
+#&gt; a4Base                               4                          0.67532468
+#&gt; a4Classif                            6                          0.85714286
+#&gt; a4Core                              11                          0.57142857
+#&gt; a4Preproc                            1                          0.02597403
+#&gt; a4Reporting                          3                          0.07792208
+#&gt;                                                                                                                                                                                                      max_heaviness_parent_info
+#&gt; a4                  Parent package &amp;lsquo;a4Base&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4&amp;rsquo;. It is listed in &amp;lsquo;Depends&amp;rsquo but no object from parent is imported to the namespace of &amp;lsquo;a4&amp;rsquo;.
+#&gt; a4Base                                            Parent package &amp;lsquo;genefilter&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Base&amp;rsquo;. 5 functions/objects are imported to the namespace of &amp;lsquo;a4Base&amp;rsquo;.
+#&gt; a4Classif                                         Parent package &amp;lsquo;ROCR&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Classif&amp;rsquo;. 3 functions/objects are imported to the namespace of &amp;lsquo;a4Classif&amp;rsquo;.
+#&gt; a4Core      Parent package &amp;lsquo;glmnet&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Core&amp;rsquo;. The whole set of functions/methods/classes from parent package is imported to the namespace of &amp;lsquo;a4Core&amp;rsquo;.
+#&gt; a4Preproc                                      Parent package &amp;lsquo;Biobase&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Preproc&amp;rsquo;. 7 functions/objects are imported to the namespace of &amp;lsquo;a4Preproc&amp;rsquo;.
+#&gt; a4Reporting                                 Parent package &amp;lsquo;xtable&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Reporting&amp;rsquo;. 1 functions/objects are imported to the namespace of &amp;lsquo;a4Reporting&amp;rsquo;.
+#&gt;             total_heaviness_from_parents adjusted_total_heaviness_from_parents
+#&gt; a4                                    56                            14.2701214
+#&gt; a4Base                                15                             6.1633605
+#&gt; a4Classif                             13                             4.9135381
+#&gt; a4Core                                13                             2.9629750
+#&gt; a4Preproc                              1                             0.1611646
+#&gt; a4Reporting                            4                             0.6446584
+#&gt;             reducible heaviness_on_children n_children heaviness_on_downstream
+#&gt; a4              FALSE             0.0000000          0                       0
+#&gt; a4Base           TRUE            48.0000000          1                      48
+#&gt; a4Classif        TRUE             7.0000000          1                       7
+#&gt; a4Core          FALSE             1.7500000          4                       2
+#&gt; a4Preproc        TRUE             0.6666667          3                       1
+#&gt; a4Reporting      TRUE             1.0000000          1                       1
 #&gt;             n_downstream hv_downstream_values adjusted_heaviness_on_children
 #&gt; a4                     0                                          0.00000000
 #&gt; a4Base                 1                   48                     4.36363636
@@ -169,12 +183,33 @@
 #&gt; a4Preproc              3              1, 1, 1                     0.15384615
 #&gt; a4Reporting            1                    1                     0.09090909
 #&gt;             adjusted_heaviness_on_downstream
-#&gt; a4                                0.00000000
-#&gt; a4Base                            4.36363636
-#&gt; a4Classif                         0.63636364
-#&gt; a4Core                            0.57142857
-#&gt; a4Preproc                         0.23076923
-#&gt; a4Reporting                       0.09090909</div></pre>
+#&gt; a4                                 0.0000000
+#&gt; a4Base                             3.0000000
+#&gt; a4Classif                          0.4375000
+#&gt; a4Core                             0.4210526
+#&gt; a4Preproc                          0.1666667
+#&gt; a4Reporting                        0.0625000
+#&gt;             heaviness_on_downstream_no_children n_downstream_no_children
+#&gt; a4                                            0                        0
+#&gt; a4Base                                        0                        0
+#&gt; a4Classif                                     0                        0
+#&gt; a4Core                                        0                        0
+#&gt; a4Preproc                                     0                        0
+#&gt; a4Reporting                                   0                        0
+#&gt;             hv_downstream_no_children_values
+#&gt; a4                                          
+#&gt; a4Base                                      
+#&gt; a4Classif                                   
+#&gt; a4Core                                      
+#&gt; a4Preproc                                   
+#&gt; a4Reporting                                 
+#&gt;             adjusted_heaviness_on_downstream_no_children
+#&gt; a4                                                     0
+#&gt; a4Base                                                 0
+#&gt; a4Classif                                              0
+#&gt; a4Core                                                 0
+#&gt; a4Preproc                                              0
+#&gt; a4Reporting                                            0</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
