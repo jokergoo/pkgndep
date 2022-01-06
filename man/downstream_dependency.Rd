@@ -23,5 +23,7 @@ The dependency information is based on packages retrieved from CRAN/Bioconductor
 A data frame with all downstream packages.
 }
 \examples{
+\dontrun{
 downstream_dependency("ComplexHeatmap")
+}
 }

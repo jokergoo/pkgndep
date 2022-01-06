@@ -67,7 +67,9 @@ heaviness = function(x, rel = FALSE, a = 10) {
 # The value is the mean heaviness of the package on all its child packages.
 #
 # == example
+# \dontrun{
 # heaviness_on_children("ComplexHeatmap")
+# }
 heaviness_on_children = function(package, add_values_attr = FALSE) {
 	tb = child_dependency(package, fields = c("Depends", "Imports", "LinkingTo"))
 	if(nrow(tb)) {

@@ -1,7 +1,7 @@
 
 
 load_from_pkgndep_db = function(file) {
-	if(!requireNamespace("pkgndep.db", quietly = TRUE)) {
+	if(!pkg_exists("pkgndep.db")) {
 		## to install pkgndep.db
 		link = "https://github.com/jokergoo/pkgndep.db/archive/refs/tags/0.0.1.tar.gz"
 		if(interactive()) {

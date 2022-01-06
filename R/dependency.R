@@ -166,7 +166,9 @@ upstream_dependency = function(package) {
 # A data frame with all downstream packages.
 #
 # == example
+# \dontrun{
 # downstream_dependency("ComplexHeatmap")
+# }
 downstream_dependency = function(package) {
 
 	tb = child_dependency(package, fields = c("Depends", "Imports", "LinkingTo"))

@@ -19,5 +19,7 @@ heaviness_on_children(package, add_values_attr = FALSE)
 The value is the mean heaviness of the package on all its child packages.
 }
 \examples{
+\dontrun{
 heaviness_on_children("ComplexHeatmap")
+}
 }

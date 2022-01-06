@@ -217,11 +217,16 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
     	legend_labels = legend_labels[1:3]
     }
 	
-    lgd0 = Legend(labels = legend_labels,
+	# for the lower version of ComplexHeatmap
+    if(packageVersion("ComplexHeatmap") > "2.7.1") {
+    	lgd0 = Legend(labels = legend_labels,
 			graphics = graphics,
 			title = "", labels_gp = gpar(fontsize = legend_fontsize))
-	lgd_list = list(lgd0)
-
+		lgd_list = list(lgd0)
+	} else {
+		lgd_list = NULL
+	}
+	
 	df_imports = x$df_imports
 	if(any(x$which_suggested_but_also_loaded)) {
 		df_imports[x$which_suggsted_but_also_loaded, 1] = -Inf
