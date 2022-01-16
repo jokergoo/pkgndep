@@ -63,7 +63,8 @@ page_select2 = function(current_page, n_page, which_table, package, records_per_
 
 html_template = function(template, vars = list()) {
 
-	template_dir = "~/project/development/pkgndep/inst/website/template"
+	# template_dir = "~/project/development/pkgndep/inst/website/template"
+	template_dir = system.file("website", "template", package = "pkgndep")
 
 	f = tempfile()
 
@@ -755,7 +756,7 @@ make_heaviness_plot = function() {
 	pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
 	pushViewport(viewport(width = 0.9))
 	correspond_between_two_rankings(x1 = df$heaviness_on_children, x2 = df$heaviness_on_downstream_no_children, 
-		name1 = "children", name2 = "downstream\n(excluding children)", top_n = 500, newpage = FALSE)
+		name1 = "children", name2 = "indirect downstream\n(excluding children)", top_n = 500, newpage = FALSE)
 	upViewport()
 	upViewport()
 

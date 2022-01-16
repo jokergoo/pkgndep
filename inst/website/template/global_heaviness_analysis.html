@@ -3,7 +3,11 @@
 
 <div style="width:1100px;">
 <br>
-<p>In this report, we study which packages' dependencies are mostly affected by parent packages and which packages affect more their child and downstream packages' dependencies.</p>
+<p>In this report, we study two aspects of the package dependencies:</p>
+<ul>
+<li>which packages' dependencies are mostly affected by parent packages, i.e. heaviness from parent packages,</li>
+<li>which packages affect more their child and downstream packages' dependencies, i.e. heaviness on child/downstream packages.</li>
+</ul>
 
 <h3>Heaviness from parent packages</h3>
 
@@ -18,8 +22,9 @@ capture these packages with heavy parents, we define <b>"adjusted max heaviness 
 <div class="method"><p>For a package <i>P</i>, denote $h$ as the max heaviness from its parent packages. The adjusted heaviness is calculated as $ h^{adj} = h \cdot a $
 where $a$ is a zooming factor. $a$ is calculated as $a = n/n_{max}$ where $n$ is the number of parents for package <i>P</i> and $n_{max}$ is the maximal number of parents of all packages (i.e. all CRAN/Bioconductor packages).</p></div>
 
-<p>The zooming factor $a$ decreases the heaviness more for small number of parents, thus, it actually transforms the original distribution of point cloud more horizontal so that it is easy to set a cutoff to mark extream points. The plot of adjusted heaviness verse number of parents can be seen by clicking the radio button <b>"Adjusted max heaviness verse number of parent packages"</b>. 
-We simply set a package as <span style="color:red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_max_heaviness_from_parents[2]%> and <span style="color:orange">having median heavy parents</span> if the adjusted heaviness is between <%=CUTOFF$adjusted_max_heaviness_from_parents[1]%> and <%=CUTOFF$adjusted_max_heaviness_from_parents[2]%>.</p>
+<p>The zooming factor $a$ decreases the heaviness more for small number of parents, thus, it actually transforms the original distribution of point cloud more horizontal so that it is easy to set a cutoff to mark extream points. The plot of adjusted heaviness verse number of parents can be seen by clicking the radio button <b>"Adjusted max heaviness verse number of parent packages"</b> below. 
+We simply mark a package as <span style="color:red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_max_heaviness_from_parents[2]%> and <span style="color:orange">having median heavy parents</span> if the adjusted heaviness is between <%=CUTOFF$adjusted_max_heaviness_from_parents[1]%> and <%=CUTOFF$adjusted_max_heaviness_from_parents[2]%>. The packages with highly heavy parents are listed
+on the right of the following figure.</p>
 
 
 <div class="form-box">
@@ -62,14 +67,15 @@ We simply set a package as <span style="color:red">having highly heavy parents</
 <p><%= img(paste0(env$figure_dir, "/plot-parent-adjusted-max-heaviness.png"), style="height:500px")%></p>
 </div>
 
-<p>A package may have more than one heavy parents, thus, we next look at the total heaviness from all parents for a package.
+<p>A package may have more than one heavy parents, thus, we next look at the total heaviness from all parents for a package. Note, heaviness
+from a parent measures the number of additional unique packages it brings in, that are not brought by any of the other parents, therefore, total heaviness from parents is actually the number of dependency packages that are brought by only one parent package.
 Generally, for a package, majority of its parents only contribute very small heaviness while only a few parents (mostly 1 ~ 3) contribute
-high heaviness to it. Thus, the "total heaviness from all parents" can be approximately treated as "total heaviness from heavy parents". </p>
+high heaviness. Thus, the "total heaviness from all parents" can be approximately treated as "total heaviness from heavy parents". </p>
 
 <p>Similarly, we define an <b>"adjusted total heaviness from parents"</b> to adjust the point distribution more horizontally. It is defined as:</p>
 
 <div class="method"><p>
-$h^{adj} = h \cdot a$, where $a = \sqrt{n}/\sqrt{n_{max}}$. 
+$h^{adj} = h \cdot a$, where $a = \sqrt{n}/\sqrt{n_{max}}$. Note here $h$ is the total heaviness from parents for package <i>P</i>.
 </p></div>
 
 <p>The plot of adjusted heaviness verse number of parents can be seen by clicking the radio button <b>"Adjusted total heaviness verse number of parent packages"</b>. We simply set a package as <span style="red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_total_heaviness_from_parents[2]%> and <span style="color: orange;">having median heavy parents</span> if the adjusted heaviness is between <%=CUTOFF$adjusted_total_heaviness_from_parents[1]%> and <%=CUTOFF$adjusted_total_heaviness_from_parents[2]%>.</p>
@@ -103,8 +109,8 @@ $h^{adj} = h \cdot a$, where $a = \sqrt{n}/\sqrt{n_{max}}$.
 <p><%= img(paste0(env$figure_dir, "/plot-parent-adjusted-total-heaviness.png"), style="height:500px")%></p>
 </div>
 
-<p>CRAN packages have very similar trends for the max and total heaviness from parents. But Bioconductor packages
-in general have more heavy parents. Also we can find there are several Bioconductor packages have many heavy parents, e.g.
+<p>According to both figures in this section, CRAN packages have very similar trends for the max and total heaviness from parents. But Bioconductor packages
+in general have more heavy parents, e.g.
 <a href="package?package=musicatk"><b>musicatk</b></a> and <a href="package?package=singleCellTK"><b>singleCellTK</b></a>.</p>
 
 
@@ -134,11 +140,11 @@ $h^{adj} = \frac{1}{K + a} \sum_k^K(n_{1k} - n_{2k})$
 <details><summary>How is <i>a</i> selected?</summary>
 
 <br>
-<p>The value of $a$ affects the ranking more to the packages with small $K$. We take $a$ as integers in the list [0, 1, ..., 29, 30], and
+<p>If we rank packages by heavines, the value of $a$ affects the ranking more to the packages with small $K$. We take $a$ as integers in the list [0, 1, ..., 29, 30], and
 for each $a$ and a specific package <i>P</i>, we calculate the adjusted heaviness on its children, denoted as $h^{adj}_{a, p}$. Note $h^{adj}_{0, p} = h_p$. $a$ is selected as the one by which ranking of all packages becomes stable. To measure the stability of the ranking of $h^{adj}_{a}$ compared to previous $a$, we calculate a score denoted as $v$: 
 $v = \sum_p^N I(|rank(h^{adj}_{a,p}) - rank(h^{adj}_{a-1,p})| > 50)$, where $N$ is total number of all packages and $I()$ is an indicator function. $v$ measures the number of packages whose ranking difference is larger than 50 (50 is a very small number compared to the total number of R packages in this analysis, which is 21741) in the two neighbour values of $a$. When $v$ becomes stable with $a$, we say increasig $a$ won't change the ranking of $v$ too much.</p>
 
-<p>The following plot shows the changes of score $v$ and $a$. A value of 10 is taken as the optimized value of $a$, since it is the elbow of the curve.</p>
+<p>The following plot shows the relation of score $v$ and $a$. A value of 10 is taken as the optimized value of $a$, since it is the elbow of the curve.</p>
 
 <p><%= img(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-children.png"), style="height:500px")%></p>
 </details>
@@ -187,7 +193,7 @@ have 111 more extra dependency packages.</p>
 with excluding the child packages. A comparison of with including child packages can be found in the next section of this report.</p>
 
 <p>Similar to the heaviness on child packages, heaviness on indirect downstream packages also decrease as the number of downstream packages increase.
-We also define <b>"adjusted heaviness on indirect downstream packages"</b>. The original definition of heaviness on indirect downstream packages is defined as:</p>
+We also define <b>"adjusted heaviness on indirect downstream packages"</b>. The original definition of heaviness on indirect downstream packages is as follows:</p>
 
 <div class="method">
 <p>For a package <i>P</i>, assume it has $K$ downstream packages (also include child packages) and the $k^{th}$ downstream package is denoted
@@ -212,7 +218,7 @@ $h^{adj} = \frac{1}{K-K_c + a} \sum_{k}^K(n_{1k} - n_{2k}) \cdot I(B_{k} \notin 
 
 <details><summary>How is <i>a</i> calculated?</summary>
 <br>
-<p>The value of $a$ affects the ranking more to the packages with small $K$. We take $a$ as integers in the list [0, 1, ..., 29, 30], and
+<p>If we rank packages by heavines, the value of $a$ affects the ranking more to the packages with small $K$. We take $a$ as integers in the list [0, 1, ..., 29, 30], and
 for each $a$ and a specific package <i>P</i>, we calculate the adjusted heaviness on its children, denoted as $h^{adj}_{a, p}$. Note $h^{adj}_{0, p} = h_p$. $a$ is selected as the one by which ranking of all packages becomes stable. To measure the stability of the ranking of $h^{adj}_{a}$ compared to previous $a$, we calculate a score denoted as $v$: 
 $v = \sum_p^N I(|rank(h^{adj}_{a,p}) - rank(h^{adj}_{a-1,p})| > 50)$, where $N$ is total number of all packages and $I()$ is an indicator function. $v$ measures the number of packages whose ranking difference is larger than 50 (50 is a very small number compared to the total number of R packages in this analysis, which is 21741) in the two neighbour values of $a$. When $v$ becomes stable with $a$, we say increasig $a$ won't change the ranking of $v$ too much.</p>
 
@@ -254,19 +260,20 @@ We simply set a package <span style="color:red">having a highly heavy impact on 
 <p><%= img(paste0(env$figure_dir, "/plot-downstream-no-children-adjusted-heaviness.png"), style="height:500px")%></p>
 </div>
 
+<p>The figure shows CRAN packages have more affect on the dependencies of indirect downstream packages.</p>
 
 <h3>Why child packages are removed from downstream packages in the analysis?</h3>
 
-<p>Each of The following two plots visualizes the rankings of all packages based on their heaviness on child packages
+<p>Each of The following two plots visualizes the ranking of all packages based on their heaviness on child packages
 and on downstream packages. For each plot, the left and right panels contain sorted heaviness for children
 and downstream respectively. In the middle panel are lines connecting the same package in the two rankings. The two ends of
-a line have points with the same color.
+a line are assigned with the same color.
 There is a "Venn diagram" at the bottom panel which shows the overlap of the top 500 packages with the highest
 heaviness on children and the highest heaviness on downstream.</p>
 
 <p>The left plot shows top 500 packages with the highest heaviness on children almost also have the highest heaviness on 
 downstream (474 out of 500), and the right plot shows if only considering the indirect downstream packages, the overlap to 
-packages with top heaviness on children would have very small overlap.
+packages with top heaviness on children have very small overlap.
 </p>
 
 <div>
@@ -274,13 +281,10 @@ packages with top heaviness on children would have very small overlap.
 </div>
 
 <p>We think why there is such a huge overlap for the top packages with the highest heaviness on children and on downstream
-is because the depth of the downstream affects from these top packages in the global dependency graph is only 1, or in other words, 
-the downstream affects ends at their child packages.</p>
-
-<p>To demonstrate this, for 474 packages that are both in the lists of top 500 packages having the highest heaviness on children and the list of 500 packages having the highest heaviness on downstream, we plot
-the fraction of child packages in downstream packages. The following plot clearly shows for these top packages,
-downstream packages are mostly child packages. With 76.4% of them, downstream packages are completely child packages, and with 91.1% of them,
-more than 60% of downstream packages are child packages.</p>
+is because the downstream packages are mainly composed of child packages. To demonstrate this, for 474 packages that are both in the lists of top 500 packages having the highest heaviness on children and the list of 500 packages having the highest heaviness on downstream, we plot
+the fraction of their child packages in downstream packages. The following plot clearly shows for these top packages,
+their downstream packages are mostly child packages. With 76.4% of them, their downstream packages are completely child packages, and with 91.1% of them,
+more than 60% of their downstream packages are child packages.</p>
 
 <div>
 <p><%= img(paste0(env$figure_dir, "/plot-top-500-children-downstream-pct.png"), style="height:500px")%></p>
