@@ -287,13 +287,14 @@ html_upstream_dependency = function(response, package, page) {
 	    }
 	    nt = data.frame(parent = nt_parent, child = nt_child, heaviness = nt_heaviness)
 
-	    ind = (page - 1)*records_per_page + seq_len(records_per_page)
-		ind = intersect(ind, 1:nrow(upstream_tb))
-		if(length(ind) == 0) {
-			ind = seq_len(records_per_page)
+	    if(nrow(upstream_tb) > 0) {
+		    ind = (page - 1)*records_per_page + seq_len(records_per_page)
+			ind = intersect(ind, 1:nrow(upstream_tb))
+			if(length(ind) == 0) {
+				ind = seq_len(records_per_page)
+			}
+			upstream_tb = upstream_tb[ind, , drop = FALSE]
 		}
-		upstream_tb = upstream_tb[ind, , drop = FALSE]
-
 		
 	} else {
 		upstream_tb = NULL
@@ -345,9 +346,9 @@ html_downstream_dependency = function(response, package, page, records_per_page 
 		row_order = order(-downstream_tb$heaviness)
 		downstream_tb = downstream_tb[row_order, , drop = FALSE]
 
-		downstream_tb = downstream_tb[downstream_tb$heaviness > 10, , drop = FALSE]
 		all_heaviness = downstream_tb$heaviness 
-
+		downstream_tb = downstream_tb[downstream_tb$heaviness > 10, , drop = FALSE]
+		
 		if(length(pl) == 0) {
 			depth_tb = NULL
 		} else {
@@ -366,12 +367,14 @@ html_downstream_dependency = function(response, package, page, records_per_page 
 
 		n_used = nrow(downstream_tb)
 
-		ind = (page - 1)*records_per_page + seq_len(records_per_page)
-		ind = intersect(ind, 1:nrow(downstream_tb))
-		if(length(ind) == 0) {
-			ind = seq_len(records_per_page)
+		if(nrow(downstream_tb) > 0) {
+			ind = (page - 1)*records_per_page + seq_len(records_per_page)
+			ind = intersect(ind, 1:nrow(downstream_tb))
+			if(length(ind) == 0) {
+				ind = seq_len(records_per_page)
+			}
+			downstream_tb = downstream_tb[ind, , drop = FALSE]
 		}
-		downstream_tb = downstream_tb[ind, , drop = FALSE]
 
 	} else {
 		downstream_tb = NULL
@@ -643,8 +646,8 @@ make_heaviness_plot = function() {
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
 			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
-			ggplot2::labs(x = "Number of downstream packages", y = "Heaviness") +
-			ggplot2::ggtitle("Heaviness on downstream packages for all CRAN/Bioconductor packages") +
+			ggplot2::labs(x = "Number of indirect downstream packages", y = "Heaviness") +
+			ggplot2::ggtitle("Heaviness on indirect downstream packages for all CRAN/Bioconductor packages") +
 			ggplot2::facet_wrap(ggplot2::vars(repo))
 		ggplot2:::print.ggplot(p)
 	})
@@ -661,8 +664,8 @@ make_heaviness_plot = function() {
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
 			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
-			ggplot2::labs(x = "Number of downstream packages", y = "Adjusted heaviness") +
-			ggplot2::ggtitle("Adjusted heaviness on downstream packages for all CRAN/Bioconductor packages") +
+			ggplot2::labs(x = "Number of indirect downstream packages", y = "Adjusted heaviness") +
+			ggplot2::ggtitle("Adjusted heaviness on indirect downstream packages for all CRAN/Bioconductor packages") +
 			ggplot2::facet_wrap(ggplot2::vars(repo))
 		ggplot2:::print.ggplot(p)
 	})

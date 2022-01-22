@@ -3,7 +3,7 @@
 <details><summary>Dependency plot</summary>
 <br>
 <% tmp_file = tempfile(fileext = ".png")
-  if(nrow(rev_tb) > 5) {
+  if(nrow(rev_tb) > 0) {
     png(tmp_file, width = 1000*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")

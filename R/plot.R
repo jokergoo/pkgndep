@@ -87,6 +87,30 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			}
 
 			return(invisible(NULL))
+		} else if(grepl("\\.pdf$", file, ignore.case = TRUE)) {
+			pdf(NULL)
+			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+			dev.off()
+
+			if(!is.null(size)) {
+				size[1] = max(size[1], 7)
+				size[2] = max(size[2], 3)
+				pdf(file, width = size[1], height = size[2])
+				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
+				dev.off()
+			} else {
+				pdf(file, width = 5, height = 1)
+				if(nrow(x$dep_mat) > 0 && ncol(x$dep_mat) == 0) {
+					grid.text(qq("All required packages for '@{x$package}' are base packages."), 0.5, 0.5)
+				} else {
+					grid.text(qq("No dependency found for package '@{x$package}'"), 0.5, 0.5)
+				}
+				dev.off()
+			}
+
+			return(invisible(NULL))
 		} else if(grepl("\\.svg$", file, ignore.case = TRUE)) {
 			tmp_file = tempfile()
 			svg(tmp_file)
@@ -120,7 +144,7 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 
 			return(invisible(NULL))
 		} else {
-			stop("`file` only allows extensions of 'png/jpg/svg'.")
+			stop("`file` only allows extensions of 'png/jpg/svg/pdf'.")
 		}
 	}
 
