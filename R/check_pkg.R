@@ -7,7 +7,7 @@
 # -bioc Whether it is a Bioconductor package.
 #
 # == details
-# If the package is not avaiable, it prints messages to lead users to install the package.
+# If the package is not avaiable, it prints messages to guide users to install the package.
 #
 check_pkg = function(pkg, bioc = FALSE) {
 	if(requireNamespace(pkg, quietly = TRUE)) {

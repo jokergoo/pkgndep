@@ -16,7 +16,7 @@ check_pkg(pkg, bioc = FALSE)
 
 }
 \details{
-If the package is not avaiable, it prints messages to lead users to install the package.
+If the package is not avaiable, it prints messages to guide users to install the package.
 }
 \examples{
 # There is no example

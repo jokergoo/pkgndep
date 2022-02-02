@@ -3,6 +3,7 @@ CHANGES in VERSION 1.1.1
 * `pkgndep()` allows github repo as input.
 * extensively improved the website.
 * add `co_heaviness()` function.
+* add `check_pkg()` function.
 
 CHANGES in VERSION 1.1.0
 
