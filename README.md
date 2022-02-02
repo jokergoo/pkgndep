@@ -1,4 +1,4 @@
-# Check the Heaviness of Package Dependencies
+# Heaviness Analysis on R Package Dependencies
 
 [![R-CMD-check](https://github.com/jokergoo/pkgndep/workflows/R-CMD-check/badge.svg)](https://github.com/jokergoo/pkgndep/actions)
 [![CRAN](https://www.r-pkg.org/badges/version/pkgndep)](https://cran.r-project.org/web/packages/pkgndep/index.html)
@@ -109,19 +109,6 @@ plot(pkg)
 ```
 
 ![image](https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png)
-
-## A global dependency analysis on all packages on CRAN/Bioconductor
-
-**pkgndep** also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages
-of the analysis were retrieved on 2021-10-28. The database can be opened by the `dependency_website()` function.
-
-```r
-dependency_website()
-```
-
-Following is a demonstration of the database.
-
-![pkgndep_db](https://user-images.githubusercontent.com/449218/148210483-78c3a07c-114b-4216-bcd3-fca45d707de7.gif)
 
 
 ## License
