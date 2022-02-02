@@ -16,6 +16,8 @@ It loads the package dependency analysis for all CRAN/Biocondutor packages done 
 A list.
 }
 \examples{
+\dontrun{
 downstream_path_list = load_pkg_downstream_dependency_path_snapshot()
 downstream_path_list[["ComplexHeatmap"]]
+}
 }

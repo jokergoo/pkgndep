@@ -50,7 +50,7 @@ df$max_heaviness_from_parents = sapply(lt, function(x) {
 	}
 })
 
-df$adjusted_max_heaviness_from_parents = df$max_heaviness_from_parents*df$n_parents/max(df$n_parents)
+df$adjusted_max_heaviness_from_parents = df$max_heaviness_from_parents*(df$n_parents+30)/max(df$n_parents)
 
 df$max_heaviness_parent_info = sapply(lt, function(x) {
 	if(any(x$which_required)) {
@@ -83,7 +83,7 @@ df$total_heaviness_from_parents = sapply(lt, function(x) {
 	}
 })
 
-df$adjusted_total_heaviness_from_parents = df$total_heaviness_from_parents*sqrt(df$n_parents)/max(sqrt(df$n_parents))
+df$adjusted_total_heaviness_from_parents = df$total_heaviness_from_parents*sqrt(df$n_parents + 20)/max(sqrt(df$n_parents))
 
 
 df$reducible = grepl("functions/objects are imported.", df$max_heaviness_parent_info)
@@ -310,19 +310,5 @@ leaf_nodes_list = apply(sp, 1, function(x) {
 })
 
 n_leaf_nodes = sapply(leaf_nodes_list, length)
-
-
-
-### global graph analysis
-library(igraph)
-nt = data.frame(from = character(0), to = character(0), heaviness = numeric(0))
-for(package in names(lt)) {
-	tb = child_dependency(package, fields = c("Depends", "Imports", "LinkingTo"))
-	nt = rbind(nt, tb)
-}
-
-
-
-
 
 

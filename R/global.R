@@ -11,5 +11,6 @@ FIELDS = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")
 
 
 pkgndep_opt = setGlobalOptions(
-    tmp_dir = "."
+    tmp_dir = ".",
+    add_link = FALSE
 )

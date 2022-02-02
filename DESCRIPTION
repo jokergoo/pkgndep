@@ -1,21 +1,18 @@
 Package: pkgndep
 Type: Package
-Title: Check the Heaviness of Package Dependencies
+Title: Heaviness Analysis on R Package Dependencies
 Version: 1.1.1
-Date: 2022-01-18
+Date: 2022-02-02
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 3.5.0)
 Imports: ComplexHeatmap (>= 2.7.1), GetoptLong, GlobalOptions, utils, grid, hash, 
     methods, BiocManager, brew
 Suggests: knitr, rmarkdown, svglite, callr, rjson, Rook, igraph, ggplot2, ggrepel
-Description: It checks the heaviness of a package's dependencies, i.e. number of 
-    additional packages that are required for each of the direct dependency packages. 
-    For each package listed in the "Depends", "Imports", "LinkingTo", "Suggests" and
-    "Enhances" fields in the DESCRIPTION file, it checks how many additional packages 
-    it brings in. The summary of the dependency is visualized by a customized heatmap.
-    It additionally creates a website that contains global package dependency
-    analysis for all packages on CRAN and Bioconductor (retrieved on 2021-10-28).
+Description: A new metric named 'dependency heaviness' is proposed that measures the number 
+    of additional dependency packages that a parent package brings to its child package 
+    and are unique to the dependency packages imported by all other parents.  
+    The dependency heaviness analysis is visualized by a customized heatmap.
 URL: https://github.com/jokergoo/pkgndep
 VignetteBuilder: knitr
 License: MIT + file LICENSE

@@ -16,6 +16,8 @@ It loads the package dependency analysis for all CRAN/Biocondutor packages done 
 A data frame of various columns.
 }
 \examples{
+\dontrun{
 df = load_pkg_stat_snapshot()
 head(df)
+}
 }

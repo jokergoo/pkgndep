@@ -57,6 +57,85 @@ heaviness = function(x, rel = FALSE, a = 10) {
 }
 
 
+heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10) {
+	p = required_dependency_packages(x, FALSE)
+	v1 = length(p)
+	v = 0
+	if(x$which_required[i] & x$which_required[j]) {
+
+		x2 = x
+		x2$dep_fields[i] = "Suggests"
+		x2$which_required[i] = FALSE
+		x2$which_required_but_not_loaded[i] = FALSE
+		p_i = setdiff(p, required_dependency_packages(x2, FALSE))
+
+		x2 = x
+		x2$dep_fields[j] = "Suggests"
+		x2$which_required[j] = FALSE
+		x2$which_required_but_not_loaded[j] = FALSE
+		p_j = setdiff(p, required_dependency_packages(x2, FALSE))
+
+		x2 = x
+		x2$dep_fields[c(i, j)] = "Suggests"
+		x2$which_required[c(i, j)] = FALSE
+		x2$which_required_but_not_loaded[c(i, j)] = FALSE
+		p_ij = setdiff(p, required_dependency_packages(x2, FALSE))
+
+		p_common = setdiff(p_ij, c(p_i, p_j))
+		v2 = length(p_common)
+
+		if(rel) {
+			v = (v1 + a)/((v1 - v2) + a)
+		} else {
+			v = v2
+		}
+	}
+	v
+}
+
+# == title
+# Co-heaviness for pairs of parent packages
+#
+# == param
+# -x An object returned by `pkgndep`.
+# -rel Whether to return the absolute measure or the relative measure.
+# -a A constant added for calculating the relative measure.
+#
+# == details
+# Denote a package as P and its two strong parent packages as A and B, i.e., parent packages in "Depends", "Imports" and "LinkingTo", 
+# the co-heaviness for A and B is calculated as follows.
+#
+# Denote S_A as the set of reduced dependency packages when only moving A to "Suggests" of P, and denote S_B as the set of reduced dependency
+# packages when only moving B to "Suggests" of P, denote S_AB as the set of reduced dependency packages when moving A and B together to "Suggests" of P,
+# the co-heaviness of A, B on P is calculatd as ``length(setdiff(S_AB, union(S_A, S_B)))``, which is the number of reduced package only caused by co-action of A and B.
+#
+# Note the co-heaviness is only calculated for parent packages in "Depends", "Imports" and "LinkingTo".
+#
+# == example
+# \dontrun{
+# x = pkgndep("DESeq2")
+# hm = co_heaviness(x)
+# ComplexHeatmap::Heatmap(hm)
+# }
+co_heaviness = function(x, rel = FALSE, a = 10) {
+
+	nr = nrow(x$dep_mat)
+	m = matrix(NA, nrow = nr, ncol = nr)
+	rownames(m) = colnames(m) = rownames(x$dep_mat)
+	diag(m) = heaviness(x, rel = rel, a = a)
+
+	if(nr <= 1) {
+		return(m)
+	}
+
+	for(i in 1:(nr-1)) {
+		for(j in (i+1):nr) {
+			m[i, j] = m[j, i] = heaviness_by_pair(x, i, j, rel, a)
+		}
+	}
+	m[x$which_required, x$which_required, drop = FALSE]
+}
+
 # == title
 # Heaviness on all child packages
 #

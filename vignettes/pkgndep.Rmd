@@ -72,7 +72,7 @@ packages are required, which are really a lot. Actually some of the heavy
 packages such as **WGCNA**, **clusterProfiler** and **ReactomePA** (the last
 three packages in the heatmap rows) are not very frequently used in **cola**,
 moving them to `Suggests` field and using them only when they are needed
-greatly helps to reduce the heaviness of **cola**. Now the number of required
+greatly helps to reduce the dependencies of **cola**. Now the number of required
 packages are reduced to only `r x$n_by_strong`.
 
 ## Usage
@@ -119,13 +119,13 @@ plot(pkg)
 ```
 
 You can set the `file` argument to directly save the image into a figure where the figure
-size is automatically calculated. Supported image formats are `png`/`jpg`/`svg`.
+size is automatically calculated. Supported image formats are `png`/`jpg`/`svg`/`pdf`.
 
 ```{r, eval = FALSE}
 plot(pkg, file = "test.png")
 ```
 
-`dependency_report()` function can generate a html report for the dependency analysis on the package:
+`dependency_report()` function can generate an HTML report for the dependency analysis on the package.
 
 ```{r, eval = FALSE}
 dependency_report(pkg)
@@ -136,17 +136,17 @@ dependency_report(pkg)
 The heaviness of package dependency can be measured quantitatively. **pkgndep** provides two measures: the absolute
 measure and the relative measure.
 
-The heaviness of a dependency package is calculated as follows. If package B
-is in the `Depends`/`Imports`/`LinkingTo` fields of package A, which means, package B 
-is directly required for package A, denote `v1` as the total number of packages for package A, 
+The heaviness of a dependency package is calculated as follows. If package _B_
+is in the `Depends`/`Imports`/`LinkingTo` fields of package _A_, which means, package _B_ 
+is directly required for package _A_, denote `v1` as the total number of packages for package _A_, 
 and denote `v2` as the total number of required packages if moving package
-B to `Suggests` in package A (which means, now B is not enforced to be installed for package A). The
+_B_ to `Suggests` in package _A_ (which means, now _B_ is not enforced to be installed for package _A_). The
 absolute measure of heaviness is simply `v1 - v2` and relative measure is `(v1 + a)/(v2 + a)` where `a` is a small constant, e.g. 10.
-So here the absolute heaviness for package B on package A is the number of additional packages
-that package B brings in.
+So here the absolute heaviness for package _B_ on package _A_ is the number of additional packages
+that package _B_ uniquely brings in.
 
-In the second scenario, if package B is in the `Suggests`/`Enhances` fields of package
-A, now `v2` is the total number of required packages if moving package B to `Imports` in package A,
+In the second scenario, if package _B_ is in the `Suggests`/`Enhances` fields of package
+_A_, now `v2` is the total number of required packages if moving package _B_ to `Imports` in package _A_,
 the absolute measure of heaviness is `v2 - v1` and relative measure is `(v2 + a)/(v1 + a)`.
 
 The heaviness score can be calculated by the function `heaviness()`:
@@ -189,21 +189,6 @@ system.time(p2 <- db2$package_dependencies("cola", recursive = TRUE, simplify = 
 ```{r}
 identical(sort(p1), sort(p2))
 ```
-
-## A global dependency analysis on all packages on CRAN/Bioconductor
-
-**pkgndep** also integrates an web-based database of the dependency analysis of all pacakges on CRAN/Bioconductor. The packages
-of the analysis were retrieved on 2021-10-28. The database can be opened by the `dependency_website()` function.
-
-```{r, eval = FALSE}
-dependency_website()
-```
-
-Following is a demonstration of the database.
-
-<script>
-document.write('<img width="1000px" src="https://user-images.githubusercontent.com/449218/148210483-78c3a07c-114b-4216-bcd3-fca45d707de7.gif" />');
-</script>
 
 ## Session info
 

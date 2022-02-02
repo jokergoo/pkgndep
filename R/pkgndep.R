@@ -110,7 +110,7 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 			n_by_strong = 0,
 			n_by_all = 0,
 			heaviness = numeric(0),
-			df_imports = matrix(nrow = 0, ncol = 3),
+			df_imports = matrix(nrow = 0, ncol = 3, dimnames = list(character(0), c("imports", "importMethods", "importClasses"))),
 			pkg_from_session_info = tb$pkg
 		)
 
@@ -285,6 +285,10 @@ print.pkgndep = function(x, ...) {
 	qqcat("@{x$package}, version @{x$version}\n")
 	qqcat("- @{x$n_by_strong} additional packages are required for installing '@{x$package}'.\n")
 	qqcat("- @{x$n_by_all} additional packages are required if installing packages listed\n  in all fields in DESCRIPTION.\n")
+
+	if(nrow(x$dep_mat) == 0) {
+		return(invisible(NULL))
+	}
 
 	l = x$heaviness >= 20 & x$df_imports[, "imports"] > 0 & x$df_imports[, "importMethods"] == 0 & x$df_imports[, "importClasses"] == 0
 	if(any(l)) {

@@ -1,7 +1,7 @@
 
 CUTOFF = list()
-CUTOFF$adjusted_max_heaviness_from_parents = c(15, 25)
-CUTOFF$adjusted_total_heaviness_from_parents = c(50, 70)
+CUTOFF$adjusted_max_heaviness_from_parents = c(50, 70)
+CUTOFF$adjusted_total_heaviness_from_parents = c(70, 100)
 CUTOFF$adjusted_heaviness_on_children = c(15, 30)
 CUTOFF$adjusted_heaviness_on_downstream_no_children = c(10, 20)
 

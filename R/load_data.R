@@ -30,8 +30,10 @@ load_from_pkgndep_db = function(file) {
 # A data frame of various columns.
 #
 # == example
+# \dontrun{
 # df = load_pkg_stat_snapshot()
 # head(df)
+# }
 load_pkg_stat_snapshot = function() {
 	if(is.null(env$pkg_stat_snapshot)) {
 		df = load_from_pkgndep_db("pkg_stat_snapshot.rds")
@@ -50,8 +52,10 @@ load_pkg_stat_snapshot = function() {
 # A list.
 #
 # == example
+# \dontrun{
 # downstream_path_list = load_pkg_downstream_dependency_path_snapshot()
 # downstream_path_list[["ComplexHeatmap"]]
+# }
 load_pkg_downstream_dependency_path_snapshot = function() {
 	if(is.null(env$pkg_downstream_dependency_path_snapshot)) {
 		lt = load_from_pkgndep_db("pkg_downstream_dependency_path_snapshot.rds")
