@@ -209,6 +209,11 @@ system.time(p2 <- db2$package_dependencies("cola", recursive = TRUE, simplify = 
 identical(sort(p1), sort(p2))
 ```
 
+## Heaviness analysis for all CRAN/Bioconductor packages
+
+We performed heaviness analysis for all CRAN/Bioconductor packages which were retrieved on 2021-10-28. All
+the analysis reports can be found at https://pkgndep.github.io/.
+
 ## Session info
 
 ```{r}
