@@ -128,12 +128,26 @@ co_heaviness = function(x, rel = FALSE, a = 10) {
 		return(m)
 	}
 
+	max_pair = NULL
+	v = 0
 	for(i in 1:(nr-1)) {
 		for(j in (i+1):nr) {
 			m[i, j] = m[j, i] = heaviness_by_pair(x, i, j, rel, a)
+			if(m[i, j] > v) {
+				v = m[i, j]
+				max_pair = c(i, j)
+			}
 		}
 	}
-	m[x$which_required, x$which_required, drop = FALSE]
+	if(length(max_pair)) {
+		max_pair = rownames(m)[max_pair]
+	}
+	m2 = m[x$which_required, x$which_required, drop = FALSE]
+	if(nrow(m2) > 1) {
+		attr(m2, "max") = max(m2[upper.tri(m2)])
+		attr(m2, "max_pair") = max_pair
+	}
+	m2
 }
 
 # == title

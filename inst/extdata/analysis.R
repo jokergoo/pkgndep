@@ -88,6 +88,16 @@ df$adjusted_total_heaviness_from_parents = df$total_heaviness_from_parents*sqrt(
 
 df$reducible = grepl("functions/objects are imported.", df$max_heaviness_parent_info)
 
+df$max_co_heaviness_from_parents = sapply(lt, function(x) {
+	qqcat("========= @{x$package} ===========\n")
+	m = co_heaviness(x)
+	if(nrow(m) > 1) {
+		max(m[upper.tri(m)])
+	} else {
+		0
+	}
+})
+
 df$heaviness_on_children = sapply(lt, function(x) {
 	heaviness_on_children(x$package)
 })

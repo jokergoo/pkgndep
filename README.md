@@ -1,4 +1,4 @@
-# Heaviness Analysis on R Package Dependencies
+# Analyzing Dependency Heaviness of R Packages
 
 [![R-CMD-check](https://github.com/jokergoo/pkgndep/workflows/R-CMD-check/badge.svg)](https://github.com/jokergoo/pkgndep/actions)
 [![CRAN](https://www.r-pkg.org/badges/version/pkgndep)](https://cran.r-project.org/web/packages/pkgndep/index.html)
