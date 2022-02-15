@@ -31,7 +31,6 @@ A \code{pkg_db} class object. There are the following methods:
 \dontrun{
 db = available.packages()
 db2 = reformat_db(db)
-}
 
 # a pkg_db object generated on 2021-10-28 can be loaded by load_pkg_db()
 db2 = load_pkg_db(snapshot = TRUE)
@@ -41,4 +40,5 @@ db2$get_dependency_table("ComplexHeatmap")
 db2$get_rev_dependency_table("ComplexHeatmap")
 db2$package_dependencies("ComplexHeatmap")
 db2$package_dependencies("ComplexHeatmap", recursive = TRUE)
+}
 }

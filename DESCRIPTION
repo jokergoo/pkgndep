@@ -7,7 +7,7 @@ Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 3.5.0)
 Imports: ComplexHeatmap (>= 2.7.1), GetoptLong, GlobalOptions, utils, grid, hash, 
-    methods, BiocManager, brew
+    methods, BiocManager, brew, BiocVersion
 Suggests: knitr, rmarkdown, svglite, callr, rjson, Rook, igraph, ggplot2, ggrepel
 Description: A new metric named 'dependency heaviness' is proposed that measures the number 
     of additional dependency packages that a parent package brings to its child package 

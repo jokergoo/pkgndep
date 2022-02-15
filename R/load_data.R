@@ -1,23 +1,14 @@
 
 
 load_from_pkgndep_db = function(file) {
-	if(!pkg_exists("pkgndep.db")) {
-		## to install pkgndep.db
-		link = "https://github.com/jokergoo/pkgndep.db/archive/refs/tags/0.0.1.tar.gz"
-		if(interactive()) {
-			answer = readline("You will install package 'pkgndep.db' from GitHub? [y|n] ")
-			if(tolower(answer) %in% c("y", "yes")) {
-	            install.packages(link, repos = NULL, type = "source")
-	        } else {
-	            stop("You need to install package 'pkgndep.db' to perform the analysis.")
-	        }
-	    } else {
-	    	install.packages(link, repos = NULL, type = "source")
-	    }
+
+	if(is.null(env$db[[file]])) {
+		tmp_file = tempfile(fileext = ".rds")
+		on.exit(file.remove(tmp_file))
+		download.file(paste0("https://pkgndep.github.io/", file), tmp_file, quiet = TRUE)
+		env$db[[file]] = readRDS(tmp_file)
 	}
-	if(!missing(file)) {
-		readRDS(system.file("extdata", file, package = "pkgndep.db"))
-	}
+	env$db[[file]]
 }
 
 # == title

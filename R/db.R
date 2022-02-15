@@ -1,7 +1,13 @@
 
 prepare_db = function(lib = NULL, verbose = TRUE) {
-	if(verbose) cat("retrieve package database from CRAN/Bioconductor...\n")
-	oe = try(suppressMessages(db_remote <- available.packages(repos = BiocManager::repositories(version = getFromNamespace(".version_choose_best", ns = "BiocManager")()))))
+
+	bioc_version = pkgndep_opt$bioc_version
+	repos = c(BioCsoft = paste0("https://bioconductor.org/packages/", bioc_version, "/bioc"),
+              BioCann = paste0("https://bioconductor.org/packages/", bioc_version, "/data/annotation"),
+              BioCexp = paste0("https://bioconductor.org/packages/", bioc_version, "/data/experiment"),
+              CRAN = "https://cloud.r-project.org")
+	if(verbose) qqcat("retrieve package database from CRAN/Bioconductor(@{bioc_version})...\n")
+	oe = try(suppressMessages(db_remote <- available.packages(repos = repos)))
 
 	if(inherits(oe, "try-error")) {
 		warning("Can not load package database from remote repositories, use the snapshot database from 'pkgndep.db' package.")
@@ -69,7 +75,6 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 # \dontrun{
 # db = available.packages()
 # db2 = reformat_db(db)
-# }
 #
 # # a pkg_db object generated on 2021-10-28 can be loaded by load_pkg_db()
 # db2 = load_pkg_db(snapshot = TRUE)
@@ -79,7 +84,7 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 # db2$get_rev_dependency_table("ComplexHeatmap")
 # db2$package_dependencies("ComplexHeatmap")
 # db2$package_dependencies("ComplexHeatmap", recursive = TRUE)
-# 
+# }
 reformat_db = function(db) {
 
 	get_package_list_from_text = function(x) {
