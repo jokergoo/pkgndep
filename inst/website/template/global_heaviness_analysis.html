@@ -229,7 +229,7 @@ $v = \sum_p^N I(|rank(h^{adj}_{a,p}) - rank(h^{adj}_{a-1,p})| > 50)$, where $N$ 
 <br>
 
 <p>The plot of adjusted heaviness verse number of downstream can be seen by clicking the radio button <b>"Adjusted heaviness verse number of indirect downstream packages"</b>. 
-We simply set a package <span style="color:red">having a highly heavy impact on its indirect downstream packages</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_heaviness_on_downstream_no_children[2]%> and <span style="color:orange">having median heavy impact</span> if the adjusted haviness is between <%=CUTOFF$adjusted_heaviness_on_downstream_no_children[1]%> and <%=CUTOFF$adjusted_heaviness_on_downstream_no_children[2]%>.</p>
+We simply set a package <span style="color:red">having a highly heavy impact on its indirect downstream packages</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_heaviness_on_indirect_downstream[2]%> and <span style="color:orange">having median heavy impact</span> if the adjusted haviness is between <%=CUTOFF$adjusted_heaviness_on_indirect_downstream[1]%> and <%=CUTOFF$adjusted_heaviness_on_indirect_downstream[2]%>.</p>
 
 <div class="form-box">
 <input class="form-check-input" type="radio" name="plot-downstream-heaviness-radio" onchange="$('#plot-downstream-heaviness').show();$('#plot-downstream-adjusted-heaviness').hide();" checked>
@@ -242,8 +242,8 @@ We simply set a package <span style="color:red">having a highly heavy impact on 
   </label>
 </div>
 
-<% df2 = df[df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[2], , drop = FALSE]
-	top_pkgs = rownames(df2)[order(df2$adjusted_heaviness_on_downstream_no_children, decreasing = TRUE)]
+<% df2 = df[df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], , drop = FALSE]
+	top_pkgs = rownames(df2)[order(df2$adjusted_heaviness_on_indirect_downstream, decreasing = TRUE)]
 %>
 
 <div id="plot-downstream-heaviness" style="position:relative;">

@@ -148,7 +148,7 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		}
 	}
 
-	get.gpar() # test whether the graphics window can be opened or not
+	#get.gpar() # test whether the graphics window can be opened or not
 	if(missing(fix_size) && cex != 1) {
 		fix_size = TRUE
 	}

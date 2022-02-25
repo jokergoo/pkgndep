@@ -1,0 +1,70 @@
+---
+title: "Suggestions for optimizing package dependencies"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Suggestions for optimizing package dependencies}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+library(pkgndep)
+```
+
+
+Heaviness analysis provides hints for reducing the complexity of package
+dependencies, but how to optimize depends on the specific use of parent
+packages in the corresponding package. First we need to be aware of that there
+are scenarios when reduction of heavy parents could not be performed: 
+
+1. When a package extends the functionality of a heavy parents, the parent must be its strong parent.
+2. A heavy parent provides core functionality to a package.
+3. S4 methods or S4 classes are imported from a parent.
+
+Now let's assume the dependencies from heavy parents can be reduced. We give
+the following suggestions for reducing them:
+
+1. Re-implement the functions that were imported from heavy parents. Take
+   package **mapStats** as an example, an extremely heavy parent **Hmisc** can
+   be observed where **Hmisc** has a heaviness of 49 which is almost 60% of
+   the total number of required packages of **mapStats**. If moving **Hmisc**
+   to “Suggests” of **mapStats**, the number of strong dependencies can be
+   reduced from 83 to 34. [The dependency heaviness
+   analysis](https://pkgndep.github.io/prefix_m/mapStats_dependency_report.html)
+   shows there is only one function imported from **Hmisc**. A deep inspection
+   into the source code of **mapStats** reveals that only a function
+   `capitalize()` from **Hmisc** is imported to **mapStats**. `capitalize()`
+   is a simple function that only capitalizes the first letter of a string.
+   The 49 additional dependencies imported from **Hmisc** can be avoided by
+   simply reimplementing a function `capitalize()` by developer’s own.
+
+2. The previous scenario is actually not very common. More common cases are
+   when heavy parents only provide analysis that are not frequently used in
+   the package, which we call it as "secondary analysis". We suggest to move
+   heavy parent packages that are less used to "Suggests" and they are only
+   loaded when the corresponding functions are called. Dependency packages
+   listed in "Suggests" by default are not mandatory to be installed, thus,
+   there will be errors when the functions are called but these dependency
+   packages are not installed yet. **pkgndep** provides a function
+   `check_pkg()` that checks the availability of a package, and if the package
+   has not been installed yet, `check_pkg()` prints friendly messages to guide
+   user to install it.
+
+    Assume `foo()` is a function that uses another function `bar()` from a heavy
+    parent **pkg**, `foo()` can be written as:
+
+```{r, eval = FALSE}
+foo = function(...) {
+    check_pkg("pkg", ...)
+
+    pkg::bar(...)
+    ...
+}
+```
+
+3. Another way for reducing the package dependencies is to directly copy code
+   from heavy parents. This approach is of course NOT recommended from the aspect
+   of software engineering, [but actually it is widely used in CRAN
+   packages](https://doi.org/10.1109/IWSC.2015.7069885).
+
+

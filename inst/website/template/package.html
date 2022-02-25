@@ -1,10 +1,10 @@
 
 
-<h2>Dependency analysis for package <span class="package"><%=pkg$package%></span></h2>
+<h2>Dependency analysis on package <span class="package"><%=pkg$package%></span></h2>
 
 <h3>General information</h3>
 
-<table class="table table-striped" style="width:700px">
+<table class="table table-striped" style="width:800px">
 <% if(grepl("bioconductor", pkg$repository)) { %>
   <tr><th>Bioconductor link</th><td style="width:100px"> <a href='https://bioconductor.org/packages/<%=pkg$package%>/' target='_blank'>link</a></td></tr>
 <% } else { %>
@@ -21,9 +21,19 @@
 <tr><th>Number of child packages</th><td><%= df[pkg$package, "n_children"]%></td></tr>
 <tr><th>Heaviness on downstream packages <a id="downstream-package-note" class="fake-link" title="Note: downstream packages include child packages.">?</a></th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
 <tr><th>Number of downstream packages</th><td><%= df[pkg$package, "n_downstream"]%></td></tr>
-<tr><th>Heaviness on indirect downstream packages (excluding child packages)</th><td><%= round(df[pkg$package, "heaviness_on_downstream_no_children"], 1)%></td></tr>
-<tr><th>Number of indirect downstream packages (excluding child packages)</th><td><%= df[pkg$package, "n_downstream_no_children"]%></td></tr>
+<tr><th>Heaviness on indirect downstream packages (excluding child packages)</th><td><%= round(df[pkg$package, "heaviness_on_indirect_downstream"], 1)%></td></tr>
+<tr><th>Number of indirect downstream packages (excluding child packages)</th><td><%= df[pkg$package, "n_indierct_downstream"]%></td></tr>
+<% m = co_heaviness(pkg)
+    diag(m) = -Inf
+if(nrow(m) >= 2) { 
+if(max(m) > 0) { 
+ind = which(m == max(m), arr.ind = TRUE)
+rn = rownames(m)
+%>
+<tr><th>Max co-heaviness from parent packages (<span class="package">"<%=rn[ind[1, 1]]%>"</span> and <span class="package">"<%=rn[ind[1, 2]]%>"</span>)</th><td><%= max(m) %></td></tr>
 
+<% }
+} %>
 </table>
 
 <script>

@@ -25,7 +25,7 @@
     }))
      dev.off() 
   } else {
-    png(tmp_file, width = 500*1.5, height = 600*1.5, res = 72*2)
+    png(tmp_file, width = 600*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
     color = ifelse(l, "highlight", "no")
@@ -99,7 +99,7 @@ downstream_tb$package = qq("<a href='?package=@{downstream_tb$package}'>@{downst
 <% if(global_min_depth < global_max_depth) { %>
 <div class="form-box" style="padding:20px 10px;">
 <div style="display: inline-grid;">
-<div style="grid-column-start:1;"><span style="padding-right:10px; position:relative; top:25px;">Adjust range of dependency depth:</span></div>
+<div style="grid-column-start:1;"><span style="padding-right:10px; position:relative; top:25px;">Adjust range of the dependency depth:</span></div>
 <div style="width:<%=max((length(depth_tb) - 1)*75, 300)%>;grid-column-start:2;padding-right:10px;">
 <input type="text" id="downstream-dep-depth-slider" name="downstream_dep_depth_range" value="" />
 </div>
@@ -182,20 +182,20 @@ for(i in seq_along(depth_tb)) {
 </style>
 
 
-
-<p>Dependency paths in the table are represented as the following graph with <%=n_nodes%> nodes and <%=nrow(nt)%> edges. 
+<hr>
+<p>Dependency paths in the table are merged as the following graph with <%=n_nodes%> nodes and <%=nrow(nt)%> edges. 
 <% if(!(min_depth == global_min_depth && max_depth == global_max_depth)) { %>
 Dependency depth ranges between <%=min_depth%> and <%=max_depth%>. 
 <% } %>
 <% if(n_nodes <= 30) { %>
 
-    <span><a class='fake-link' onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt('LR');$('#graph-downstream-horizontal-layout').hide();$('#graph-downstream-vertical-layout').show();" style="font-size: 0.8em;">Reset graph</a></span> | 
-    <span><a class='fake-link' id="graph-downstream-vertical-layout" onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt('TB');$('#graph-downstream-horizontal-layout').show();$(this).hide();" style="font-size: 0.8em;">Vertical layout</a></span>
-    <span><a class='fake-link' id="graph-downstream-horizontal-layout" onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt('LR');$('#graph-downstream-vertical-layout').show();$(this).hide();" style="font-size: 0.8em; display: none;">Horizontal layout</a></span>
+    <span><a class='fake-link' onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt('LR');$('#graph-downstream-horizontal-layout').hide();$('#graph-downstream-vertical-layout').show();$('#cy-downstream-dep').resizable('destroy');$('#cy-downstream-dep').resizable();" style="font-size: 0.8em;">Reset graph</a></span> | 
+    <span><a class='fake-link' id="graph-downstream-vertical-layout" onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt('TB');$('#graph-downstream-horizontal-layout').show();$(this).hide();$('#cy-downstream-dep').resizable('destroy');$('#cy-downstream-dep').resizable();" style="font-size: 0.8em;">Vertical layout</a></span>
+    <span><a class='fake-link' id="graph-downstream-horizontal-layout" onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt('LR');$('#graph-downstream-vertical-layout').show();$(this).hide();$('#cy-downstream-dep').resizable('destroy');$('#cy-downstream-dep').resizable();" style="font-size: 0.8em; display: none;">Horizontal layout</a></span>
 
 <% } else { %>
 
- <span><a class='fake-link' onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt();" style="font-size: 0.8em;">Reset graph</a></span>
+ <span><a class='fake-link' onclick="$('#cy-downstream-dep').html('');load_downstream_dep_nt();$('#cy-downstream-dep').resizable('destroy');$('#cy-downstream-dep').resizable();" style="font-size: 0.8em;">Reset graph</a></span>
 
 <% } %>
 </p>
@@ -254,7 +254,18 @@ if(n_nodes > 500) {
 %>
 
 
-<p><b>Green dots:</b> Groups of leave nodes (number > 1) in the complete graph that connect to their parents nodes. It is for reducing the size of original graph. <b>Red arrows:</b> Edges with high betweenness. Value on a edge is the heaviness from a parent on its child package.</p>
+<p>Legends (if there are such):</p>
+<ul>
+  <li><b>Orange dot:</b> the package <b><%=pkg$package%></b>.</li>
+  <li><b>Green dots:</b> Groups of leave nodes (number > 1) in the complete graph that connect to their parents nodes. It is for reducing the size of graph. </li>
+  <li><b>Red arrows:</b> Edges with high betweenness. Value on a edge is the heaviness from a parent on its child package.</li>
+</ul>
+
+<p>There are the two notes for the following graph:</p>
+<ul>
+<li>The number on an edge only corresponds to the direct heaviness from a parent on its child. It does not necessarily mean all the heaviness are inherited to the very downstream end nodes. E.g. for a dependency path: <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k1</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k2</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">C</span>, the <code>k1</code> heaviness from A to B are not necessarily all passed to package C, although most of them should be.</li>
+  <li>The graph is only a union of the shortest paths from <b><%=pkg$package%></b> to its downstream packages, thus it does not include all the dependency relations downstream of <b><%=pkg$package%></b> in the global dependency graph.</li>
+</ul>
 
 
 <div id='cy-downstream-dep' style="position:relative;">
@@ -349,12 +360,14 @@ load_downstream_dep_nt = function(rankDir = "TB") {
   });
 
 }
+
+$('#cy-downstream-dep').resizable();
 </script>
 
 
 <% } else { %>
 
-<p>In total there are <%=n_total%> downstream dependencied, but no package has heaviness larger than 10.</p>
+<p>In total there are <%=n_total%> downstream dependencies, but no package on which <%=pkg$package%> has heaviness larger than 10.</p>
 
 <% } %>
 

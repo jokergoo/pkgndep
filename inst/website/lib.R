@@ -3,7 +3,7 @@ CUTOFF = list()
 CUTOFF$adjusted_max_heaviness_from_parents = c(50, 70)
 CUTOFF$adjusted_total_heaviness_from_parents = c(70, 100)
 CUTOFF$adjusted_heaviness_on_children = c(15, 30)
-CUTOFF$adjusted_heaviness_on_downstream_no_children = c(10, 20)
+CUTOFF$adjusted_heaviness_on_indirect_downstream = c(10, 20)
 
 page_select = function(current_page, n_page, param_str = '') {
 	pages = seq(current_page - 4, current_page + 4)
@@ -63,8 +63,11 @@ page_select2 = function(current_page, n_page, which_table, package, records_per_
 
 html_template = function(template, vars = list()) {
 
-	# template_dir = "~/project/development/pkgndep/inst/website/template"
-	template_dir = system.file("website", "template", package = "pkgndep")
+	if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
+		template_dir = "~/project/development/pkgndep/inst/website/template"
+	} else {
+		template_dir = system.file("website", "template", package = "pkgndep")
+	}
 
 	f = tempfile()
 
@@ -145,27 +148,31 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		df2[, "adjusted_heaviness_on_children"] = round(df2[, "adjusted_heaviness_on_children"], 1)
 		df2[, "heaviness_on_downstream"] = round(df2[, "heaviness_on_downstream"], 1)
 		df2[, "adjusted_heaviness_on_downstream"] = round(df2[, "adjusted_heaviness_on_downstream"], 1)
-		df2[, "heaviness_on_downstream_no_children"] = round(df2[, "heaviness_on_downstream_no_children"], 1)
-		df2[, "adjusted_heaviness_on_downstream_no_children"] = round(df2[, "adjusted_heaviness_on_downstream_no_children"], 1)
+		df2[, "heaviness_on_indirect_downstream"] = round(df2[, "heaviness_on_indirect_downstream"], 1)
+		df2[, "adjusted_heaviness_on_indirect_downstream"] = round(df2[, "adjusted_heaviness_on_indirect_downstream"], 1)
 
 		df2$max_heaviness_from_parents = qq("<a href='package?package=@{pkgs}' title='@{df2$max_heaviness_parent_info}'>@{df2$max_heaviness_from_parents}</a>", collapse = FALSE)
+		max_co_heaviness_from_parents_title = qq("Two parent packages '@{gsub(',', '\\' and \\'', df2$max_co_heaviness_parents_pair)}' contribute the highest co-heaviness on '@{pkgs}'.", collapse = FALSE)
+		max_co_heaviness_from_parents_title[df2$max_co_heaviness_from_parents == 0] = "There is no pair of parents having co-heaviness."
+		max_co_heaviness_from_parents_title = ifelse(df2$max_co_heaviness_parents_pair_type == "", max_co_heaviness_from_parents_title, qq("@{max_co_heaviness_from_parents_title} The relation of the two parents is '@{df2$max_co_heaviness_parents_pair_type}'.", collapse = FALSE))
+		df2$max_co_heaviness_from_parents = qq("<a href='package?package=@{pkgs}' title=\"@{max_co_heaviness_from_parents_title}\">@{df2$max_co_heaviness_from_parents}</a>", collapse = FALSE)
+		
 		l = grepl("functions/objects are imported", df2$max_heaviness_parent_info)
 		if(any(l)) {
 			df2$max_heaviness_from_parents[l] = paste0(qq(" <span class='reducible'><a title='This heaviness can be reduced by moving parent packages to &lsquo;Suggests&rsquo; of &lsquo;@{pkgs[l]}&rsquo;.'>reducible</a></span> ", collapse = FALSE), df2$max_heaviness_from_parents[l])
 		}
 
 		if(exclude_children) {
-			df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", 
+			df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "max_co_heaviness_from_parents",
 				"heaviness_on_children",  "n_children", 
-				"heaviness_on_downstream_no_children", "n_downstream_no_children"), drop = FALSE]
+				"heaviness_on_indirect_downstream", "n_indierct_downstream"), drop = FALSE]
 		} else {
-			df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", 
+			df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "max_co_heaviness_from_parents",
 				"heaviness_on_children",  "n_children", 
 				"heaviness_on_downstream", "n_downstream"), drop = FALSE]
 		}
 		df2$repository = ifelse(grepl("bioconductor", df2$repository), "Bioconductor", "CRAN")
 
-		
 		response$write(html_template("dependency_table",
 			vars = list(df = df,
 				        df2 = df2,
@@ -181,7 +188,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 				        )))
 	} else {
 		response$write(html_template("error",
-			vars = list(error_message = "No results found.")))
+			vars = list(error_message = "No result found.")))
 	}
 
 	response$write(html_template("footer"))
@@ -215,8 +222,13 @@ html_single_package = function(response, package) {
 			all_pkgs = df$package,
 			package = "")))
 
-		response$write(html_template("error",
-			vars = list(error_message = qq("Cannot make dependency heatmap for package '@{package}'"))))
+		if(package %in% BASE_PKGS) {
+			response$write(html_template("error",
+				vars = list(error_message = qq("Base package <b>'@{package}'</b> is not included in this analysis."))))
+		} else {
+			response$write(html_template("error",
+				vars = list(error_message = qq("Package <b>'@{package}'</b> is not included in this analysis."))))
+		}
 		response$write(html_template("footer"))
 		return(NULL)
 	} else {
@@ -480,6 +492,11 @@ html_child_dependency = function(response, package, page, records_per_page = 20,
 	df = load_pkg_stat_snapshot()
 
 	rev_pkg_tb = pkg_db_snapshot$package_dependencies(package, reverse = TRUE)
+	rev_pkg_tb = as.data.frame(rev_pkg_tb)
+	rev_pkg_tb$dep_fields = factor(rev_pkg_tb$dep_fields, levels = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances"))
+	rev_pkg_tb = rev_pkg_tb[order(rev_pkg_tb$dep_fields, rev_pkg_tb$package), , drop = FALSE]
+	rev_pkg_tb = rev_pkg_tb[!duplicated(rev_pkg_tb$package), , drop = FALSE]
+
 	n_total = nrow(rev_pkg_tb)
 	n_used = 0
 
@@ -636,12 +653,12 @@ make_heaviness_plot = function() {
 
 	cat("  - generate plots for heaviness on downstream packages.\n")
 	png(paste0(env$figure_dir, "/plot-downstream-no-children-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	heaviness = ifelse(df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[2], "high", ifelse(df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[1], "median", "low"))
+	heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], "high", ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[1], "median", "low"))
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_downstream_no_children, heaviness_on_downstream_no_children, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[2], df$package, ""))) +
+		p = ggplot2::ggplot(df, ggplot2::aes(n_indierct_downstream, heaviness_on_indirect_downstream, color = heaviness, 
+				label = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], df$package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
@@ -654,12 +671,12 @@ make_heaviness_plot = function() {
 	dev.off()
 
 	png(paste0(env$figure_dir, "/plot-downstream-no-children-adjusted-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	heaviness = ifelse(df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[2], "high", ifelse(df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[1], "median", "low"))
+	heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], "high", ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[1], "median", "low"))
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_downstream_no_children, adjusted_heaviness_on_downstream_no_children, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_downstream_no_children >= CUTOFF$adjusted_heaviness_on_downstream_no_children[2], df$package, ""))) +
+		p = ggplot2::ggplot(df, ggplot2::aes(n_indierct_downstream, adjusted_heaviness_on_indirect_downstream, color = heaviness, 
+				label = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], df$package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
@@ -744,7 +761,7 @@ make_heaviness_plot = function() {
 	})
 	dev.off() 
 
-	cat("  - generate plots for comparing downstream and downstream (exluding children) packages.\n")
+	cat("  - generate plots for comparing downstream and indirect downstream (exluding children) packages.\n")
 	png(paste0(env$figure_dir, "/plot-compare-downstream-and-downstream2.png"), width = 800*1.5, height = 500*1.5, res = 72*2)
 	grid.newpage()
 	pushViewport(viewport(layout = grid.layout(nrow = 1, ncol = 2)))
@@ -758,7 +775,7 @@ make_heaviness_plot = function() {
 
 	pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
 	pushViewport(viewport(width = 0.9))
-	correspond_between_two_rankings(x1 = df$heaviness_on_children, x2 = df$heaviness_on_downstream_no_children, 
+	correspond_between_two_rankings(x1 = df$heaviness_on_children, x2 = df$heaviness_on_indirect_downstream, 
 		name1 = "children", name2 = "indirect downstream\n(excluding children)", top_n = 500, newpage = FALSE)
 	upViewport()
 	upViewport()
@@ -773,7 +790,7 @@ make_heaviness_plot = function() {
 	dev.off()
 
 
-	lta = readRDS(system.file("extdata", "adjusted_heaviness_select_a.rds", package = "pkgndep.db"))
+	lta = load_from_pkgndep_db("adjusted_heaviness_select_a.rds")
 	d1 = lta$children
 	png(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-children.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
 	plot(d1[, 1], d1[, 2], xlab = "value of a", ylab = "#{|rank(h_a) - rank(h_{a-1})| > 50}", main = "Select a for adjusting heaviness on child packages"); abline(v = 10, col = "red")
@@ -784,7 +801,7 @@ make_heaviness_plot = function() {
 	plot(d2[, 1], d2[, 2], xlab = "value of a", ylab = "#{|rank(h_a) - rank(h_{a-1})| > 50}", main = "Select a for adjusting heaviness on downstream packages"); abline(v = 10, col = "red")
 	dev.off()
 
-	d3 = lta$downstream_no_children
+	d3 = lta$indirect_downstream
 	png(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-downstream-no-children.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
 	plot(d3[, 1], d3[, 2], xlab = "value of a", ylab = "#{|rank(h_a) - rank(h_{a-1})| > 50}", main = "Select a for adjusting heaviness\non indirect downstream packages"); abline(v = 6, col = "red")
 	dev.off()

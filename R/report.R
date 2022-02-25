@@ -17,7 +17,7 @@
 # }
 dependency_report = function(pkg, file = NULL) {
 	
-	if(identical(topenv(), .GlobalEnv)) {
+	if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
 		template_file = "~/project/development/pkgndep/inst/extdata/package_report.html"
 	} else {
 		template_file = system.file("extdata", "package_report.html", package = "pkgndep")

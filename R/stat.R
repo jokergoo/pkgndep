@@ -57,7 +57,7 @@ heaviness = function(x, rel = FALSE, a = 10) {
 }
 
 
-heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10) {
+heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10, jaccard = FALSE) {
 	p = required_dependency_packages(x, FALSE)
 	v1 = length(p)
 	v = 0
@@ -84,7 +84,13 @@ heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10) {
 		p_common = setdiff(p_ij, c(p_i, p_j))
 		v2 = length(p_common)
 
-		if(rel) {
+		if(jaccard) {
+			if(length(p_ij) == 0) {
+				v = 0
+			} else {
+				v = v2/length(p_ij)
+			}
+		} else if(rel) {
 			v = (v1 + a)/((v1 - v2) + a)
 		} else {
 			v = v2
@@ -100,6 +106,7 @@ heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10) {
 # -x An object returned by `pkgndep`.
 # -rel Whether to return the absolute measure or the relative measure.
 # -a A constant added for calculating the relative measure.
+# -jaccard Whether to return Jaccard coeffcient?
 #
 # == details
 # Denote a package as P and its two strong parent packages as A and B, i.e., parent packages in "Depends", "Imports" and "LinkingTo", 
@@ -111,18 +118,26 @@ heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10) {
 #
 # Note the co-heaviness is only calculated for parent packages in "Depends", "Imports" and "LinkingTo".
 #
+# When ``jaccard`` is set to ``TRUE``, the function returns jaccard coeffcient. ``setdiff(S_AB, union(S_A, S_B))`` is actually
+# the set of dependencies imported by and only by two parent packages A and B. Thus the jaccard coeffcient is calculated as
+# ``length(setdiff(S_AB, union(S_A, S_B)))/length(S_AB)``.
+#
 # == example
 # \dontrun{
 # x = pkgndep("DESeq2")
 # hm = co_heaviness(x)
 # ComplexHeatmap::Heatmap(hm)
+# co_heaviness(x, jaccard = TRUE)
 # }
-co_heaviness = function(x, rel = FALSE, a = 10) {
+co_heaviness = function(x, rel = FALSE, a = 10, jaccard = FALSE) {
 
 	nr = nrow(x$dep_mat)
 	m = matrix(NA, nrow = nr, ncol = nr)
 	rownames(m) = colnames(m) = rownames(x$dep_mat)
 	diag(m) = heaviness(x, rel = rel, a = a)
+	if(jaccard) {
+		diag(m) = sign(diag(m))
+	}
 
 	if(nr <= 1) {
 		return(m)
@@ -132,7 +147,7 @@ co_heaviness = function(x, rel = FALSE, a = 10) {
 	v = 0
 	for(i in 1:(nr-1)) {
 		for(j in (i+1):nr) {
-			m[i, j] = m[j, i] = heaviness_by_pair(x, i, j, rel, a)
+			m[i, j] = m[j, i] = heaviness_by_pair(x, i, j, rel, a, jaccard)
 			if(m[i, j] > v) {
 				v = m[i, j]
 				max_pair = c(i, j)
@@ -145,7 +160,7 @@ co_heaviness = function(x, rel = FALSE, a = 10) {
 	m2 = m[x$which_required, x$which_required, drop = FALSE]
 	if(nrow(m2) > 1) {
 		attr(m2, "max") = max(m2[upper.tri(m2)])
-		attr(m2, "max_pair") = max_pair
+		attr(m2, "max_pair") = sort(max_pair)
 	}
 	m2
 }
@@ -171,18 +186,15 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 		if(length(hv) == 0) {
 			v = 0
 			attr(v, "all_children_pkgs") = 0
-			attr(v, "gini_index") = 0
 			if(add_values_attr) attr(v, "values") = numeric(0)
 		} else {
 			v = mean(hv)
 			attr(v, "all_children_pkgs") = length(hv)
-			attr(v, "gini_index") = gini_index(hv + 2)
 			if(add_values_attr) attr(v, "values") = structure(hv, names = tb[, 2])
 		}
 	} else {
 		v = 0
 		attr(v, "all_children_pkgs") = 0
-		attr(v, "gini_index") = 0
 		if(add_values_attr) attr(v, "values") = numeric(0)
 	}
 	v
@@ -265,10 +277,40 @@ heaviness_on_downstream = function(package, add_values_attr = FALSE) {
 	s = abs(s1 - s2)
 	v = mean(s)
 	attr(v, "all_downstream_pkgs") = length(pkg)
-	attr(v, "gini_index") = gini_index(s + 2)
 	if(add_values_attr) attr(v, "values") = structure(s, names = pkg)
 
 	v
+}
+
+# == title
+# Heaviness from all upstream packages
+# 
+# == param
+# -package A package name.
+#
+# == value
+# A named vector.
+#
+heaviness_from_upstream = function(package) {
+	df = load_pkg_stat_snapshot()
+
+	upstream_pkgs = unique(upstream_dependency(package)[, 1])
+	upstream_pkgs = setdiff(upstream_pkgs, BASE_PKGS)
+	n_total = length(upstream_pkgs)	
+
+	upstream_tb = data.frame(package = character(n_total), heaviness = numeric(n_total))
+		
+	if(n_total) {
+		upstream_tb$package = upstream_pkgs
+		for(i in seq_along(upstream_pkgs)) {
+			s = df[upstream_pkgs[i], "hv_downstream_values"][[1]]
+			if(!is.null(s)) {
+				upstream_tb[i, "heaviness"] = s[package]
+			}
+		}
+	}
+
+	structure(upstream_tb$heaviness, names = upstream_tb$package)
 }
 
 

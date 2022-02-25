@@ -1,5 +1,5 @@
 
-<h2>Analysis on the heaviness of R package dependencies</h2> <p>R packages under analysis were retrieved from CRAN/Biocoductor on 2021-10-28. There are
+<h2>Analysis on the dependency heaviness of R packages</h2> <p>R packages under analysis were retrieved from CRAN/Biocoductor on 2021-10-28. There are
 <b><%=n_cran%></b> packages from CRAN and <b><%=n_bioc%></b> packages from
 Bioconductor (<a href='https://bioconductor.org/packages/3.14/BiocViews.html#___Software' target='_blank'>bioc version 3.14</a>).</p>
 
@@ -61,24 +61,24 @@ packages that <i>A</i> brings to <i>P</i></b>.</li>
 are used to measure how heavy parents are.</li>
 
 <li><b>Heaviness of a package on all its child packages</b>: For package <i>P</i>,
-assuming it has $K$ child packages and the $k^{th}$ child is denoted
+assuming it has $K_c$ child packages and the $k^{th}$ child is denoted
 as $A_k$. Denote $n_{1k}$ as the number of strong dependencies of
 $A_k$ and $n_{2k}$ as the number of strong dependencies of $A_k$ <i>if moving <i>P</i>
-to its <code>Suggesets</code></i>, the heaviness of <i>P</i> on its child packages is
-calculated as $\frac{1}{K} \sum_k^K(n_{1k} - n_{2k})$. So here the heaviness measures
+to its</i> <code>Suggests</code>, the heaviness of <i>P</i> on its child packages is
+calculated as $\frac{1}{K_c} \sum_k^{K_c}(n_{1k} - n_{2k})$. So here the heaviness measures
 the average number of additional packages <i>P</i> brings to its child packages.</li>
 
 <li><b>Heaviness of a package on all its downstream packages</b>: The
 definition is similar to the heaviness of a package on all its child packages.
 For package <i>P</i>,
-assuming it has $K$ downstream packages and the $k^{th}$ downstream package is denoted
+assuming it has $K_d$ downstream packages and the $k^{th}$ downstream package is denoted
 as $B_k$. Denote $n_{1k}$ as the number of strong dependencies of package
 $B_k$. Since <i>P</i> can affect its downstream in an indirect manner, 
 we recalculate the global dependency relations for all packages after moving 
 <i>P</i> to all its child packages' <code>Suggests</code>. Then we denote 
 $n_{2k}$ as the number of strong dependencies of $B_k$ in the modified dependency graph.
 The heaviness of <i>P</i> on its downstream packages is
-calculated as $\frac{1}{K} \sum_k^K(n_{1k} - n_{2k})$.</li>
+calculated as $\frac{1}{K_d} \sum_k^{K_d}(n_{1k} - n_{2k})$.</li>
 
 <li><b>Heaviness of a package on all its indirect downstream packages</b>: The calculation is
 the same as "heaviness on downstream packages" except now the child packages are excluded from
@@ -88,10 +88,20 @@ downstream packages. </li>
 <p>Here the measure of <b>Heaviness of a package on all its child packages</b> is more important to developers,
 since it tells how many additional depedency packages are expected to be imported when they add a new parent package to their packages.</p>
 
-All these measures have a trend that small $K$ (i.e. number of parents, children or downstream packages) leads to high heaviness values.
+<p>All these measures have a trend that small $K$ (i.e. number of parents, children or downstream packages) leads to high heaviness values.
 Packages with small $K$ are in general of less interests. What is more important is to see, e.g. which package heavily affects a lot of 
 children or downstream packages (i.e. with large $K$). Thus, the original definition of heaviness is <b>adjusted</b> correspondingly to decrease the heaviness more for smaller $K$.
-A detailed explanation of the adjusted heaviness can be found in the tab <b>"Heaviness analysis"</b>.
+A detailed explanation of the adjusted heaviness can be found in the tab <b>"Heaviness analysis"</b>.</p>
+
+<p>The previous definition of heaviness only measures the effect of a single package. Here we define another measure called <b>"co-heaviness from parent package"</b> that measures the number of additional dependency packages simultaneously imported by two parents.
+Denote <i>P</i>'s two strong parent packages as <i>A</i> and <i>B</i>, 
+denote $S_A$ as the set of reduced dependency packages when only moving <i>A</i> to
+<code>Suggests</code> of <i>P</i>, denote $S_B$ as the set of reduced dependency packages when
+only moving <i>B</i> to <code>Suggests</code> of <i>P</i>, and denote $S_{AB}$ as the set of reduced dependency
+packages when moving <i>A</i> and <i>B</i> together to <code>Suggests</code> of <i>P</i>, the co-heaviness of
+<i>A</i>, <i>B</i> on <i>P</i> is calculatd as $ \left | S_{AB} \setminus  \cup (S_A, S_B) \right | $ where $|A|$
+is the number of elements in set <i>A</i> and $A \setminus B$ is the set of elements in <i>A</i> but not in <i>B</i>.
+</p>
 
 </details>
 
@@ -118,13 +128,13 @@ details[open] > summary:first-of-type {
 <form method="get" class="form-inline">
 
 <div>
-	<label> <b>Table rows are ordered by: </b> <a id="order-by-note" class="fake-link" title="Note: adjusted heaviness values are not listed in the table because the absolute values of them are meaningless. They are only used for reordering the table." style="font-size: 0.8em;">Where are these columns?</a><br>
-		<input type="radio" name="order_by" value="adjusted_max_heaviness_from_parents" <%=ifelse(order_by == 'adjusted_max_heaviness_from_parents', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted max heaviness from parent packages<br>
-      <input type="radio" name="order_by" value="adjusted_heaviness_on_children" <%=ifelse(order_by == 'adjusted_heaviness_on_children', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on child packages<br>
+	<label> <b>Order table rows by: </b> <a id="order-by-note" class="fake-link" title="Note: adjusted heaviness values are not listed in the table because the absolute values of them are meaningless. They are only used for reordering the table." style="font-size: 0.8em;">Where are these columns?</a><br>
+		<input type="radio" name="order_by" value="adjusted_max_heaviness_from_parents" <%=ifelse(order_by == 'adjusted_max_heaviness_from_parents', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted max heaviness from parent packages,<br>
+      <input type="radio" name="order_by" value="adjusted_heaviness_on_children" <%=ifelse(order_by == 'adjusted_heaviness_on_children', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on child packages,<br>
       <% if(exclude_children) { %>
-      <input type="radio" name="order_by" value="adjusted_heaviness_on_downstream_no_children" <%=ifelse(order_by == 'adjusted_heaviness_on_downstream_no_children', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on downstream packages (excluding child packages)
+      <input type="radio" name="order_by" value="adjusted_heaviness_on_indirect_downstream" <%=ifelse(order_by == 'adjusted_heaviness_on_indirect_downstream', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on downstream packages (excluding child packages)
       <% } else { %>
-      <input type="radio" name="order_by" value="adjusted_heaviness_on_downstream" <%=ifelse(order_by == 'adjusted_heaviness_on_downstream', 'checked=1', '')%>onchange="this.form.submit()"> Adjusted heaviness on downstream packages
+      <input type="radio" name="order_by" value="adjusted_heaviness_on_downstream" <%=ifelse(order_by == 'adjusted_heaviness_on_downstream', 'checked=1', '')%>onchange="this.form.submit()"> Adjusted heaviness on downstream packages.
       <% } %>
         </label>
 </div>
@@ -138,7 +148,7 @@ details[open] > summary:first-of-type {
 
 <div>
 <label>
-	<input id="input-exclude-children" type="checkbox" name="exclude_children" <%=ifelse(exclude_children, 'checked=1', '')%> onchange="this.form.submit()"> Exclude children from downstream packages or only list indirect downsteam packages. A package's downstream packages also include its child packages, so a package's heaviness on downstream packages would be very similar to the heaviness on its child packages if the dependency depth to downstream is small (if the max dependency depth is 2, then all downstream packages are child packages). On the other hand, a package may have a lot of child packages as leaves in the downstream dependency graph. Thus, excluding children from downstream packages helps to discover the heaviness indirectly affecting downstream packages.
+	<input id="input-exclude-children" type="checkbox" name="exclude_children" <%=ifelse(exclude_children, 'checked=1', '')%> onchange="this.form.submit()"> Exclude children from downstream packages or only list indirect downsteam packages. A package's downstream packages also include its child packages, so a package's heaviness on downstream packages would be very similar to the heaviness on its child packages if the dependency depth to downstream is small (if the max dependency depth is 2, then all downstream packages are child packages). Thus, excluding children from downstream packages helps to discover the heaviness that indirectly affects downstream packages.
 </label>
 </div>
 
@@ -158,7 +168,8 @@ $(function() {
  <span style="width:20px;background-color:#FFFF10;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness from parent packages
  <span style="width:20px;background-color:#10FFFF;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness on child/downstream packages
  </p>
-<p>The full dependency table can be obtained by <code>df = pkgndep::load_pkg_stat_snapshot()</code>.</p>
+ <br>
+<p>The full table of dependency heaviness analysis can be obtained by <code>df = pkgndep::all_pkg_stat_snapshot()</code>.</p>
 </div>
 
 
@@ -171,10 +182,11 @@ if(exclude_children) {
 				          qq("<a href='?order_by=n_by_all&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of all dependency packages</a>"), 
 				          qq("<a href='?order_by=n_parents&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of parent packages</a>"), 
 				          qq("<a href='?order_by=max_heaviness_from_parents&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Max heaviness from parent packages</a>"), 
+				          qq("<a href='?order_by=max_co_heaviness_from_parents&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Max co-heaviness from parent packages</a>"), 
 				          qq("<a href='?order_by=heaviness_on_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on child packages</a>"), 
 				          qq("<a href='?order_by=n_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of child packages</a>"), 
-				          qq("<a href='?order_by=adjusted_heaviness_on_downstream_no_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on indirect downstream packages (excluding children)</a>"), 
-				          qq("<a href='?order_by=n_downstream_no_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of indirect downstream packages (excluding children)</a>"))
+				          qq("<a href='?order_by=adjusted_heaviness_on_indirect_downstream&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on indirect downstream packages (excluding children)</a>"), 
+				          qq("<a href='?order_by=n_indierct_downstream&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of indirect downstream packages (excluding children)</a>"))
 } else {
 	col.names = c(qq("<a href='?order_by=package&reducible=@{reducible_str}'>Package</a>"), 
 			             "Repository",
@@ -182,6 +194,7 @@ if(exclude_children) {
 				          qq("<a href='?order_by=n_by_all&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of all dependency packages</a>"), 
 				          qq("<a href='?order_by=n_parents&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of parent packages</a>"), 
 				          qq("<a href='?order_by=max_heaviness_from_parents&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Max heaviness from parent packages</a>"), 
+				          qq("<a href='?order_by=max_co_heaviness_from_parents&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Max co-heaviness from parent packages</a>"), 
 				          qq("<a href='?order_by=heaviness_on_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on child packages</a>"), 
 				          qq("<a href='?order_by=n_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of child packages</a>"), 
 				          qq("<a href='?order_by=heaviness_on_downstream&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on downstream packages</a>"), 
@@ -233,11 +246,12 @@ $(function() {
 	$("#dependency-table thead th").filter( ":nth-child(4)" ).css("background-color", "#FFFF10");
 	$("#dependency-table thead th").filter( ":nth-child(5)" ).css("background-color", "#FFFF10");
 	$("#dependency-table thead th").filter( ":nth-child(6)" ).css("background-color", "#FFFF10");
+	$("#dependency-table thead th").filter( ":nth-child(7)" ).css("background-color", "#FFFF10");
 
-	$("#dependency-table thead th").filter( ":nth-child(7)" ).css("background-color", "#10FFFF");
 	$("#dependency-table thead th").filter( ":nth-child(8)" ).css("background-color", "#10FFFF");
 	$("#dependency-table thead th").filter( ":nth-child(9)" ).css("background-color", "#10FFFF");
 	$("#dependency-table thead th").filter( ":nth-child(10)" ).css("background-color", "#10FFFF");
+	$("#dependency-table thead th").filter( ":nth-child(11)" ).css("background-color", "#10FFFF");
 
 	$("#dependency-table a").tooltip();
 })

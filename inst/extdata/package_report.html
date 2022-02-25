@@ -48,7 +48,7 @@ if(max(m) > 0) {
 ind = which(m == max(m), arr.ind = TRUE)
 rn = rownames(m)
 %>
-<tr><th>Max co-heaviness from parent packages (<span class="package"><%=rn[ind[1, 1]]%></span> and <span class="package"><%=rn[ind[1, 2]]%></span>)</th><td><%= max(m) %></td></tr>
+<tr><th>Max co-heaviness from parent packages (<span class="package">"<%=rn[ind[1, 1]]%>"</span> and <span class="package">"<%=rn[ind[1, 2]]%>"</span>)</th><td><%= max(m) %></td></tr>
 
 <% }
 } %>
@@ -154,6 +154,47 @@ $("#parent-dependency tr td:nth-child(2)").each(function(index) {
     }
 })
 </script>
+
+ <% m = co_heaviness(pkg)
+    if(nrow(m) > 1) {
+        if(attr(m, "max") > 10) {
+            m2 = co_heaviness(pkg, jaccard = TRUE)
+
+            pair1 = NULL
+            pair2 = NULL
+            hv1 = NULL
+            hv2 = NULL
+
+            nr = nrow(m)
+            for(i in 1:(nr-1)) {
+                for(j in (i+1):nr) {
+                    if(m[i, j] > 10) {
+                        pair1 = c(pair1, rownames(m)[i])
+                        pair2 = c(pair2, rownames(m)[j])
+                        hv1 = c(hv1, m[i, j])
+                        hv2 = c(hv2, m2[i, j])
+                    }
+                }
+            }
+            co_tb = data.frame(pair1 = pair1, pair2 = pair2, heaviness = hv1, jaccard = round(hv2, 3)) 
+            co_tb = co_tb[order(co_tb$heaviness, decreasing = TRUE), , drop = FALSE]
+            if(pkgndep_opt$add_link) {
+                co_tb[, 1] = qq("<a href='https://pkgndep.github.io/prefix_@{tolower(substr(co_tb[, 1], 1, 1))}/@{co_tb[, 1]}_dependency_report.html'><b>@{co_tb[, 1]}</b></a>", collapse = FALSE)
+                co_tb[, 2] = qq("<a href='https://pkgndep.github.io/prefix_@{tolower(substr(co_tb[, 2], 1, 1))}/@{co_tb[, 2]}_dependency_report.html'><b>@{co_tb[, 2]}</b></a>", collapse = FALSE)
+            } else {
+                co_tb[, 1] = qq("<b>@{co_tb[, 1]}</b>", collapse = FALSE)
+                co_tb[, 2] = qq("<b>@{co_tb[, 2]}</b>", collapse = FALSE)
+            }
+        %>
+        <br>
+<p>The following table lists pairs of parent packages with co-heaviness larger than 10. The co-heaviness measures the number of additional 
+dependencies that two parent packages simultaneously import and are only imported by the two parents.</p>
+<p>Note the co-heaviness from parents can be always easily observed in the dependency heatmap.</p>
+            <%= as.character(knitr::kable(co_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent 1", "Parent 2", qq("Co-heaviness on @{pkg$package}"), "Co-heaviness as Jaccard coeffcient"), table.attr = "class='table table-striped' style='width:900px'" )) %>
+
+   <%     }
+    }
+  %>
 
 
 <% } else { %>

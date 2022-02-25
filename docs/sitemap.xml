@@ -16,6 +16,9 @@
     <loc>/articles/pkgndep.html</loc>
   </url>
   <url>
+    <loc>/articles/suggestions.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -46,6 +49,9 @@
     <loc>/reference/heaviness.html</loc>
   </url>
   <url>
+    <loc>/reference/heaviness_from_upstream.html</loc>
+  </url>
+  <url>
     <loc>/reference/heaviness_on_children.html</loc>
   </url>
   <url>
@@ -58,7 +64,16 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/is_parent.html</loc>
+  </url>
+  <url>
+    <loc>/reference/is_upstream.html</loc>
+  </url>
+  <url>
     <loc>/reference/load_all_pkg_dep.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_from_pkgndep_db.html</loc>
   </url>
   <url>
     <loc>/reference/load_pkg_db.html</loc>

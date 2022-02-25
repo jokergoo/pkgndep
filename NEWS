@@ -1,3 +1,11 @@
+CHANGES in VERSION 1.1.2
+
+* add `is_parent()` and `is_upstream()`.
+* add new argument `jaccard` in `co_heaviness()`.
+* add a new vignette.
+
+====================================
+
 CHANGES in VERSION 1.1.1
 
 * `pkgndep()` allows github repo as input.

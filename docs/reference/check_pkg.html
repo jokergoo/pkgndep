@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -75,7 +78,9 @@
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>If the package is not avaiable, it prints messages to guide users to install the package.</p>
+    <p>One of the suggestions to avoid heavy dependencies is to put parent packages that are not frequently used
+to 'Suggests' and to load them when the corresponding functions are used. Here the <code>check_pkg</code>
+function helps to check whether these parent packages are avaiable and if not, it prints messages to guide users to install the corresponding packages.</p>
     </div>
 
     <div id="ref-examples">

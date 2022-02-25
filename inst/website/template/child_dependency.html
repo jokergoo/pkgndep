@@ -4,7 +4,7 @@
 <br>
 <% tmp_file = tempfile(fileext = ".png")
   if(nrow(rev_tb) > 0) {
-    png(tmp_file, width = 1000*1.5, height = 500*1.5, res = 72*2)
+    png(tmp_file, width = 1200*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
     color = ifelse(l, "highlight", "no")
@@ -76,9 +76,9 @@ namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/libra
 %>
 
 <br>
-<p>In total, there are <%=n_total%> child packages. Only <%=n_used%> child packages with heaviness on <span class="package"><%=pkg$package%></span> larger than 10 are listed in the following table.</p>
+<p>In total, <span class="package"><%=pkg$package%></span> has <%=n_total%> child packages. Only <%=n_used%> child packages with heaviness from <span class="package"><%=pkg$package%></span> larger than 10 are listed in the following table.</p>
 <p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
-<p><b>Heaviness of <span class="package"><%=pkg$package%></span> on child package:</b> number of required packages that can be reduced for each of the child packages if moving <span class="package"><%=pkg$package%></span> to their <code>Suggests</code>.</p>
+<p><b>Heaviness of <span class="package"><%=pkg$package%></span> on child package:</b> number of required packages that can be reduced for each of the child packages by moving <span class="package"><%=pkg$package%></span> to its <code>Suggests</code>.</p>
 <% rev_tb$package = qq("<a href='?package=@{rev_tb$package}'>@{rev_tb$package}</a>", collapse = FALSE)
   rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a href='@{namespace_link}' target='_blank'>link</a>", collapse = FALSE), rev_tb[, 6:7, drop = FALSE])
     html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "imports", "importMethods", "importClasses", "NAMESPACE file", qq("Heaviness of <span class='package'>@{pkg$package}</span> on child package"), "Number of parent packages"), table.attr = "class='table table-striped' id='child-dependency'", align = c("l", rep("r", ncol(rev_tb) - 1))))
@@ -98,10 +98,10 @@ namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/libra
 <form method="get" class="form-inline">
 <div class="checkbox">
   <label>
-      <input id="input-child-dep-prioritize-reducible" name="child_dep_prioritize_reducible" type="checkbox" <%=ifelse(child_dep_prioritize_reducible, 'checked=1', '')%>> Prioritize child packages of which <span class="package"><%=pkg$package%></span> can be moved to their <code>Suggests</code>. In other words, they only import a part of functions from <span class="package"><%=pkg$package%></span> and dependency from <span class="package"><%=pkg$package%></span> can be reduced.
+      <input id="input-child-dep-prioritize-reducible" name="child_dep_prioritize_reducible" type="checkbox" <%=ifelse(child_dep_prioritize_reducible, 'checked=1', '')%>> Prioritize child packages of which the dependency from <span class="package"><%=pkg$package%></span> is reducible. In other words, they only import a limited number of functions from <span class="package"><%=pkg$package%></span>.
     </label>
   <label>
-      <input id="input-child-dep-internal-ordering" name="child_dep_internal_ordering" type="checkbox" <%=ifelse(child_dep_internal_ordering, 'checked=1', '')%>> By default the table is ordered by <b>"the heaviness from <span class="package"><%=pkg$package%></span>"</b>. Normally, if a child package has fewer parent packages including <span class="package"><%=pkg$package%></span>, it is more likely that <span class="package"><%=pkg$package%></span> contributes higher heaviness on it. By clicking this box, the table will be reordered by values of <b>"heaviness of <span class="package"><%=pkg$package%></span> * number of parent packages"</b>, which will prioritize the child packages with large numbers of parent packages and <span class="package"><%=pkg$package%></span> still contribute high heaviness on them.
+      <input id="input-child-dep-internal-ordering" name="child_dep_internal_ordering" type="checkbox" <%=ifelse(child_dep_internal_ordering, 'checked=1', '')%>> By default the table is ordered by <b>"Heaviness of <span class="package"><%=pkg$package%></span> on child package"</b>. Normally, if a child package has only a few parent packages (including <span class="package"><%=pkg$package%></span>), it is very likely that <span class="package"><%=pkg$package%></span> contributes dominant heaviness on it. By checking this box, the table will be reordered by values of <b>"heaviness of <span class="package"><%=pkg$package%></span> * number of parent packages"</b>, which will prioritize the child packages with large numbers of parent packages and <span class="package"><%=pkg$package%></span> still contribute high heaviness on them.
     </label>
   </div>
  </form>
@@ -178,7 +178,7 @@ $("#child-dependency tr td:nth-child(2)").each(function(index) {
 
 <% } else { %>
 
-<p>In total there are <%=n_total%> child dependencies, but no package that '<%=pkg$package%>' has heaviness larger than 10 on it.</p>
+<p>In total there are <%=n_total%> child dependencies, but no package on which '<%=pkg$package%>' has heaviness larger than 10.</p>
 
 <% } %>
 

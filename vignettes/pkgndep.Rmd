@@ -156,24 +156,6 @@ heaviness(pkg)
 heaviness(pkg, rel = TRUE)
 ```
 
-## Check the availability of packages
-
-We suggest to move heavy parent packages that are less used to `Suggests` and they are only loaded when the corresponding functions are called. 
-Dependency packages listed in `Suggests` by default are not mandatory to be installed, thus, there will be errors when the functions are called but these dependency packages
-are not installed yet. **pkgndep** provides a function `check_pkg()` that checks the availability of a package, and if the package has not been 
-installed yet, `check_pkg()` prints friendly messages to guide user to install it. 
-
-Assume `foo()` is a function that uses another function `bar()` from a heavy parent **pkg**, 
-`foo()` can be written as:
-
-```{r, eval = FALSE}
-foo = function(...) {
-    check_pkg("pkg", ...)
-
-    pkg::bar(...)
-    ...
-}
-```
 
 ## A fast version of `tools::package_dependencies()`
 

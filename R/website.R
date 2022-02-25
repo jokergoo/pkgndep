@@ -15,5 +15,6 @@ dependency_website = function() {
 	}
 
 	callr::rscript(system.file("website", "app.R", package = "pkgndep"))
+	
 }
 

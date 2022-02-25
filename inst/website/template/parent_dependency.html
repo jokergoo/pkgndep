@@ -12,7 +12,7 @@ if(grepl("(bioc|books|annotation|experiment|workflow)", pkg$repository)) {
 
 <p>"Import" information is from the <a href="<%= namespace_link %>" target="_blank">NAMESPACE</a> file of <span class="package"><%=pkg$package%></span>.</p>
 <p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
-<p><b>Required packages:</b> number of strong dependency packages for each of the parent package (or in other words, number of dependency packages the parent package brings in).</p>
+<p><b>Required packages:</b> number of strong dependency packages that each of the parent package requires (or in other words, number of dependency packages the parent package brings in).</p>
 <p><b>Heaviness from parent on <span class="package"><%=pkg$package%></span>:</b> number of required packages that can be reduced if moving parent package to <code>Suggests</code> of <span class="package"><%=pkg$package%></span>.</p>
 
 <% tb[, 1] = qq("<a href='?package=@{tb[, 1]}'>@{tb[, 1]}</a>", collapse = FALSE)
@@ -72,8 +72,71 @@ $("#parent-dependency tr td:nth-child(2)").each(function(index) {
     <%= page_select2(page, ceiling(nr/records_per_page), "parent_dependency", pkg$package) %>
   <% } %>
 
+  <% m = co_heaviness(pkg)
+    if(nrow(m) > 1) {
+        if(attr(m, "max") > 10) {
+            m2 = co_heaviness(pkg, jaccard = TRUE)
+
+            pair1 = NULL
+            pair2 = NULL
+            hv1 = NULL
+            hv2 = NULL
+
+            nr = nrow(m)
+            for(i in 1:(nr-1)) {
+                for(j in (i+1):nr) {
+                    if(m[i, j] > 10) {
+                        pair1 = c(pair1, rownames(m)[i])
+                        pair2 = c(pair2, rownames(m)[j])
+                        hv1 = c(hv1, m[i, j])
+                        hv2 = c(hv2, m2[i, j])
+                    }
+                }
+            }
+
+            relation = rep("", length(pair1))
+            for(i in seq_along(pair1)) {
+                v = "not-clear"
+                p = c(pair1[i], pair2[i])
+                if(length(p)) {
+                    if(is_parent(p[1], p[2])) {
+                        v = "parent-child"
+                    } else if(is_parent(p[2], p[1])) {
+                        v = "parent-child"
+                    } else if(is_upstream(p[1], p[2])) {
+                        v = "upstream-downstream"
+                    } else if(is_parent(p[2], p[1])) {
+                        v = "upstream-downstream"
+                    } else {
+                        up1 = heaviness_from_upstream(p[1])
+                        up2 = heaviness_from_upstream(p[2])
+                        # the max heaviness of common upstream
+                        max = attr(m, "max")
+                        cn = intersect(names(up1[up1 > max*0.75]), names(up2[up2 > max*0.75]))
+                        if(length(cn)) {
+                            v = "have-common-upstream"
+                        }
+                    }
+                } 
+                relation[i] = v
+            }
+    
+
+            co_tb = data.frame(pair1 = qq("<a href='package?package=@{pair1}'>@{pair1}</a>", collapse = FALSE), pair2 = qq("<a href='package?package=@{pair2}'>@{pair2}</a>", collapse = FALSE), relation = relation, heaviness = hv1, jaccard = round(hv2, 3)) 
+            co_tb = co_tb[order(co_tb$heaviness, decreasing = TRUE), , drop = FALSE]
+        %>
+        <hr>
+<p>The following table lists pairs of parent packages with co-heaviness larger than 10. The co-heaviness measures the number of additional 
+dependencies that two parent packages simultaneously import and are only imported by the two parents.</p>
+<p>Note the co-heaviness from parents can be always easily observed in the dependency heatmap.</p>
+            <%= as.character(knitr::kable(co_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent 1", "Parent 2", "Relation of two parents", qq("Co-heaviness on @{pkg$package}"), "Co-heaviness as Jaccard coeffcient"), table.attr = "class='table table-striped' style='width:1000px'", align = c("l", "l", "r", "r", "r") )) %>
+
+   <%     }
+    }
+  %>
+
 <% } else { %>
 
-<p>No dependency found.</p>
+<p>No parent dependency found.</p>
 
 <% } %>

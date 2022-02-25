@@ -16,7 +16,9 @@ check_pkg(pkg, bioc = FALSE)
 
 }
 \details{
-If the package is not avaiable, it prints messages to guide users to install the package.
+One of the suggestions to avoid heavy dependencies is to put parent packages that are not frequently used
+to 'Suggests' and to load them when the corresponding functions are used. Here the \code{\link{check_pkg}}
+function helps to check whether these parent packages are avaiable and if not, it prints messages to guide users to install the corresponding packages.
 }
 \examples{
 # There is no example

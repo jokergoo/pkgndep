@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -89,6 +92,10 @@
         </td>
         <td><p>Heaviness from parent packages</p></td>
       </tr><tr><td>
+          <p><code><a href="heaviness_from_upstream.html">heaviness_from_upstream()</a></code> </p>
+        </td>
+        <td><p>Heaviness from all upstream packages</p></td>
+      </tr><tr><td>
           <p><code><a href="heaviness_on_children.html">heaviness_on_children()</a></code> </p>
         </td>
         <td><p>Heaviness on all child packages</p></td>
@@ -97,9 +104,21 @@
         </td>
         <td><p>Heaviness on all downstream packages</p></td>
       </tr><tr><td>
+          <p><code><a href="is_parent.html">is_parent()</a></code> </p>
+        </td>
+        <td><p>Test the parent-child relationship</p></td>
+      </tr><tr><td>
+          <p><code><a href="is_upstream.html">is_upstream()</a></code> </p>
+        </td>
+        <td><p>Test upstream - downstream relationship</p></td>
+      </tr><tr><td>
           <p><code><a href="load_all_pkg_dep.html">load_all_pkg_dep()</a></code> </p>
         </td>
         <td><p>Load dependency data of all packages</p></td>
+      </tr><tr><td>
+          <p><code><a href="load_from_pkgndep_db.html">load_from_pkgndep_db()</a></code> </p>
+        </td>
+        <td><p>Load pre-computed results</p></td>
       </tr><tr><td>
           <p><code><a href="load_pkg_db.html">load_pkg_db()</a></code> </p>
         </td>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
@@ -76,7 +79,7 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"ComplexHeatmap_dep.rds"</span>, package <span class="op">=</span> <span class="st">"pkgndep"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">gini_index</span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">heaviness</span><span class="op">[</span><span class="va">x</span><span class="op">$</span><span class="va">which_required</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.240566</span>
 </code></pre></div>
     </div>
   </div>

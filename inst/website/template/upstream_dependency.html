@@ -2,7 +2,7 @@
 <% if(n_used > 0) { %>
 <p>In total, <span class="package"><%=pkg$package%></span> has <%=n_total%> upstream package<%=ifelse(n_total > 1, 's', '')%>. Only <%=n_used%> upstream packages with heaviness on <span class="package"><%=pkg$package%></span> larger than 5 are listed in the following table. Note all 14 base packages (<span class="package">base</span>, <span class="package">compiler</span>, <span class="package">datasets</span>, <span class="package">graphics</span>, <span class="package">grDevices</span>, <span class="package">grid</span>, <span class="package">methods</span>, <span class="package">parallel</span>, <span class="package">splines</span>, <span class="package">stats</span>, <span class="package">stats4</span>, <span class="package">tcltk</span>, <span class="package">tools</span> and <span class="package">utils</span>) are removed from this table.</p>
 <p><b>Dependency path:</b> the shortest path from upstream package to <span class="package"><%=pkg$package%></span> in the global dependency graph. The form of <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span> means package A contribute a direct heaviness of <i>k</i> on package B.</p>
-<p><b>Heaviness from upstream on <span class="package"><%=pkg$package%></span>:</b> number of required packages that can be reduced if moving upstream package to <code>Suggests</code> of its child package in the dependency path. Similar as heaviness to downstream packages, denote $n_{1k}$ as the number of strong dependencies of <span class="package"><%=pkg$package%></span>. Since the upstream package can affect <span class="package"><%=pkg$package%></span> in an indirect manner, we recalculate the global dependency relations for all packages after moving the corresponding upstream package to all its child packages' <code>Suggests</code>. Then we denote $n_{2k}$
+<p><b>Heaviness from upstream on <span class="package"><%=pkg$package%></span>:</b> number of required packages that can be reduced if moving upstream package to <code>Suggests</code> of all its child package. Denote $n_{1k}$ as the number of strong dependencies of <span class="package"><%=pkg$package%></span>. Since the upstream package can affect <span class="package"><%=pkg$package%></span> in an indirect manner, we recalculate the global dependency relations for all packages after moving the corresponding upstream package to all its child packages' <code>Suggests</code>. Then we denote $n_{2k}$
 as the number of strong dependencies of <span class="package"><%=pkg$package%></span> in the modified dependency graph. The heaviness from upstream package is calculated as $n_{1k} - n_{2k}$.</p>
 <% 
   el = upstream_dependency(pkg$package)
@@ -39,11 +39,18 @@ upstream_tb$package = qq("<a href='?package=@{upstream_tb$package}'>@{upstream_t
 }
 </style>
 
-<p>Dependency paths in the table are represented as the following graph with <%=length(unique(c(nt[, 1], nt[, 2])))%> nodes and <%=nrow(nt)%> edges. 
-    <span><a class='fake-link' onclick="$('#cy-upstream-dep').html('');load_upstream_dep_nt();$('#graph-upstream-horizontal-layout').show();$('#graph-upstream-vertical-layout').hide();" style="font-size: 0.8em;">Reset graph</a></span> | 
-    <span><a class='fake-link' id="graph-upstream-vertical-layout" onclick="$('#cy-upstream-dep').html('');load_upstream_dep_nt('TB');$('#graph-upstream-horizontal-layout').show();$(this).hide();" style="font-size: 0.8em; display: none;">Vertical layout</a></span>
-    <span><a class='fake-link' id="graph-upstream-horizontal-layout" onclick="$('#cy-upstream-dep').html('');load_upstream_dep_nt('LR');$('#graph-upstream-vertical-layout').show();$(this).hide();" style="font-size: 0.8em;">Horizontal layout</a></span>
+<hr>
+<p>Dependency paths in the table are merged as the following graph with <%=length(unique(c(nt[, 1], nt[, 2])))%> nodes and <%=nrow(nt)%> edges. 
+    <span><a class='fake-link' onclick="$('#cy-upstream-dep').html('');load_upstream_dep_nt();$('#graph-upstream-horizontal-layout').show();$('#graph-upstream-vertical-layout').hide();$('#cy-upstream-dep').resizable('destroy');$('#cy-upstream-dep').resizable();" style="font-size: 0.8em;">Reset graph</a></span> | 
+    <span><a class='fake-link' id="graph-upstream-vertical-layout" onclick="$('#cy-upstream-dep').html('');load_upstream_dep_nt('TB');$('#graph-upstream-horizontal-layout').show();$(this).hide();$('#cy-upstream-dep').resizable('destroy');$('#cy-upstream-dep').resizable();" style="font-size: 0.8em; display: none;">Vertical layout</a></span>
+    <span><a class='fake-link' id="graph-upstream-horizontal-layout" onclick="$('#cy-upstream-dep').html('');load_upstream_dep_nt('LR');$('#graph-upstream-vertical-layout').show();$(this).hide();$('#cy-upstream-dep').resizable('destroy');$('#cy-upstream-dep').resizable();" style="font-size: 0.8em;">Horizontal layout</a></span>
 </p>
+<p>There are the two notes for the following graph:</p>
+<ul>
+<li>The number on an edge only corresponds to the direct heaviness from a parent on its child. It does not necessarily mean all the heaviness are inherited to the very downstream end nodes. E.g. for a dependency path: <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k1</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k2</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">C</span>, the <code>k1</code> heaviness from A to B are not necessarily all passed to package C, although most of them should be.</li>
+  <li>The graph is only a union of the shortest paths from upstream packages to <b><%=pkg$package%></b>, thus it does not include all the dependency relations upstream of <b><%=pkg$package%></b> in the global dependency graph.</li>
+</ul>
+
 <div id='cy-upstream-dep' style="position:relative;">
     <span style="top:100px;left:50%;position:absolute;"><a class='fake-link' onclick="load_upstream_dep_nt();$(this).parent().remove();" style="font-size: 1.5em;">Load graph</a></span>
 </div>
@@ -95,10 +102,11 @@ load_upstream_dep_nt = function(rankDir = "TB") {
   });
 
 }
+$('#cy-upstream-dep').resizable();
 </script>
 
 <% } else { %>
-<p>In total there are <%=n_total%> upstream dependencied, but no upstream package has heaviness larger than 5 on '<%=pkg$package%>'.</p>
+<p>In total there are <%=n_total%> upstream dependencies, but no upstream package has heaviness larger than 5 on '<%=pkg$package%>'.</p>
 
 <% } %>
 

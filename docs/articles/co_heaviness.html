@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -54,6 +54,9 @@
   <ul class="dropdown-menu" role="menu">
 <li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
     </li>
   </ul>
 </li>
@@ -104,6 +107,8 @@
 <p>Here we define <strong>the co-heaviness</strong> that measures the number of additional dependency packages brought by two parent packages. Denote a package as <em>P</em> and its two strong parent packages as <em>A</em> and <em>B</em>, i.e., parent packages in “Depends”, “Imports” and “LinkingTo”, denote <span class="math inline">\(S_A\)</span> as the set of reduced dependency packages when only moving <em>A</em> to “Suggests” of <em>P</em>, denote <span class="math inline">\(S_B\)</span> as the set of reduced dependency packages when only moving <em>B</em> to “Suggests” of <em>P</em>, and denote <span class="math inline">\(S_{AB}\)</span> as the set of reduced dependency packages when moving <em>A</em> and <em>B</em> together to “Suggests” of <em>P</em>, the co-heaviness of <em>A</em>, <em>B</em> on <em>P</em> is calculatd as</p>
 <p><span class="math display">\[ \left | S_{AB} \setminus  \cup (S_A, S_B) \right | \]</span></p>
 <p>which is the number of reduced package only caused by co-action of A and B. Symbol <span class="math inline">\(A \setminus B\)</span> is the set of elements in <em>A</em> not in <em>B</em> and <span class="math inline">\(|A|\)</span> is the number of elements in set <em>A</em>.</p>
+<p>Denote <span class="math inline">\(h_A\)</span> as the heaviness of <em>A</em> (as a strong parent) on <em>P</em>, <span class="math inline">\(h_B\)</span> as the heaviness of <em>B</em> (as a strong parent) on <em>P</em>, and <span class="math inline">\(h_{AB}\)</span> as the co-heaviess of <em>A</em>/<em>B</em> on <em>P</em>, the number of reduced strong dependencies by moving both <em>A</em> and <em>B</em> to <em>P</em>’s “Suggests” is:</p>
+<p><span class="math display">\[ h_A + h_B + h_{AB} \]</span></p>
 <p><strong>pkgndep</strong> provides a function <code><a href="../reference/co_heaviness.html">co_heaviness()</a></code> that calculates co-heaviness of two parent packages. It returns a co-heaviness matrix. Please note it only returns the matrix for strong parents.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="../reference/co_heaviness.html">co_heaviness</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
@@ -155,13 +160,93 @@
 <span class="co">## ggplot2                         0      21           1          1             0</span>
 <span class="co">## geneplotter                     0       1           1         23             0</span>
 <span class="co">## genefilter                      0       1          23          2             0</span>
-<span class="co">## RcppArmadillo                   0       0           0          0             1</span></code></pre>
+<span class="co">## RcppArmadillo                   0       0           0          0             1</span>
+<span class="co">## attr(,"max")</span>
+<span class="co">## [1] 23</span>
+<span class="co">## attr(,"max_pair")</span>
+<span class="co">## [1] "genefilter"  "geneplotter"</span></code></pre>
 <p>The co-heaviness matrix can be visualized as a heatmap.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></span><span class="op">(</span><span class="va">m</span>, name <span class="op">=</span> <span class="st">"co-heaviness"</span><span class="op">)</span></code></pre></div>
 <p><img src="co_heaviness_files/figure-html/unnamed-chunk-7-1.png" width="624" style="display: block; margin: auto;"></p>
 <p>There are two major reasons for the high co-heaviness from two parent packages. 1. Parent <em>A</em> also depends on package <em>B</em>, thus all the dependency packages brought by package <em>B</em> will also be included in the dependency packages from package <em>A</em>. E.g., package <strong>ffpe</strong>’s two parents <strong>lumi</strong> and <strong>methylumi</strong> where <strong>lumi</strong> also depends on <strong>methylumi</strong> and most of the heaviness comes from <strong>methylummi</strong>. 2. Although <em>A</em> and <em>B</em> do not depend on each other, they have a common upstream package, which brings the same dependencies to A and B. Such as the example of <strong>DESeq2</strong>, its two parent packages <strong>geneplotter</strong> and <strong>genefilter</strong> have a common upstream pacakge <strong>annotate</strong> that contribute many dependencies to both package.</p>
+<p>Alternatively, the co-heaviness can also be defined as a relative measure, the Jaccard coeffcient. Note <span class="math inline">\(S_{AB} \setminus \cup (S_A, S_B)\)</span> is actually the set of dependencies that are imported simultaneously by and only by two parent packages A and B. Thus the Jaccard coeffcient is calculated as:</p>
+<p><span class="math display">\[ \frac{ \left | S_{AB} \setminus  \cup (S_A, S_B) \right | }{ \left | S_{AB} \right |  } \]</span></p>
+<p>Or using the denotation of heaviness defined before, the Jaccard coeffcient can also be written as:</p>
+<p><span class="math display">\[ \frac{h_{AB}}{h_A + h_B + h_{AB}} \]</span></p>
+<p>The Jaccard coeffcient can be calculated by setting argument <code>jaccard = TRUE</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/co_heaviness.html">co_heaviness</a></span><span class="op">(</span><span class="va">x</span>, jaccard <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##                      S4Vectors IRanges GenomicRanges SummarizedExperiment</span>
+<span class="co">## S4Vectors                    0       0           0.0                  0.0</span>
+<span class="co">## IRanges                      0       0           0.0                  0.0</span>
+<span class="co">## GenomicRanges                0       0           0.0                  0.2</span>
+<span class="co">## SummarizedExperiment         0       0           0.2                  1.0</span>
+<span class="co">## methods                      0       0           0.0                  0.0</span>
+<span class="co">## stats4                       0       0           0.0                  0.0</span>
+<span class="co">## Rcpp                         0       0           0.0                  0.0</span>
+<span class="co">## BiocGenerics                 0       0           0.0                  0.0</span>
+<span class="co">## Biobase                      0       0           0.0                  0.0</span>
+<span class="co">## locfit                       0       0           0.0                  0.0</span>
+<span class="co">## BiocParallel                 0       0           0.0                  0.0</span>
+<span class="co">## ggplot2                      0       0           0.0                  0.0</span>
+<span class="co">## geneplotter                  0       0           0.0                  0.0</span>
+<span class="co">## genefilter                   0       0           0.0                  0.0</span>
+<span class="co">## RcppArmadillo                0       0           0.0                  0.0</span>
+<span class="co">##                      methods stats4 Rcpp BiocGenerics Biobase locfit</span>
+<span class="co">## S4Vectors                  0      0    0            0       0      0</span>
+<span class="co">## IRanges                    0      0    0            0       0      0</span>
+<span class="co">## GenomicRanges              0      0    0            0       0      0</span>
+<span class="co">## SummarizedExperiment       0      0    0            0       0      0</span>
+<span class="co">## methods                    0      0    0            0       0      0</span>
+<span class="co">## stats4                     0      0    0            0       0      0</span>
+<span class="co">## Rcpp                       0      0    0            0       0      0</span>
+<span class="co">## BiocGenerics               0      0    0            0       0      0</span>
+<span class="co">## Biobase                    0      0    0            0       0      0</span>
+<span class="co">## locfit                     0      0    0            0       0      1</span>
+<span class="co">## BiocParallel               0      0    0            0       0      0</span>
+<span class="co">## ggplot2                    0      0    0            0       0      0</span>
+<span class="co">## geneplotter                0      0    0            0       0      0</span>
+<span class="co">## genefilter                 0      0    0            0       0      0</span>
+<span class="co">## RcppArmadillo              0      0    0            0       0      0</span>
+<span class="co">##                      BiocParallel    ggplot2 geneplotter genefilter</span>
+<span class="co">## S4Vectors                       0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## IRanges                         0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## GenomicRanges                   0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## SummarizedExperiment            0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## methods                         0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## stats4                          0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## Rcpp                            0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## BiocGenerics                    0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## Biobase                         0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## locfit                          0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## BiocParallel                    1 0.00000000  0.00000000 0.00000000</span>
+<span class="co">## ggplot2                         0 1.00000000  0.04347826 0.04166667</span>
+<span class="co">## geneplotter                     0 0.04347826  1.00000000 0.88461538</span>
+<span class="co">## genefilter                      0 0.04166667  0.88461538 1.00000000</span>
+<span class="co">## RcppArmadillo                   0 0.00000000  0.00000000 0.00000000</span>
+<span class="co">##                      RcppArmadillo</span>
+<span class="co">## S4Vectors                        0</span>
+<span class="co">## IRanges                          0</span>
+<span class="co">## GenomicRanges                    0</span>
+<span class="co">## SummarizedExperiment             0</span>
+<span class="co">## methods                          0</span>
+<span class="co">## stats4                           0</span>
+<span class="co">## Rcpp                             0</span>
+<span class="co">## BiocGenerics                     0</span>
+<span class="co">## Biobase                          0</span>
+<span class="co">## locfit                           0</span>
+<span class="co">## BiocParallel                     0</span>
+<span class="co">## ggplot2                          0</span>
+<span class="co">## geneplotter                      0</span>
+<span class="co">## genefilter                       0</span>
+<span class="co">## RcppArmadillo                    1</span>
+<span class="co">## attr(,"max")</span>
+<span class="co">## [1] 0.8846154</span>
+<span class="co">## attr(,"max_pair")</span>
+<span class="co">## [1] "genefilter"  "geneplotter"</span></code></pre>
+<p>But users need to be careful that a small value of <span class="math inline">\(|S_{AB}|\)</span> may lead to a large Jaccard coeffcient value.</p>
 <p>Finally, co-heaviness captures additional dependency packages from and only from two parents, while it does work for more parents. However, the effect of heaviness from multiple parents can always be easily observed from the dependency heatmap.</p>
   </div>
 

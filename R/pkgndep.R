@@ -220,13 +220,19 @@ pkgndep_simplified = function(package, pkg_db) {
 	if(length(all_pkgs) == 0) {
 		obj = list(
 			package = package,
+			version = "0.0.0",
 			dep_mat = matrix(nrow = 0, ncol = 0), 
 			dep_fields = character(0),
 
 			which_required = logical(0),
 			n_by_strong = 0,
 			n_by_all = 0,
-			heaviness = numeric(0)
+			heaviness = numeric(0),
+
+			which_required = logical(0),
+			which_required_but_not_loaded = logical(0),
+			which_suggested_but_also_loaded = logical(0),
+			df_imports = matrix(nrow = 0, ncol = 3, dimnames = list(character(0), c("imports", "importMethods", "importClasses")))
 		)
 
 		return(obj)
@@ -250,6 +256,7 @@ pkgndep_simplified = function(package, pkg_db) {
 
 	obj = list(
 		package = package,
+		version = "0.0.0",
 		dep_mat = dep_mat, 
 		dep_fields = dep_fields,
 
@@ -262,6 +269,15 @@ pkgndep_simplified = function(package, pkg_db) {
 	obj$n_by_strong = length(required_dependency_packages(obj, FALSE))
 	obj$n_by_all = length(required_dependency_packages(obj, TRUE))
 	obj$heaviness = heaviness(obj)
+
+	obj$which_required = logical(nrow(dep_mat))
+	obj$which_required_but_not_loaded = logical(nrow(dep_mat))
+	obj$which_suggested_but_also_loaded = logical(nrow(dep_mat))
+
+	df_imports = matrix(0, nrow = nrow(dep_mat), ncol = 3)
+	colnames(df_imports) = c("imports", "importMethods", "importClasses")
+	rownames(df_imports) = rn
+	obj$df_imports = df_imports
 
 	class(obj) = "pkgndep"
 
@@ -282,9 +298,9 @@ pkgndep_simplified = function(package, pkg_db) {
 # # See examples in `pkgndep()`.
 #
 print.pkgndep = function(x, ...) {
-	qqcat("@{x$package}, version @{x$version}\n")
-	qqcat("- @{x$n_by_strong} additional packages are required for installing '@{x$package}'.\n")
-	qqcat("- @{x$n_by_all} additional packages are required if installing packages listed\n  in all fields in DESCRIPTION.\n")
+	qqcat("'@{x$package}', version @{x$version}\n")
+	qqcat("- @{x$n_by_strong} package@{ifelse(x$n_by_strong > 1, 's', '')} @{ifelse(x$n_by_strong > 1, 'are', 'is')} required for installing '@{x$package}'.\n")
+	qqcat("- @{x$n_by_all} package@{ifelse(x$n_by_strong > 1, 's', '')} @{ifelse(x$n_by_strong > 1, 'are', 'is')} required if installing packages listed in all fields in DESCRIPTION.\n")
 
 	if(nrow(x$dep_mat) == 0) {
 		return(invisible(NULL))
@@ -293,11 +309,11 @@ print.pkgndep = function(x, ...) {
 	l = x$heaviness >= 20 & x$df_imports[, "imports"] > 0 & x$df_imports[, "importMethods"] == 0 & x$df_imports[, "importClasses"] == 0
 	if(any(l)) {
 		cat("\n")
-		cat("Following adjustment may be performed:\n")
+		cat("Following adjustment could be performed:\n")
 		for(i in which(l)) {
 			ni = x$df_imports[i, 'imports']
 			nm = rownames(x$df_imports)[i]
-			qqcat("- @{ni} function@{ifelse(ni == 1, ' is', 's are')} imported from '@{nm}'. Moving '@{nm}'' to 'Suggests'\n  will reduce @{x$heaviness[i]} dependencies.\n")
+			qqcat("- Found @{ni} function@{ifelse(ni == 1, ' is', 's are')} imported from a heavy parent '@{nm}'. Moving '@{nm}''\n  to 'Suggests' will reduce @{x$heaviness[i]} dependencies.\n")
 		}
 
 		l1 = x$which_required
@@ -305,7 +321,6 @@ print.pkgndep = function(x, ...) {
 		m = x$dep_mat
 		l2 = colSums(m[l1, , drop = FALSE]) > 0
 		n_by_strong2 = length(unique(c(unlist(dimnames(m[l1, l2, drop = FALSE]))))) 
-		cat("\n")
 		qqcat("Moving all mentioned packages to 'Suggests' will reduce the dependency packages from @{x$n_by_strong} to @{n_by_strong2}.\n")
 	}
 }

@@ -222,3 +222,34 @@ nrow = function(x) {
 		base::nrow(x)
 	}
 }
+
+# == title
+# Test the parent-child relationship
+#
+# == param
+# -parent A vector of package names.
+# -child A single package name.
+# -... Pass to `parent_dependency`.
+#
+# == value
+# A logical vector.
+is_parent = function(parent, child, ...) {
+	df = parent_dependency(child, ...)
+	parent %in% df$parents 
+}
+
+# == title
+# Test upstream - downstream relationship
+#
+# == param
+# -upstream A vector of package names.
+# -package A single package name.
+# -... Pass to `upstream_dependency`.
+#
+# == value
+# A logical vector.
+is_upstream = function(upstream, package, ...) {
+	df = upstream_dependency(package, ...)
+	upstream %in% df$parents
+}
+

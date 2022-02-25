@@ -9,8 +9,8 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 	if(verbose) qqcat("retrieve package database from CRAN/Bioconductor(@{bioc_version})...\n")
 	oe = try(suppressMessages(db_remote <- available.packages(repos = repos)))
 
-	if(inherits(oe, "try-error")) {
-		warning("Can not load package database from remote repositories, use the snapshot database from 'pkgndep.db' package.")
+	if(inherits(oe, "try-error") || nrow(db_remote) == 0) {
+		warning("Can not load package database from remote repositories, use the snapshot database.")
 		return(load_from_pkgndep_db("pkg_db_snapshot.rds"))
 	}
 

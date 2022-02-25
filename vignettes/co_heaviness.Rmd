@@ -70,6 +70,13 @@ $$ \left | S_{AB} \setminus  \cup (S_A, S_B) \right | $$
 which is the number of reduced package only caused by co-action of A and B. Symbol $A \setminus B$ is the set
 of elements in _A_ not in _B_ and $|A|$ is the number of elements in set _A_.
 
+Denote $h_A$ as the heaviness of _A_ (as a strong parent) on _P_, $h_B$ as the
+heaviness of _B_ (as a strong parent) on _P_, and $h_{AB}$ as the co-heaviess
+of _A_/_B_ on _P_, the number of reduced strong dependencies by moving both
+_A_ and _B_ to _P_'s "Suggests" is:
+
+$$ h_A + h_B + h_{AB} $$
+
 **pkgndep** provides a function `co_heaviness()` that calculates co-heaviness of two parent packages.
 It returns a co-heaviness matrix. Please note it only returns the matrix for strong parents.
 
@@ -92,6 +99,23 @@ and most of the heaviness comes from **methylummi**. 2. Although _A_ and _B_ do 
 they have a common upstream package, which brings the same dependencies to A and B. Such as the example
 of **DESeq2**, its two parent packages **geneplotter** and **genefilter** have a common upstream pacakge **annotate**
 that contribute many dependencies to both package.
+
+Alternatively, the co-heaviness can also be defined as a relative measure, the Jaccard coeffcient.
+Note $S_{AB} \setminus  \cup (S_A, S_B)$ is actually the set of dependencies that are imported simultaneously by and only by two parent packages A and B. Thus the Jaccard coeffcient is calculated as:
+
+$$ \frac{ \left | S_{AB} \setminus  \cup (S_A, S_B) \right | }{ \left | S_{AB} \right |  } $$
+
+Or using the denotation of heaviness defined before, the Jaccard coeffcient can also be written as:
+
+$$ \frac{h_{AB}}{h_A + h_B + h_{AB}} $$
+
+The Jaccard coeffcient can be calculated by setting argument `jaccard = TRUE`:
+
+```{r}
+co_heaviness(x, jaccard = TRUE)
+```
+
+But users need to be careful that a small value of $|S_{AB}|$ may lead to a large Jaccard coeffcient value.
 
 Finally, co-heaviness captures additional dependency packages from and only
 from two parents, while it does work for more parents. However, the effect of

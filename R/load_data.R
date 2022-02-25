@@ -1,12 +1,25 @@
 
 
+# == title
+# Load pre-computed results
+#
+# == param
+# -file File name.
+#
+# == details
+# Internally used.
 load_from_pkgndep_db = function(file) {
 
 	if(is.null(env$db[[file]])) {
-		tmp_file = tempfile(fileext = ".rds")
-		on.exit(file.remove(tmp_file))
-		download.file(paste0("https://pkgndep.github.io/", file), tmp_file, quiet = TRUE)
-		env$db[[file]] = readRDS(tmp_file)
+
+		if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
+			env$db[[file]] = readRDS(paste0("~/project/development/pkgndep.github.io/", file))
+		} else {
+			tmp_file = tempfile(fileext = ".rds")
+			on.exit(file.remove(tmp_file))
+			download.file(paste0("https://pkgndep.github.io/", file), tmp_file, quiet = TRUE)
+			env$db[[file]] = readRDS(tmp_file)
+		}
 	}
 	env$db[[file]]
 }
@@ -31,6 +44,36 @@ load_pkg_stat_snapshot = function() {
 		env$pkg_stat_snapshot = df
 	}
 	invisible(env$pkg_stat_snapshot)
+}
+
+# == title
+# The complete table of dependency heaviness for all CRAN/Bioconductor packages
+#
+# == value
+# The columns are self-explanatory from the column names.
+all_pkg_stat_snapshot = function() {
+	df = load_pkg_stat_snapshot()
+	df[, c("package",
+			"repository",
+			"n_by_strong",
+			"n_by_all",
+			"n_parents",
+			"max_heaviness_from_parents",
+			"adjusted_max_heaviness_from_parents",
+			"total_heaviness_from_parents",
+			"adjusted_total_heaviness_from_parents",
+			"max_co_heaviness_from_parents",
+			"max_co_heaviness_parents_pair",
+			"max_co_heaviness_parents_pair_type",
+			"n_children",
+			"heaviness_on_children",
+			"adjusted_heaviness_on_children",
+			"n_downstream",
+			"heaviness_on_downstream",
+			"adjusted_heaviness_on_downstream",
+			"n_indierct_downstream",
+			"heaviness_on_indirect_downstream",
+			"adjusted_heaviness_on_indirect_downstream")]
 }
 
 # == title
