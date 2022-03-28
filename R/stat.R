@@ -322,8 +322,12 @@ heaviness_from_upstream = function(package) {
 #
 # == example
 # x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-# gini_index(x$heaviness[x$which_required] + 2)
+# gini_index(x$heaviness[x$which_required])
 gini_index = function(v) {
+
+	if(inherits(v, "pkgndep")) {
+		gini_index(v$heaviness[v$which_required])
+	}
 	if(length(v) < 2) {
 		0
 	} else {

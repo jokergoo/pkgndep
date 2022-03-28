@@ -41,6 +41,15 @@ df = data.frame(
 	n_parents = sapply(lt, function(x) sum(x$which_required))
 )
 
+df$max_rel_heaviness_from_parents = sapply(lt, function(x) {
+	qqcat("===== @{x$package} ======\n")
+	if(any(x$which_required)) {
+		max(heaviness(x, rel = TRUE)[x$which_required])
+	} else {
+		1
+	}
+})
+
 df$max_heaviness_from_parents = sapply(lt, function(x) {
 	if(any(x$which_required)) {
 		max(x$heaviness[x$which_required])
@@ -51,6 +60,15 @@ df$max_heaviness_from_parents = sapply(lt, function(x) {
 
 df$adjusted_max_heaviness_from_parents = df$max_heaviness_from_parents*(df$n_parents+30)/max(df$n_parents)
 
+
+df$max_heaviness_parent_info = sapply(lt, function(x) {
+	if(any(x$which_required)) {
+		v = (x$heaviness[x$which_required])
+		names(v)[which.max(v)]
+	} else {
+		NA
+	}
+})
 df$max_heaviness_parent_info = sapply(lt, function(x) {
 	if(any(x$which_required)) {
 		i = which.max(x$heaviness[x$which_required])
@@ -358,5 +376,13 @@ leaf_nodes_list = apply(sp, 1, function(x) {
 })
 
 n_leaf_nodes = sapply(leaf_nodes_list, length)
+
+#### the dependency adjacent list
+edg = NULL
+for(nm in names(lt)) {
+	qqcat("=== @{nm} ===\n")
+	edg = rbind(edg, child_dependency(nm))
+}
+
 
 

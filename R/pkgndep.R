@@ -111,7 +111,8 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 			n_by_all = 0,
 			heaviness = numeric(0),
 			df_imports = matrix(nrow = 0, ncol = 3, dimnames = list(character(0), c("imports", "importMethods", "importClasses"))),
-			pkg_from_session_info = tb$pkg
+			pkg_from_session_info = tb$pkg,
+			gini_index = 0
 		)
 
 		class(obj) = "pkgndep"
@@ -197,6 +198,8 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 	obj$which_suggested_but_also_loaded = obj$which_suggested_but_also_loaded[row_order]
 	obj$heaviness = obj$heaviness[row_order]
 	obj$df_imports = obj$df_imports[row_order, , drop = FALSE]
+
+	obj$gini_index = gini_index(obj$heaviness[obj$which_required])
 
 	return(obj)
 }

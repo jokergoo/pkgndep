@@ -161,18 +161,16 @@ heaviness(pkg, rel = TRUE)
 
 The package dependencies are based on "package database" which is normally retrieved by `available.packages()`.
 In **tools** package, there is a `package_dependencies()` function that can be used to get a list of dependency packages.
-In the following example code, we retrieve the dependency packages for package **cola**.
-
-```{r, eval = FALSE}
-db = available.packages(repos = BiocManager::repositories())
-```
-
-```{r, echo = FALSE}
-db = available.packages(repos = BiocManager::repositories(version = BiocManager:::.version_choose_best()))
-```
+In the following example code, we retrieve the dependency packages for package **ggplot2**.
 
 ```{r}
-system.time(p1 <- tools::package_dependencies("cola", db = db, recursive = TRUE)[[1]])
+chooseCRANmirror(ind = 1) # choose the mirror fro RStudio
+db = available.packages()
+```
+
+
+```{r}
+system.time(p1 <- tools::package_dependencies("ggplot2", db = db, recursive = TRUE)[[1]])
 ```
 
 In **pkgndep**, we implement a faster version of `package_dependencies()` function. First the database needs
@@ -182,7 +180,7 @@ its method `db2$package_dependencies()` can be used to retrieve dependency packa
 ```{r}
 db2 = reformat_db(db)
 db2
-system.time(p2 <- db2$package_dependencies("cola", recursive = TRUE, simplify = TRUE))
+system.time(p2 <- db2$package_dependencies("ggplot2", recursive = TRUE, simplify = TRUE))
 ```
 
 `p1` and `p2` are actually identical:

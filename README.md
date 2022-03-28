@@ -86,7 +86,7 @@ plot(pkg)
 or
 
 ```r
-pkg = pkgndep("path-to-the-package")
+pkg = pkgndep("path-of-the-package")
 plot(pkg)
 ```
 
