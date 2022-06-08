@@ -2,7 +2,7 @@
 .libPaths("/Volumes/Elements/all_pkg_lib/")
 
 library(pkgndep, lib.loc = .libPaths()[2])
-library(GetoptLong, lib.loc = .libPaths()[2])
+library(GetoptLong)
 
 setwd("~/project/development/pkgndep_analysis/")
 
@@ -17,7 +17,7 @@ for(i in seq_along(all_pkg)) {
 
 	qqcat("\n++++++++++++++ @{i}/@{length(all_pkg)} ++++++++++++++\n")
 	pkg = all_pkg[i]
-	x = pkgndep(pkg)
+	x = pkgndep::pkgndep(pkg)
 
 	lt[[pkg]] = x
 }
@@ -30,6 +30,10 @@ file.copy("all_pkgs.rds", "~/project/development/pkgndep.github.io/all_pkgs.rds"
 # pkg_db
 saveRDS(pkgndep:::env$pkg_db, file = "pkg_db_snapshot.rds", compress = "xz")
 file.copy("pkg_db_snapshot.rds", "~/project/development/pkgndep.github.io/pkg_db_snapshot.rds", overwrite = TRUE)
+
+
+# total number of dependencies
+sum(sapply(pkgndep:::env$pkg_db$dependency, nrow))
 
 
 ## a data frame that contains various statistics
@@ -61,7 +65,7 @@ df$max_heaviness_from_parents = sapply(lt, function(x) {
 df$adjusted_max_heaviness_from_parents = df$max_heaviness_from_parents*(df$n_parents+30)/max(df$n_parents)
 
 
-df$max_heaviness_parent_info = sapply(lt, function(x) {
+df$heaviest_parent = sapply(lt, function(x) {
 	if(any(x$which_required)) {
 		v = (x$heaviness[x$which_required])
 		names(v)[which.max(v)]
@@ -69,6 +73,7 @@ df$max_heaviness_parent_info = sapply(lt, function(x) {
 		NA
 	}
 })
+
 df$max_heaviness_parent_info = sapply(lt, function(x) {
 	if(any(x$which_required)) {
 		i = which.max(x$heaviness[x$which_required])
@@ -209,7 +214,7 @@ df$heaviness_on_indirect_downstream = sapply(score, function(x) {
 	}
 })
 
-df$n_indierct_downstream = sapply(score, function(x) {
+df$n_indirect_downstream = sapply(score, function(x) {
 	v = attr(x, "values")
 	children = child_dependency(attr(x, "package"), fields = c("Depends", "Imports", "LinkingTo"))[, 2]
 
@@ -293,13 +298,13 @@ select_a_for_adjusted_heaviness = function(which = "children", all_a = 0:30, ran
 }
 
 d1 = select_a_for_adjusted_heaviness("children")
-plot(d1[, 1], d1[, 2], xlab = "value of a", ylab = "sum(abs(rank(v) - rank(prev_v)) > 50)", main = "Select a for adjusted heaviness on child packages"); abline(v = 10, col = "red")
+plot(d1[, 1], d1[, 2], xlab = "value of a", ylab = "sum(abs(rank(v) - rank(prev_v)) > 10)", main = "Select a for adjusted heaviness on child packages"); abline(v = 10, col = "red")
 
 d2 = select_a_for_adjusted_heaviness("downstream")
-plot(d2[, 1], d2[, 2], xlab = "value of a", ylab = "sum(abs(rank(v) - rank(prev_v)) > 50)", main = "Select a for adjusted heaviness on downstream packages"); abline(v = 15, col = "red")
+plot(d2[, 1], d2[, 2], xlab = "value of a", ylab = "sum(abs(rank(v) - rank(prev_v)) > 15)", main = "Select a for adjusted heaviness on downstream packages"); abline(v = 15, col = "red")
 
 d3 = select_a_for_adjusted_heaviness("indirect_downstream")
-plot(d3[, 1], d3[, 2], xlab = "value of a", ylab = "sum(abs(rank(v) - rank(prev_v)) > 50)", main = "Select a for adjusted heaviness on downstream packages excluding children"); abline(v = 6, col = "red")
+plot(d3[, 1], d3[, 2], xlab = "value of a", ylab = "sum(abs(rank(v) - rank(prev_v)) > 6)", main = "Select a for adjusted heaviness on downstream packages excluding children"); abline(v = 6, col = "red")
 
 
 saveRDS(list(children = d1, downstream = d2, indirect_downstream = d3), file = "adjusted_heaviness_select_a.rds", compress = "xz")
@@ -308,7 +313,7 @@ file.copy("adjusted_heaviness_select_a.rds", "~/project/development/pkgndep.gith
 #### dependency path to all downstream packages
 
 library(igraph)
-df = load_pkg_stat_snapshot()
+# df = load_pkg_stat_snapshot()
 
 downstream_path_list = list()
 for(package in names(lt)) {

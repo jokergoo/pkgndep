@@ -166,7 +166,8 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 	fix_size = fix_size
 	
 	m2 = m
-	m2[, colnames(m) %in% BASE_PKGS] = m2[, colnames(m) %in% BASE_PKGS] * 2
+	m2[, colnames(m) %in% BASE_PKGS] = m2[, colnames(m) %in% BASE_PKGS] * 3
+	m2[, colnames(m) %in% RECOMMENDED_PKGS] = m2[, colnames(m) %in% RECOMMENDED_PKGS] * 2
 
     dep_fields_col = structure(c("#d9534f", "#f0ad4e", "#337ab7", "#5cb85c", "#5bc0de"), names =  c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances"))
 
@@ -180,7 +181,7 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		rect_gp = gpar(col = "#EEEEEE"),
 		show_row_dend = FALSE, 
 		show_column_dend = FALSE,
-		col = c("1" = "#1f78b4", "2" = "#e31a1c", "0" = "#CCCCCC"),
+		col = c("1" = "#1f78b4", "2" = "darkgreen", "3" = "#e31a1c", "0" = "#CCCCCC"),
 		column_names_gp = gpar(fontsize = pkg_fontsize),
 		column_names_rot = 60,
 		row_names_gp = gpar(fontsize = pkg_fontsize),
@@ -228,18 +229,29 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 
 	graphics = list(
         function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#e31a1c", col = "white")),
+        function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "darkgreen", col = "white")),
         function(x, y, w, h) grid.rect(x, y, w, h, gp = gpar(fill = "#1f78b4", col = "white")),
         function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "purple", col = "white")),
         function(x, y, w, h) grid.points(x, y, pch = 16, size = unit(2, "mm"), gp = gpar(col = "purple"))
     )
     legend_labels = c("Base packages that are required", 
-    	              "Other packages that are required", 
+    	              "Recommended packages that are required", 
+    	              "Contributed packages that are required", 
     	              qq("Packages that are required for installing '@{x$package}'"),
     	              qq("Packages that are loaded after 'library(@{x$package})'"))
-    if(length(x$pkg_from_session_info) == 0) {
-    	graphics = graphics[1:3]
-    	legend_labels = legend_labels[1:3]
+
+    graphics_ind = seq_along(graphics)
+
+    if(!any(colnames(m2) %in% RECOMMENDED_PKGS)) {
+    	graphics_ind = setdiff(graphics_ind, 2)
     }
+
+    if(length(x$pkg_from_session_info) == 0) {
+    	graphics_ind = graphics_ind[-length(graphics_ind)]
+    }
+
+    graphics = graphics[graphics_ind]
+    legend_labels = legend_labels[graphics_ind]
 	
 	# for the lower version of ComplexHeatmap
     if(packageVersion("ComplexHeatmap") > "2.7.1") {

@@ -15,4 +15,5 @@ The columns are self-explanatory from the column names.
 \examples{
 # There is no example
 NULL
+
 }

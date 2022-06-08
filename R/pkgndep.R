@@ -781,6 +781,7 @@ parseNamespaceFile_cp <- function(package, nsFile, descfile, mustExist = TRUE) {
                     call. = FALSE, domain = NA)
                )
     }
+
     for (e in directives)
         parseDirective(e)
 

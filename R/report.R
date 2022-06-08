@@ -23,6 +23,10 @@ dependency_report = function(pkg, file = NULL) {
 		template_file = system.file("extdata", "package_report.html", package = "pkgndep")
 	}
 
+	if(!requireNamespace("base64", quietly = TRUE)) {
+		stop("Please install base64 package.")
+	}
+
 	open_browser = FALSE
 	if(is.null(file)) {
 		file = tempfile(fileext = ".html")

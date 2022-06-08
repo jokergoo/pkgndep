@@ -16,5 +16,5 @@ gini_index(v)
 }
 \examples{
 x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-gini_index(x$heaviness[x$which_required] + 2)
+gini_index(x$heaviness[x$which_required])
 }
