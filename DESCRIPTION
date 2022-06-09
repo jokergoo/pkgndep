@@ -1,6 +1,6 @@
 Package: pkgndep
 Type: Package
-Title: Analyzing Dependency Heaviness of R Packages
+Title: Analyze Dependency Heaviness of R Packages
 Version: 1.1.4
 Date: 2022-06-08
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
@@ -8,7 +8,8 @@ Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"
 Depends: R (>= 4.0.0)
 Imports: ComplexHeatmap (>= 2.6.0), GetoptLong, GlobalOptions, utils, grid, hash, 
     methods, BiocManager, brew, BiocVersion
-Suggests: knitr, rmarkdown, svglite, callr, rjson, Rook, igraph, ggplot2, ggrepel, base64
+Suggests: knitr, rmarkdown, svglite, callr, rjson, Rook, igraph, ggplot2, ggrepel, 
+    base64, testthat, cowplot
 Description: A new metric named 'dependency heaviness' is proposed that measures the number 
     of additional dependency packages that a parent package brings to its child package 
     and are unique to the dependency packages imported by all other parents.  

@@ -1,8 +1,11 @@
 
 prepare_db = function(lib = NULL, verbose = TRUE) {
 
+	op = getOption("repo")
+	on.exit(options(repo = op))
+
 	bioc_version = pkgndep_opt$bioc_version
-	repos = BiocManager::repositories(version = bioc_version)
+	suppressMessages(repos <- BiocManager::repositories(version = bioc_version))
 	repos = repos[intersect(names(repos), c("BioCsoft", "BioCann", "BioCexp", "CRAN"))]
 	if(verbose) qqcat("retrieve package database from CRAN/Bioconductor(@{bioc_version})...\n")
 	oe = try(suppressMessages(db_remote <- available.packages(repos = repos)))

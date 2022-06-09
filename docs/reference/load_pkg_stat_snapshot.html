@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -84,26 +84,33 @@
 <span class="r-in"><span class="va">df</span> <span class="op">=</span> <span class="fu">load_pkg_stat_snapshot</span><span class="op">(</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 package                                              repository</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4                   a4 https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base           a4Base https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif     a4Classif https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core           a4Core https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc     a4Preproc https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting a4Reporting https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             n_by_strong n_by_all n_parents max_heaviness_from_parents</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4                   81      161         5                         48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base               72      153        13                          4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif            30       84        11                          6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core               17       36         4                         11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc             6       62         2                          1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting           4       24         2                          3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             adjusted_max_heaviness_from_parents</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4                                   21.8181818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                                2.2337662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif                             3.1948052</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                                4.8571429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc                             0.4155844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                           1.2467532</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4                   a4 https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base           a4Base https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif     a4Classif https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core           a4Core https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc     a4Preproc https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting a4Reporting https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             n_by_strong n_by_all n_parents max_rel_heaviness_from_parents</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4                   82      162         5                       2.044444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base               73      154        13                       1.050633</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif            32       89        11                       1.166667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core               19       43         4                       1.812500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc             6       66         2                       1.066667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting           4       29         2                       1.272727</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             max_heaviness_from_parents adjusted_max_heaviness_from_parents</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4                                  47                          20.0609756</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                               4                           2.0975610</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif                            6                           3.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                              13                           5.3902439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc                            1                           0.3902439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                          3                           1.1707317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             heaviest_parent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4                   a4Base</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base           genefilter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif              ROCR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core               glmnet</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc           Biobase</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting          xtable</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                      max_heaviness_parent_info</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4                  Parent package &amp;lsquo;a4Base&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4&amp;rsquo;. It is listed in &amp;lsquo;Depends&amp;rsquo but no object from parent is imported to the namespace of &amp;lsquo;a4&amp;rsquo;.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                                            Parent package &amp;lsquo;genefilter&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Base&amp;rsquo;. 5 functions/objects are imported to the namespace of &amp;lsquo;a4Base&amp;rsquo;.</span>
@@ -112,16 +119,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc                                      Parent package &amp;lsquo;Biobase&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Preproc&amp;rsquo;. 7 functions/objects are imported to the namespace of &amp;lsquo;a4Preproc&amp;rsquo;.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                                 Parent package &amp;lsquo;xtable&amp;rsquo; contibutes the highest heaviness on &amp;lsquo;a4Reporting&amp;rsquo;. 1 functions/objects are imported to the namespace of &amp;lsquo;a4Reporting&amp;rsquo;.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             total_heaviness_from_parents adjusted_total_heaviness_from_parents</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4                                    56                            31.9089614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                                15                             9.8198051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif                             13                             8.2485733</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                                13                             7.2577768</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc                              1                             0.5345225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                            4                             2.1380899</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4                                    55                            30.3686697</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                                15                             9.5157123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif                             13                             7.9931373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                                15                             8.1150267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc                              1                             0.5179698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                            4                             2.0718791</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             reducible max_co_heaviness_from_parents</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4              FALSE                             5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base           TRUE                            36</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif        TRUE                             5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base           TRUE                            35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif        TRUE                             7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Core          FALSE                             2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc        TRUE                             5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting      TRUE                             0</span>
@@ -133,27 +140,27 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc            Biobase,BiocGenerics                       parent-child</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                                                                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             heaviness_on_children n_children heaviness_on_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4                      0.0000000          0                       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                 48.0000000          1                      48</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif               7.0000000          1                       7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                  1.7500000          4                       2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc               0.6666667          3                       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting             1.0000000          1                       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4                      0.0000000          0                    0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                 47.0000000          1                   47.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif               7.0000000          1                    7.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                  2.0000000          4                    2.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc               0.6666667          3                    1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting             1.0000000          1                    1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             n_downstream hv_downstream_values adjusted_heaviness_on_children</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4                     0                                          0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                 1                   48                     4.36363636</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                 1                   47                     4.27272727</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif              1                    7                     0.63636364</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                 4           1, 1, 1, 5                     0.50000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                 4           1, 1, 1, 6                     0.57142857</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc              3              1, 1, 1                     0.15384615</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting            1                    1                     0.09090909</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             adjusted_heaviness_on_downstream heaviness_on_indirect_downstream</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4                                 0.0000000                                0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                             3.0000000                                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                             2.9375000                                0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif                          0.4375000                                0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                             0.4210526                                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a4Core                             0.4736842                                0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Preproc                          0.1666667                                0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Reporting                        0.0625000                                0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             n_indierct_downstream hv_indirect_downstream_values</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             n_indirect_downstream hv_indirect_downstream_values</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4                              0                              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Base                          0                              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a4Classif                       0                              </span>
@@ -182,7 +189,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

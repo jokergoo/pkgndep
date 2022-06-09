@@ -5,12 +5,8 @@ env = new.env()
 # BASE_PKGS = c("base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
 #         "parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
 
-installed_tb = installed.packages()
-BASE_PKGS = names(which(installed_tb[ ,"Priority"] == "base", ))
+
 DEFAULT_LOADED_BASE_PKGS = c("base", "stats", "graphics", "grDevices", "utils", "datasets", "methods")
-
-RECOMMENDED_PKGS = names(which(installed_tb[ ,"Priority"] == "recommended", ))
-
 
 FIELDS = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")
 

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -91,6 +91,9 @@
 
     
     
+<div class="section level2">
+<h2 id="for-the-strong-parents">For the strong parents<a class="anchor" aria-label="anchor" href="#for-the-strong-parents"></a>
+</h2>
 <p>Heaviness analysis provides hints for reducing the complexity of package dependencies, but how to optimize depends on the specific use of parent packages in the corresponding package. First we need to be aware of that there are scenarios when reduction of heavy parents could not be performed:</p>
 <ol style="list-style-type: decimal">
 <li>When a package extends the functionality of a heavy parents, the parent must be its strong parent.</li>
@@ -113,13 +116,27 @@
     <span class="va">...</span>
 <span class="op">}</span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
-<li>Another way for reducing the package dependencies is to directly copy code from heavy parents. This approach is of course NOT recommended from the aspect of software engineering, <a href="https://doi.org/10.1109/IWSC.2015.7069885" class="external-link">but actually it is widely used in CRAN packages</a>.</li>
+<li><p>Another way for reducing the package dependencies is to directly copy code from heavy parents. This approach is of course NOT recommended from the aspect of software engineering, <a href="https://doi.org/10.1109/IWSC.2015.7069885" class="external-link">but actually it is widely used in CRAN packages</a>.</p></li>
+<li><p>Try to separate a large package into several smaller packages which focus on more specific tasks. For example, the package <strong>remotes</strong> separated from the package <strong>devtools</strong> only focuses on installing packages from remote repositories, where <a href="https://pkgndep.github.io/prefix_r/remotes_dependency_report.html" class="external-link"><strong>remotes</strong> only has 4 strong dependencies</a>, but <a href="https://pkgndep.github.io/prefix_d/devtools_dependency_report.html" class="external-link"><strong>devtools</strong> has 76</a>.</p></li>
 </ol>
 </div>
+<div class="section level2">
+<h2 id="for-the-weak-parents">For the weak parents<a class="anchor" aria-label="anchor" href="#for-the-weak-parents"></a>
+</h2>
+<p>Weak parent packages are those listed in “Suggested/Enhances” fields in the DESCRIPTION file. The heaviness mainly measures the effects on strong parents (those in “Depends/Imports”) and we suggest moving heavy and strong parents to “Suggested/Enhances” if they are not frequently used by users. As “suggested” packages are not necessarily required for users, optimizing the dependency complexity for suggested packages is less necessary.</p>
+<p>But still, on the developer’s side, it is still important to keep the dependency complexity of “all parent packages” to a reasonable size. CRAN and Bioconductor perform full checks on packages, which means they require all the packages in “Depends”, “Imports” and “Suggests” to be installed. A large dependency (normally from suggested packages) more likely produces failures, which prevents acceptance of updates on CRAN or on Bioconductor. In general, we have the following suggestions for handling dependency complexity from suggested packages.</p>
+<ol style="list-style-type: decimal">
+<li>If removing a heavy suggested package does not affect the functionality of the package, or in other words, this dependency package only “enhances” the package, then it can be put in the “Enhances” field of the DESCRIPTION file. Packages listed in “Enhances” will never be checked by <code>R CMD check</code>.</li>
+<li>If a heavy suggested package is only used in examples and vignettes. Developers may think whether they really need the corresponding code to run during the building and the checking of the package. More complex vignettes can be served separately while not being shipped with the package, e.g., <a href="https://satijalab.org/seurat/" class="external-link">the Seurat package</a>.</li>
+</ol>
+</div>
+  </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
@@ -132,7 +149,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

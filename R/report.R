@@ -17,11 +17,7 @@
 # }
 dependency_report = function(pkg, file = NULL) {
 	
-	if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
-		template_file = "~/project/development/pkgndep/inst/extdata/package_report.html"
-	} else {
-		template_file = system.file("extdata", "package_report.html", package = "pkgndep")
-	}
+	template_file = system.file("extdata", "package_report.html", package = "pkgndep")
 
 	if(!requireNamespace("base64", quietly = TRUE)) {
 		stop("Please install base64 package.")

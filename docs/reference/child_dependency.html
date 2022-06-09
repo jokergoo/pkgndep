@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -92,99 +92,111 @@ is set to NA.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \dontrun{</span></span>
 <span class="r-in"><span class="fu">child_dependency</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           parents                  children dep_fields heaviness</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  ComplexHeatmap                  AMARETTO    Depends         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 ComplexHeatmap           EnrichedHeatmap    Depends        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78 ComplexHeatmap               countToFPKM    Depends        19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55 ComplexHeatmap                    recoup    Depends         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  ComplexHeatmap                   BioNERO    Imports         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  ComplexHeatmap                BiocOncoTK    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  ComplexHeatmap           BloodGen3Module    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 ComplexHeatmap                  CATALYST    Imports         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 ComplexHeatmap                     COCOA    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 ComplexHeatmap                      CeTF    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 ComplexHeatmap          DEComplexDisease    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 ComplexHeatmap                 DEGreport    Imports         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 ComplexHeatmap                       DEP    Imports         4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 ComplexHeatmap                     ELMER    Imports         3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 ComplexHeatmap                 GeneTonic    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 ComplexHeatmap     GenomicSuperSignature    Imports        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 ComplexHeatmap               InterCellar    Imports         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 ComplexHeatmap InteractiveComplexHeatmap    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38 ComplexHeatmap              LineagePulse    Imports        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82 ComplexHeatmap                   MKomics    Imports        18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42 ComplexHeatmap                      MOMA    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 ComplexHeatmap                 MWASTools    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 ComplexHeatmap               MatrixQCvis    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40 ComplexHeatmap                    MesKit    Imports        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 ComplexHeatmap                      POMA    Imports         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48 ComplexHeatmap                 PathoStat    Imports         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49 ComplexHeatmap                   PeacoQC    Imports        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56 ComplexHeatmap                     RLSeq    Imports         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87 ComplexHeatmap                       RVA    Imports         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60 ComplexHeatmap                   SEtools    Imports         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65 ComplexHeatmap       TBSignatureProfiler    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73 ComplexHeatmap              TCGAWorkflow    Imports         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70 ComplexHeatmap                      Xeva    Imports         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71 ComplexHeatmap                     YAPSA    Imports         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  ComplexHeatmap                   airpart    Imports         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74 ComplexHeatmap                    armada    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  ComplexHeatmap               blacksheepr    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 ComplexHeatmap                     celda    Imports         4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 ComplexHeatmap                      cola    Imports         4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77 ComplexHeatmap                     conos    Imports        18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 ComplexHeatmap                cytoKernel    Imports        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 ComplexHeatmap                   diffUTR    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 ComplexHeatmap                   diffcyt    Imports         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 ComplexHeatmap                     fCCAC    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 ComplexHeatmap              gCrisprTools    Imports        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 ComplexHeatmap                    gmoviz    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37 ComplexHeatmap                      iSEE    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 ComplexHeatmap          microbiomeMarker    Imports         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 ComplexHeatmap                  monaLisa    Imports         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45 ComplexHeatmap                    muscat    Imports         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 ComplexHeatmap                  musicatk    Imports         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 ComplexHeatmap                  pipeComp    Imports         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85 ComplexHeatmap                   pkgndep    Imports        21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52 ComplexHeatmap               profileplyr    Imports         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86 ComplexHeatmap                   rKOMICS    Imports        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58 ComplexHeatmap                     sechm    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59 ComplexHeatmap                 segmenter    Imports        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88 ComplexHeatmap                     sigQC    Imports         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61 ComplexHeatmap        simplifyEnrichment    Imports         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62 ComplexHeatmap              singleCellTK    Imports         0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63 ComplexHeatmap                   sparrow    Imports         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90 ComplexHeatmap               tidyHeatmap    Imports        16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91 ComplexHeatmap                visxhclust    Imports        15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92 ComplexHeatmap                    wilson    Imports         4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  ComplexHeatmap         BindingSiteFinder   Suggests        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 ComplexHeatmap                BrainSABER   Suggests        15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 ComplexHeatmap                 CNVRanger   Suggests        16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 ComplexHeatmap                  CNVScope   Suggests         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 ComplexHeatmap         EnrichmentBrowser   Suggests        16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 ComplexHeatmap              HilbertCurve   Suggests        14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81 ComplexHeatmap               IOHanalyzer   Suggests        19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83 ComplexHeatmap                      MOSS   Suggests        23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72 ComplexHeatmap            NanoporeRNASeq   Suggests        17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54 ComplexHeatmap                 QFeatures   Suggests        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 ComplexHeatmap              TCGAbiolinks   Suggests        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67 ComplexHeatmap                 TCGAutils   Suggests        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68 ComplexHeatmap      TimeSeriesExperiment   Suggests        11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  ComplexHeatmap                     artMS   Suggests         9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  ComplexHeatmap                     bambu   Suggests        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75 ComplexHeatmap                  circlize   Suggests        20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 ComplexHeatmap                 clustifyr   Suggests        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 ComplexHeatmap                  dittoSeq   Suggests        14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79 ComplexHeatmap                    eclust   Suggests         7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 ComplexHeatmap                  gtrellis   Suggests        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80 ComplexHeatmap                    i2dash   Suggests        21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 ComplexHeatmap                  msImpute   Suggests        14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84 ComplexHeatmap          multipanelfigure   Suggests        18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53 ComplexHeatmap                  projectR   Suggests         8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57 ComplexHeatmap               scDblFinder   Suggests        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64 ComplexHeatmap                     spiky   Suggests        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89 ComplexHeatmap                 spiralize   Suggests        16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69 ComplexHeatmap                   weitrix   Suggests        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            parents                  children dep_fields heaviness</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   ComplexHeatmap                  AMARETTO    Depends         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  ComplexHeatmap           EnrichedHeatmap    Depends        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  ComplexHeatmap InteractiveComplexHeatmap    Depends        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86  ComplexHeatmap               countToFPKM    Depends        19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62  ComplexHeatmap                    recoup    Depends         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   ComplexHeatmap                    ASURAT    Imports        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   ComplexHeatmap                   BioNERO    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   ComplexHeatmap                BiocOncoTK    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  ComplexHeatmap           BloodGen3Module    Imports         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  ComplexHeatmap                  CATALYST    Imports         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  ComplexHeatmap                     COCOA    Imports        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  ComplexHeatmap                     COTAN    Imports        14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  ComplexHeatmap                      CeTF    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  ComplexHeatmap          DEComplexDisease    Imports        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  ComplexHeatmap                 DEGreport    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  ComplexHeatmap                       DEP    Imports         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  ComplexHeatmap                     ELMER    Imports         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  ComplexHeatmap                    FLAMES    Imports         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  ComplexHeatmap                    GRaNIE    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  ComplexHeatmap                 GeneTonic    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  ComplexHeatmap     GenomicSuperSignature    Imports        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  ComplexHeatmap               InterCellar    Imports         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  ComplexHeatmap              LineagePulse    Imports         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91  ComplexHeatmap                   MKomics    Imports        18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  ComplexHeatmap                      MOMA    Imports         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52  ComplexHeatmap                 MWASTools    Imports        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44  ComplexHeatmap               MatrixQCvis    Imports        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  ComplexHeatmap                    MesKit    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90  ComplexHeatmap                  MitoHEAR    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  ComplexHeatmap                     PALMO    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58  ComplexHeatmap                      POMA    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  ComplexHeatmap                 PathoStat    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55  ComplexHeatmap                   PeacoQC    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  ComplexHeatmap                     RLSeq    Imports         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97  ComplexHeatmap                  RNAseqQC    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98  ComplexHeatmap                       RVA    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71  ComplexHeatmap                    SPONGE    Imports         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  ComplexHeatmap       TBSignatureProfiler    Imports        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77  ComplexHeatmap                      Xeva    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78  ComplexHeatmap                     YAPSA    Imports         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   ComplexHeatmap                   airpart    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  ComplexHeatmap                    armada    Imports        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   ComplexHeatmap               blacksheepr    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81  ComplexHeatmap              bulkAnalyseR    Imports         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  ComplexHeatmap                     celda    Imports         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  ComplexHeatmap                      cola    Imports         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85  ComplexHeatmap                     conos    Imports        18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  ComplexHeatmap                cytoKernel    Imports        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  ComplexHeatmap                   diffUTR    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  ComplexHeatmap                   diffcyt    Imports         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  ComplexHeatmap                     fCCAC    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  ComplexHeatmap              gCrisprTools    Imports        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  ComplexHeatmap                    gmoviz    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38  ComplexHeatmap                    hermes    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  ComplexHeatmap                      iSEE    Imports        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  ComplexHeatmap          microbiomeMarker    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  ComplexHeatmap                  monaLisa    Imports         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  ComplexHeatmap                    muscat    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51  ComplexHeatmap                  musicatk    Imports         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  ComplexHeatmap                  pipeComp    Imports         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  ComplexHeatmap                   pkgndep    Imports        21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59  ComplexHeatmap               profileplyr    Imports         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96  ComplexHeatmap                   rKOMICS    Imports        14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 99  ComplexHeatmap                     scITD    Imports         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65  ComplexHeatmap                     sechm    Imports         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66  ComplexHeatmap                 segmenter    Imports        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67  ComplexHeatmap        simplifyEnrichment    Imports         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68  ComplexHeatmap              singleCellTK    Imports         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69  ComplexHeatmap                   sparrow    Imports         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 101 ComplexHeatmap               tidyHeatmap    Imports        16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 103 ComplexHeatmap                visxhclust    Imports        15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 104 ComplexHeatmap                    wilson    Imports         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   ComplexHeatmap         BindingSiteFinder   Suggests        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  ComplexHeatmap                BrainSABER   Suggests        15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82  ComplexHeatmap                     CIARA   Suggests        18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  ComplexHeatmap                 CNVRanger   Suggests        15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84  ComplexHeatmap                  CNVScope   Suggests         6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  ComplexHeatmap         EnrichmentBrowser   Suggests        16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  ComplexHeatmap              HilbertCurve   Suggests        14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89  ComplexHeatmap               IOHanalyzer   Suggests        19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92  ComplexHeatmap                      MOSS   Suggests        23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  ComplexHeatmap            NanoporeRNASeq   Suggests        17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61  ComplexHeatmap                 QFeatures   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73  ComplexHeatmap              TCGAbiolinks   Suggests        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  ComplexHeatmap                 TCGAutils   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  ComplexHeatmap      TimeSeriesExperiment   Suggests        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   ComplexHeatmap                     artMS   Suggests         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   ComplexHeatmap                     bambu   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83  ComplexHeatmap                  circlize   Suggests        20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  ComplexHeatmap                 clustifyr   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  ComplexHeatmap                  dittoSeq   Suggests        14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87  ComplexHeatmap                    eclust   Suggests         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  ComplexHeatmap                  gtrellis   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88  ComplexHeatmap                    i2dash   Suggests        21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  ComplexHeatmap                  msImpute   Suggests        13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93  ComplexHeatmap          multipanelfigure   Suggests        18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  ComplexHeatmap                     pareg   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57  ComplexHeatmap              plotgardener   Suggests        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60  ComplexHeatmap                  projectR   Suggests         8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64  ComplexHeatmap               scDblFinder   Suggests        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70  ComplexHeatmap                     spiky   Suggests        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 100 ComplexHeatmap                 spiralize   Suggests        16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 102 ComplexHeatmap                 tinyarray   Suggests        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76  ComplexHeatmap                   weitrix   Suggests        12</span>
 <span class="r-in"><span class="co"># }</span></span>
 </code></pre></div>
     </div>
@@ -200,7 +212,7 @@ is set to NA.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

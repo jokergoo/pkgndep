@@ -186,7 +186,7 @@ if(exclude_children) {
 				          qq("<a href='?order_by=heaviness_on_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on child packages</a>"), 
 				          qq("<a href='?order_by=n_children&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of child packages</a>"), 
 				          qq("<a href='?order_by=adjusted_heaviness_on_indirect_downstream&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Heaviness on indirect downstream packages (excluding children)</a>"), 
-				          qq("<a href='?order_by=n_indierct_downstream&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of indirect downstream packages (excluding children)</a>"))
+				          qq("<a href='?order_by=n_indirect_downstream&reducible=@{reducible_str}&exclude_children=@{exclude_children_str}'>Number of indirect downstream packages (excluding children)</a>"))
 } else {
 	col.names = c(qq("<a href='?order_by=package&reducible=@{reducible_str}'>Package</a>"), 
 			             "Repository",

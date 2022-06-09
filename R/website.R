@@ -7,7 +7,7 @@
 #
 dependency_website = function() {
 
-	pkgs = c("knitr", "igraph", "ggrepel", "callr", "Rook")
+	pkgs = c("knitr", "igraph", "ggrepel", "callr", "Rook", "cowplot")
 	for(p in pkgs) {
 		if(!requireNamespace(p, quietly = TRUE)) {
 			stop(paste0("Package ", p, " is needed for the website, please install it from CRAN."))

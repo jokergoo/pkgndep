@@ -191,7 +191,7 @@ identical(sort(p1), sort(p2))
 
 ## Heaviness analysis for all CRAN/Bioconductor packages
 
-We performed heaviness analysis for all CRAN/Bioconductor packages which were retrieved on 2021-10-28. All
+We performed heaviness analysis for all CRAN/Bioconductor packages which were retrieved on `r readLines(url("https://pkgndep.github.io/date.txt"))[1]`. All
 the analysis reports can be found at https://pkgndep.github.io/.
 
 ## Session info

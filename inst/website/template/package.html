@@ -22,7 +22,7 @@
 <tr><th>Heaviness on downstream packages <a id="downstream-package-note" class="fake-link" title="Note: downstream packages include child packages.">?</a></th><td><%= round(df[pkg$package, "heaviness_on_downstream"], 1)%></td></tr>
 <tr><th>Number of downstream packages</th><td><%= df[pkg$package, "n_downstream"]%></td></tr>
 <tr><th>Heaviness on indirect downstream packages (excluding child packages)</th><td><%= round(df[pkg$package, "heaviness_on_indirect_downstream"], 1)%></td></tr>
-<tr><th>Number of indirect downstream packages (excluding child packages)</th><td><%= df[pkg$package, "n_indierct_downstream"]%></td></tr>
+<tr><th>Number of indirect downstream packages (excluding child packages)</th><td><%= df[pkg$package, "n_indirect_downstream"]%></td></tr>
 <% m = co_heaviness(pkg)
     diag(m) = -Inf
 if(nrow(m) >= 2) { 

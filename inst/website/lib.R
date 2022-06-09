@@ -165,7 +165,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		if(exclude_children) {
 			df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "max_co_heaviness_from_parents",
 				"heaviness_on_children",  "n_children", 
-				"heaviness_on_indirect_downstream", "n_indierct_downstream"), drop = FALSE]
+				"heaviness_on_indirect_downstream", "n_indirect_downstream"), drop = FALSE]
 		} else {
 			df2 = df2[, c("package", "repository", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "max_co_heaviness_from_parents",
 				"heaviness_on_children",  "n_children", 
@@ -657,7 +657,7 @@ make_heaviness_plot = function() {
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_indierct_downstream, heaviness_on_indirect_downstream, color = heaviness, 
+		p = ggplot2::ggplot(df, ggplot2::aes(n_indirect_downstream, heaviness_on_indirect_downstream, color = heaviness, 
 				label = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], df$package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
@@ -675,7 +675,7 @@ make_heaviness_plot = function() {
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_indierct_downstream, adjusted_heaviness_on_indirect_downstream, color = heaviness, 
+		p = ggplot2::ggplot(df, ggplot2::aes(n_indirect_downstream, adjusted_heaviness_on_indirect_downstream, color = heaviness, 
 				label = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], df$package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +

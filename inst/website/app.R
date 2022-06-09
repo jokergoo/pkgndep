@@ -34,13 +34,8 @@ cat("- Load website components.\n")
 httpd = Rhttpd$new()
 suppressMessages(httpd$start(quiet = TRUE))
 
-if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
-	httpd$add(app = File$new("~/project/development/pkgndep/inst/www/_js"), name = 'js')
-	httpd$add(app = File$new("~/project/development/pkgndep/inst/www/_css"), name = 'css')
-} else {
-	httpd$add(app = File$new(system.file("www", "_js", package = "pkgndep")), name = 'js')
-	httpd$add(app = File$new(system.file("www", "_css", package = "pkgndep")), name = 'css')
-}
+httpd$add(app = File$new(system.file("www", "_js", package = "pkgndep")), name = 'js')
+httpd$add(app = File$new(system.file("www", "_css", package = "pkgndep")), name = 'css')
 
 request_log = function(page, param) {
 

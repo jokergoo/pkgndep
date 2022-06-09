@@ -12,14 +12,10 @@ load_from_pkgndep_db = function(file) {
 
 	if(is.null(env$db[[file]])) {
 
-		if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
-			env$db[[file]] = readRDS(paste0("~/project/development/pkgndep.github.io/", file))
-		} else {
-			tmp_file = tempfile(fileext = ".rds")
-			on.exit(file.remove(tmp_file))
-			download.file(paste0("https://pkgndep.github.io/", file), tmp_file, quiet = TRUE)
-			env$db[[file]] = readRDS(tmp_file)
-		}
+		tmp_file = tempfile(fileext = ".rds")
+		on.exit(file.remove(tmp_file))
+		download.file(paste0("https://pkgndep.github.io/", file), tmp_file, quiet = TRUE)
+		env$db[[file]] = readRDS(tmp_file)
 	}
 	env$db[[file]]
 }
@@ -71,7 +67,7 @@ all_pkg_stat_snapshot = function() {
 			"n_downstream",
 			"heaviness_on_downstream",
 			"adjusted_heaviness_on_downstream",
-			"n_indierct_downstream",
+			"n_indirect_downstream",
 			"heaviness_on_indirect_downstream",
 			"adjusted_heaviness_on_indirect_downstream")]
 }

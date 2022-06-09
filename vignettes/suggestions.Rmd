@@ -12,6 +12,8 @@ library(pkgndep)
 ```
 
 
+## For the strong parents
+
 Heaviness analysis provides hints for reducing the complexity of package
 dependencies, but how to optimize depends on the specific use of parent
 packages in the corresponding package. First we need to be aware of that there
@@ -66,5 +68,43 @@ foo = function(...) {
    from heavy parents. This approach is of course NOT recommended from the aspect
    of software engineering, [but actually it is widely used in CRAN
    packages](https://doi.org/10.1109/IWSC.2015.7069885).
+
+4. Try to separate a large package into several smaller packages which focus on more specific tasks.
+   For example, the package **remotes** separated from the package **devtools** only focuses on 
+   installing packages from remote repositories, where [**remotes** only has 4 strong dependencies](https://pkgndep.github.io/prefix_r/remotes_dependency_report.html), 
+   but [**devtools** has 76](https://pkgndep.github.io/prefix_d/devtools_dependency_report.html).
+
+## For the weak parents
+
+Weak parent packages are those listed in "Suggested/Enhances" fields in the
+DESCRIPTION file. The heaviness mainly measures the effects on strong parents
+(those in "Depends/Imports") and we suggest moving heavy and strong parents to
+"Suggested/Enhances" if they are not frequently used by users. As "suggested"
+packages are not necessarily required for users, optimizing the dependency
+complexity for suggested packages is less necessary.
+
+But still, on the developer's side, it is still important to keep the
+dependency complexity of "all parent packages" to a reasonable size. CRAN and
+Bioconductor perform full checks on packages, which means they require all the
+packages in "Depends", "Imports" and "Suggests" to be installed. A large
+dependency (normally from suggested packages) more likely produces failures,
+which prevents acceptance of updates on CRAN or on Bioconductor. In general, we
+have the following suggestions for handling dependency complexity from suggested
+packages.
+
+1. If removing a heavy suggested package does not affect the functionality of
+   the package, or in other words, this dependency package only "enhances" the
+   package, then it can be put in the "Enhances" field of the DESCRIPTION
+   file. Packages listed in "Enhances" will never be checked by `R CMD check`.
+2. If a heavy suggested package is only used in examples and vignettes.
+   Developers may think whether they really need the corresponding code to run
+   during the building and the checking of the package. More complex
+   vignettes can be served separately while not being shipped with the package,
+   e.g., [the Seurat package](https://satijalab.org/seurat/).
+
+
+
+
+
 
 

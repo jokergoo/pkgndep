@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -106,14 +106,14 @@
 <span class="r-in"><span class="co"># a pkg_db object generated on 2021-10-28 can be loaded by load_pkg_db()</span></span>
 <span class="r-in"><span class="va">db2</span> <span class="op">=</span> <span class="fu"><a href="load_pkg_db.html">load_pkg_db</a></span><span class="op">(</span>snapshot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">db2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A package database of 21741 packages.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - 0 local / 21741 remote packages.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - 3416 Bioconductor / 18325 CRAN / 0 other packages.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A package database of 22076 packages.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - 0 local / 22076 remote packages.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - 3438 Bioconductor / 18638 CRAN / 0 other packages.</span>
 <span class="r-in"><span class="va">db2</span><span class="op">$</span><span class="fu">get_meta</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       Package Version Local</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ComplexHeatmap ComplexHeatmap  2.10.0    no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ComplexHeatmap ComplexHeatmap  2.12.0    no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                             Repository</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ComplexHeatmap https://bioconductor.org/packages/3.14/bioc/src/contrib</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ComplexHeatmap https://bioconductor.org/packages/3.15/bioc/src/contrib</span>
 <span class="r-in"><span class="va">db2</span><span class="op">$</span><span class="fu">get_dependency_table</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       package          dependency        dep_fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] "ComplexHeatmap" "methods"         "Depends" </span>
@@ -133,119 +133,132 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15,] "ComplexHeatmap" "matrixStats"     "Imports" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16,] "ComplexHeatmap" "foreach"         "Imports" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17,] "ComplexHeatmap" "doParallel"      "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] "ComplexHeatmap" "testthat"        "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19,] "ComplexHeatmap" "knitr"           "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20,] "ComplexHeatmap" "markdown"        "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21,] "ComplexHeatmap" "dendsort"        "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22,] "ComplexHeatmap" "jpeg"            "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23,] "ComplexHeatmap" "tiff"            "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [24,] "ComplexHeatmap" "fastcluster"     "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25,] "ComplexHeatmap" "EnrichedHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [26,] "ComplexHeatmap" "dendextend"      "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27,] "ComplexHeatmap" "grImport"        "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28,] "ComplexHeatmap" "grImport2"       "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29,] "ComplexHeatmap" "glue"            "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [30,] "ComplexHeatmap" "GenomicRanges"   "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31,] "ComplexHeatmap" "gridtext"        "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [32,] "ComplexHeatmap" "pheatmap"        "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33,] "ComplexHeatmap" "gridGraphics"    "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [34,] "ComplexHeatmap" "gplots"          "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35,] "ComplexHeatmap" "rmarkdown"       "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [36,] "ComplexHeatmap" "Cairo"           "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] "ComplexHeatmap" "codetools"       "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19,] "ComplexHeatmap" "testthat"        "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20,] "ComplexHeatmap" "knitr"           "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21,] "ComplexHeatmap" "markdown"        "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22,] "ComplexHeatmap" "dendsort"        "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23,] "ComplexHeatmap" "jpeg"            "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [24,] "ComplexHeatmap" "tiff"            "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25,] "ComplexHeatmap" "fastcluster"     "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [26,] "ComplexHeatmap" "EnrichedHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [27,] "ComplexHeatmap" "dendextend"      "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [28,] "ComplexHeatmap" "grImport"        "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29,] "ComplexHeatmap" "grImport2"       "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [30,] "ComplexHeatmap" "glue"            "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31,] "ComplexHeatmap" "GenomicRanges"   "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [32,] "ComplexHeatmap" "gridtext"        "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33,] "ComplexHeatmap" "pheatmap"        "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [34,] "ComplexHeatmap" "gridGraphics"    "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [35,] "ComplexHeatmap" "gplots"          "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [36,] "ComplexHeatmap" "rmarkdown"       "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37,] "ComplexHeatmap" "Cairo"           "Suggests"</span>
 <span class="r-in"><span class="va">db2</span><span class="op">$</span><span class="fu">get_rev_dependency_table</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       package                     dependency       dep_fields</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] "airpart"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] "AMARETTO"                  "ComplexHeatmap" "Depends" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] "artMS"                     "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] "bambu"                     "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] "BindingSiteFinder"         "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] "BiocOncoTK"                "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] "BioNERO"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] "blacksheepr"               "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] "BloodGen3Module"           "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] "BrainSABER"                "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] "CATALYST"                  "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12,] "celda"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13,] "CeTF"                      "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14,] "clustifyr"                 "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15,] "CNVRanger"                 "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16,] "COCOA"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17,] "cola"                      "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] "cytoKernel"                "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19,] "DEComplexDisease"          "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20,] "DEGreport"                 "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21,] "DEP"                       "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22,] "diffcyt"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23,] "diffUTR"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [24,] "dittoSeq"                  "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25,] "ELMER"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [26,] "EnrichedHeatmap"           "ComplexHeatmap" "Depends" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27,] "EnrichmentBrowser"         "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28,] "fCCAC"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29,] "gCrisprTools"              "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [30,] "GeneTonic"                 "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31,] "GenomicSuperSignature"     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [32,] "gmoviz"                    "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33,] "gtrellis"                  "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [34,] "HilbertCurve"              "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35,] "InteractiveComplexHeatmap" "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [36,] "InterCellar"               "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37,] "iSEE"                      "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [38,] "LineagePulse"              "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [39,] "MatrixQCvis"               "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [40,] "MesKit"                    "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41,] "microbiomeMarker"          "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [42,] "MOMA"                      "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43,] "monaLisa"                  "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [44,] "msImpute"                  "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45,] "muscat"                    "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [46,] "musicatk"                  "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [47,] "MWASTools"                 "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [48,] "PathoStat"                 "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49,] "PeacoQC"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [50,] "pipeComp"                  "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [51,] "POMA"                      "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [52,] "profileplyr"               "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53,] "projectR"                  "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [54,] "QFeatures"                 "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [55,] "recoup"                    "ComplexHeatmap" "Depends" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [56,] "RLSeq"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57,] "scDblFinder"               "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [58,] "sechm"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [59,] "segmenter"                 "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [60,] "SEtools"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61,] "simplifyEnrichment"        "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [62,] "singleCellTK"              "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [63,] "sparrow"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [64,] "spiky"                     "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [65,] "TBSignatureProfiler"       "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [66,] "TCGAbiolinks"              "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [67,] "TCGAutils"                 "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [68,] "TimeSeriesExperiment"      "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [69,] "weitrix"                   "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [70,] "Xeva"                      "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [71,] "YAPSA"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [72,] "NanoporeRNASeq"            "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [73,] "TCGAWorkflow"              "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [74,] "armada"                    "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [75,] "circlize"                  "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [76,] "CNVScope"                  "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [77,] "conos"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [78,] "countToFPKM"               "ComplexHeatmap" "Depends" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [79,] "eclust"                    "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [80,] "i2dash"                    "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [81,] "IOHanalyzer"               "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [82,] "MKomics"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [83,] "MOSS"                      "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [84,] "multipanelfigure"          "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [85,] "pkgndep"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [86,] "rKOMICS"                   "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [87,] "RVA"                       "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [88,] "sigQC"                     "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [89,] "spiralize"                 "ComplexHeatmap" "Suggests"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [90,] "tidyHeatmap"               "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [91,] "visxhclust"                "ComplexHeatmap" "Imports" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [92,] "wilson"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        package                     dependency       dep_fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1,] "airpart"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2,] "AMARETTO"                  "ComplexHeatmap" "Depends" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3,] "artMS"                     "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4,] "ASURAT"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5,] "bambu"                     "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [6,] "BindingSiteFinder"         "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [7,] "BiocOncoTK"                "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8,] "BioNERO"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [9,] "blacksheepr"               "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [10,] "BloodGen3Module"           "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [11,] "BrainSABER"                "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [12,] "CATALYST"                  "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [13,] "celda"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [14,] "CeTF"                      "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [15,] "clustifyr"                 "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [16,] "CNVRanger"                 "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [17,] "COCOA"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [18,] "cola"                      "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [19,] "COTAN"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [20,] "cytoKernel"                "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [21,] "DEComplexDisease"          "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [22,] "DEGreport"                 "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [23,] "DEP"                       "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [24,] "diffcyt"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [25,] "diffUTR"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [26,] "dittoSeq"                  "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [27,] "ELMER"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [28,] "EnrichedHeatmap"           "ComplexHeatmap" "Depends" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [29,] "EnrichmentBrowser"         "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [30,] "fCCAC"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [31,] "FLAMES"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [32,] "gCrisprTools"              "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [33,] "GeneTonic"                 "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [34,] "GenomicSuperSignature"     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [35,] "gmoviz"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [36,] "GRaNIE"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [37,] "gtrellis"                  "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [38,] "hermes"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [39,] "HilbertCurve"              "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [40,] "InteractiveComplexHeatmap" "ComplexHeatmap" "Depends" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [41,] "InterCellar"               "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [42,] "iSEE"                      "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43,] "LineagePulse"              "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [44,] "MatrixQCvis"               "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [45,] "MesKit"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [46,] "microbiomeMarker"          "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [47,] "MOMA"                      "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [48,] "monaLisa"                  "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [49,] "msImpute"                  "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [50,] "muscat"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [51,] "musicatk"                  "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [52,] "MWASTools"                 "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [53,] "pareg"                     "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [54,] "PathoStat"                 "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [55,] "PeacoQC"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [56,] "pipeComp"                  "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [57,] "plotgardener"              "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [58,] "POMA"                      "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [59,] "profileplyr"               "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [60,] "projectR"                  "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [61,] "QFeatures"                 "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [62,] "recoup"                    "ComplexHeatmap" "Depends" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [63,] "RLSeq"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [64,] "scDblFinder"               "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [65,] "sechm"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [66,] "segmenter"                 "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [67,] "simplifyEnrichment"        "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [68,] "singleCellTK"              "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [69,] "sparrow"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [70,] "spiky"                     "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [71,] "SPONGE"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [72,] "TBSignatureProfiler"       "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [73,] "TCGAbiolinks"              "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [74,] "TCGAutils"                 "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [75,] "TimeSeriesExperiment"      "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [76,] "weitrix"                   "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [77,] "Xeva"                      "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [78,] "YAPSA"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [79,] "NanoporeRNASeq"            "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [80,] "armada"                    "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [81,] "bulkAnalyseR"              "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [82,] "CIARA"                     "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [83,] "circlize"                  "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [84,] "CNVScope"                  "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85,] "conos"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [86,] "countToFPKM"               "ComplexHeatmap" "Depends" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [87,] "eclust"                    "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [88,] "i2dash"                    "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [89,] "IOHanalyzer"               "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [90,] "MitoHEAR"                  "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [91,] "MKomics"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [92,] "MOSS"                      "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [93,] "multipanelfigure"          "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [94,] "PALMO"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [95,] "pkgndep"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [96,] "rKOMICS"                   "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [97,] "RNAseqQC"                  "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [98,] "RVA"                       "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [99,] "scITD"                     "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [100,] "spiralize"                 "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [101,] "tidyHeatmap"               "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [102,] "tinyarray"                 "ComplexHeatmap" "Suggests"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [103,] "visxhclust"                "ComplexHeatmap" "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [104,] "wilson"                    "ComplexHeatmap" "Imports" </span>
 <span class="r-in"><span class="va">db2</span><span class="op">$</span><span class="fu">package_dependencies</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       package          dependency      dep_fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] "ComplexHeatmap" "methods"       "Depends" </span>
@@ -265,6 +278,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15,] "ComplexHeatmap" "matrixStats"   "Imports" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16,] "ComplexHeatmap" "foreach"       "Imports" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17,] "ComplexHeatmap" "doParallel"    "Imports" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] "ComplexHeatmap" "codetools"     "Imports" </span>
 <span class="r-in"><span class="va">db2</span><span class="op">$</span><span class="fu">package_dependencies</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       package          dependency      dep_fields </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] "ComplexHeatmap" "methods"       "Depends"  </span>
@@ -284,86 +298,87 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15,] "ComplexHeatmap" "matrixStats"   "Imports"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16,] "ComplexHeatmap" "foreach"       "Imports"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [17,] "ComplexHeatmap" "doParallel"    "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] "circlize"       "graphics"      "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19,] "circlize"       "GlobalOptions" "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20,] "circlize"       "shape"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21,] "circlize"       "grDevices"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22,] "circlize"       "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23,] "circlize"       "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [24,] "circlize"       "colorspace"    "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25,] "circlize"       "methods"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [26,] "circlize"       "grid"          "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27,] "GetoptLong"     "rjson"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28,] "GetoptLong"     "GlobalOptions" "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29,] "GetoptLong"     "methods"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [30,] "GetoptLong"     "crayon"        "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31,] "colorspace"     "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [32,] "colorspace"     "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33,] "colorspace"     "grDevices"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [34,] "colorspace"     "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35,] "clue"           "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [36,] "clue"           "cluster"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37,] "clue"           "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [38,] "clue"           "methods"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [39,] "GlobalOptions"  "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [40,] "GlobalOptions"  "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41,] "digest"         "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [42,] "IRanges"        "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43,] "IRanges"        "utils"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [44,] "IRanges"        "stats"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45,] "IRanges"        "BiocGenerics"  "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [46,] "IRanges"        "S4Vectors"     "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [47,] "IRanges"        "stats4"        "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [48,] "IRanges"        "S4Vectors"     "LinkingTo"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49,] "foreach"        "codetools"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [50,] "foreach"        "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [51,] "foreach"        "iterators"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [52,] "doParallel"     "foreach"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53,] "doParallel"     "iterators"     "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [54,] "doParallel"     "parallel"      "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [55,] "doParallel"     "utils"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [56,] "GlobalOptions"  "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57,] "GlobalOptions"  "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [58,] "shape"          "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [59,] "shape"          "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [60,] "shape"          "grDevices"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61,] "colorspace"     "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [62,] "colorspace"     "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [63,] "colorspace"     "grDevices"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [64,] "colorspace"     "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [65,] "crayon"         "grDevices"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [66,] "crayon"         "methods"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [67,] "crayon"         "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [68,] "cluster"        "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [69,] "cluster"        "grDevices"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [70,] "cluster"        "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [71,] "cluster"        "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [72,] "BiocGenerics"   "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [73,] "BiocGenerics"   "utils"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [74,] "BiocGenerics"   "graphics"      "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [75,] "BiocGenerics"   "stats"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [76,] "BiocGenerics"   "methods"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [77,] "BiocGenerics"   "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [78,] "BiocGenerics"   "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [79,] "BiocGenerics"   "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [80,] "S4Vectors"      "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [81,] "S4Vectors"      "utils"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [82,] "S4Vectors"      "stats"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [83,] "S4Vectors"      "stats4"        "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [84,] "S4Vectors"      "BiocGenerics"  "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [85,] "iterators"      "utils"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [86,] "foreach"        "codetools"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [87,] "foreach"        "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [88,] "foreach"        "iterators"     "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [89,] "BiocGenerics"   "methods"       "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [90,] "BiocGenerics"   "utils"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [91,] "BiocGenerics"   "graphics"      "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [92,] "BiocGenerics"   "stats"         "Depends"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [93,] "BiocGenerics"   "methods"       "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [94,] "BiocGenerics"   "utils"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [95,] "BiocGenerics"   "graphics"      "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [96,] "BiocGenerics"   "stats"         "Imports"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [97,] "iterators"      "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] "ComplexHeatmap" "codetools"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19,] "circlize"       "graphics"      "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20,] "circlize"       "GlobalOptions" "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21,] "circlize"       "shape"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22,] "circlize"       "grDevices"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23,] "circlize"       "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [24,] "circlize"       "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25,] "circlize"       "colorspace"    "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [26,] "circlize"       "methods"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [27,] "circlize"       "grid"          "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [28,] "GetoptLong"     "rjson"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29,] "GetoptLong"     "GlobalOptions" "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [30,] "GetoptLong"     "methods"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [31,] "GetoptLong"     "crayon"        "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [32,] "colorspace"     "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33,] "colorspace"     "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [34,] "colorspace"     "grDevices"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [35,] "colorspace"     "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [36,] "clue"           "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37,] "clue"           "cluster"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [38,] "clue"           "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [39,] "clue"           "methods"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [40,] "GlobalOptions"  "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41,] "GlobalOptions"  "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [42,] "digest"         "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [43,] "IRanges"        "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [44,] "IRanges"        "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45,] "IRanges"        "stats"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [46,] "IRanges"        "BiocGenerics"  "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [47,] "IRanges"        "S4Vectors"     "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [48,] "IRanges"        "stats4"        "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49,] "IRanges"        "S4Vectors"     "LinkingTo"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [50,] "foreach"        "codetools"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [51,] "foreach"        "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [52,] "foreach"        "iterators"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [53,] "doParallel"     "foreach"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [54,] "doParallel"     "iterators"     "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [55,] "doParallel"     "parallel"      "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [56,] "doParallel"     "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [57,] "GlobalOptions"  "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [58,] "GlobalOptions"  "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [59,] "shape"          "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [60,] "shape"          "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [61,] "shape"          "grDevices"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [62,] "colorspace"     "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [63,] "colorspace"     "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [64,] "colorspace"     "grDevices"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [65,] "colorspace"     "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [66,] "crayon"         "grDevices"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [67,] "crayon"         "methods"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [68,] "crayon"         "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [69,] "cluster"        "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [70,] "cluster"        "grDevices"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [71,] "cluster"        "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [72,] "cluster"        "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [73,] "BiocGenerics"   "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [74,] "BiocGenerics"   "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [75,] "BiocGenerics"   "graphics"      "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [76,] "BiocGenerics"   "stats"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [77,] "BiocGenerics"   "methods"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [78,] "BiocGenerics"   "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [79,] "BiocGenerics"   "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [80,] "BiocGenerics"   "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [81,] "S4Vectors"      "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [82,] "S4Vectors"      "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [83,] "S4Vectors"      "stats"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [84,] "S4Vectors"      "stats4"        "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [85,] "S4Vectors"      "BiocGenerics"  "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [86,] "iterators"      "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [87,] "foreach"        "codetools"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [88,] "foreach"        "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [89,] "foreach"        "iterators"     "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [90,] "BiocGenerics"   "methods"       "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [91,] "BiocGenerics"   "utils"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [92,] "BiocGenerics"   "graphics"      "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [93,] "BiocGenerics"   "stats"         "Depends"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [94,] "BiocGenerics"   "methods"       "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [95,] "BiocGenerics"   "utils"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [96,] "BiocGenerics"   "graphics"      "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [97,] "BiocGenerics"   "stats"         "Imports"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [98,] "iterators"      "utils"         "Depends"  </span>
 <span class="r-in"><span class="co"># }</span></span>
 </code></pre></div>
     </div>
@@ -379,7 +394,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
