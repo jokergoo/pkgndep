@@ -88,7 +88,7 @@ dependency complexity of "all parent packages" to a reasonable size. CRAN and
 Bioconductor perform full checks on packages, which means they require all the
 packages in "Depends", "Imports" and "Suggests" to be installed. A large
 dependency (normally from suggested packages) more likely produces failures,
-which prevents acceptance of updates on CRAN or on Bioconductor. In general, we
+which prevents acceptance or updates on CRAN or on Bioconductor. In general, we
 have the following suggestions for handling dependency complexity from suggested
 packages.
 
@@ -96,11 +96,11 @@ packages.
    the package, or in other words, this dependency package only "enhances" the
    package, then it can be put in the "Enhances" field of the DESCRIPTION
    file. Packages listed in "Enhances" will never be checked by `R CMD check`.
-2. If a heavy suggested package is only used in examples and vignettes.
-   Developers may think whether they really need the corresponding code to run
+2. If a heavy suggested package is only used in examples and in vignettes.
+   Developers may think about whether they really need the corresponding code to run
    during the building and the checking of the package. More complex
-   vignettes can be served separately while not being shipped with the package,
-   e.g., [the Seurat package](https://satijalab.org/seurat/).
+   vignettes can be served separately while not being shipped with the package.
+   A nice example is [the Seurat package](https://satijalab.org/seurat/).
 
 
 

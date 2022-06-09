@@ -96,6 +96,14 @@ The value for `pkgndep()` should be 1. a CRAN/Bioconductor package, 2. an instal
 
 Executable examples:
 
+```{r, echo = FALSE}
+if(grepl("devel", R.version$status)) {
+  pkgndep = function(...) {
+      pkgndep::pkgndep(..., online = FALSE)
+  }
+}
+```
+
 ```{r}
 library(pkgndep)
 pkg = pkgndep("ComplexHeatmap")

@@ -11,9 +11,13 @@ DEFAULT_LOADED_BASE_PKGS = c("base", "stats", "graphics", "grDevices", "utils", 
 FIELDS = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")
 
 
-bioc_version = BiocManager::version()
-bioc_version = as.character(bioc_version)
-    
+if(grepl("devel", R.version$status)) {  # only for CRAN check on R-devel where BiocManager::version() throws error 
+    bioc_version = packageVersion("BiocVersion")[, 1:2]
+    bioc_version = as.character(bioc_version)
+} else {
+    bioc_version = BiocManager::version()
+    bioc_version = as.character(bioc_version)
+}   
 
 
 # == title
