@@ -58,6 +58,9 @@ moving them to `Suggests` field and using them only when they are needed
 greatly helps to reduce the heaviness of **cola**. Now the number of required
 packages are reduced to only 64.
 
+## Citation
+
+Gu Z. et al., pkgndep: a tool for analyzing dependency heaviness of R packages. Bioinformatics 2022. https://doi.org/10.1093/bioinformatics/btac449
 
 ## Installation
 
