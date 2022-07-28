@@ -6,6 +6,7 @@
 # -x An object returned by `pkgndep`.
 # -rel Whether to return the absolute measure or the relative measure.
 # -a A constant added for calculating the relative measure.
+# -only_strong_dep Whether to only return the heaviness for strong parents.
 #
 # == details
 # The heaviness from a parent package is calculated as follows: If package B is in the ``Depends``/``Imports``/``LinkingTo`` fields of package A,
@@ -23,7 +24,7 @@
 # x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
 # heaviness(x)
 # heaviness(x, rel = TRUE)
-heaviness = function(x, rel = FALSE, a = 10) {
+heaviness = function(x, rel = FALSE, a = 10, only_strong_dep = FALSE) {
 
 	v1 = length(required_dependency_packages(x, FALSE))
 	nr = nrow(x$dep_mat)
@@ -53,7 +54,11 @@ heaviness = function(x, rel = FALSE, a = 10) {
 		}
 	}
 	names(v) = rownames(x$dep_mat)
-	v
+	if(only_strong_dep) {
+		v[x$which_required]
+	} else {
+		v
+	}
 }
 
 
@@ -326,7 +331,7 @@ heaviness_from_upstream = function(package) {
 gini_index = function(v) {
 
 	if(inherits(v, "pkgndep")) {
-		gini_index(v$heaviness[v$which_required])
+		return(gini_index(v$heaviness[v$which_required]))
 	}
 	if(length(v) < 2) {
 		0

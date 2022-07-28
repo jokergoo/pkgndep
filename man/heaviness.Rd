@@ -7,13 +7,14 @@ Heaviness from parent packages
 Heaviness from parent packages
 }
 \usage{
-heaviness(x, rel = FALSE, a = 10)
+heaviness(x, rel = FALSE, a = 10, only_strong_dep = FALSE)
 }
 \arguments{
 
   \item{x}{An object returned by \code{\link{pkgndep}}.}
   \item{rel}{Whether to return the absolute measure or the relative measure.}
   \item{a}{A constant added for calculating the relative measure.}
+  \item{only_strong_dep}{Whether to only return the heaviness for strong parents.}
 
 }
 \details{

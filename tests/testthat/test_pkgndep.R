@@ -31,19 +31,24 @@ if(!grepl("devel", R.version$status)) {
 
 	dcf = read.dcf(system.file("DESCRIPTION", package = "ComplexHeatmap"))
 
-	depends = strsplit(dcf[1, "Depends"], ",\\s+")[[1]]
-	imports = strsplit(dcf[1, "Imports"], ",\\s+")[[1]]
-	suggests = strsplit(dcf[1, "Suggests"], ",\\s+")[[1]]
+	v1 = pkgndep:::env$pkg_db_snapshot$meta["ComplexHeatmap", "Version"]
+	v2 = dcf[1, "Version"]
 
-	depends = gsub("\\s+\\(.*\\)", "", depends); depends = depends[depends != "R"]
-	imports = gsub("\\s+\\(.*\\)", "", imports)
-	suggests = gsub("\\s+\\(.*\\)", "", suggests)
+	if(v1 == v2) {
+		depends = strsplit(dcf[1, "Depends"], ",\\s+")[[1]]
+		imports = strsplit(dcf[1, "Imports"], ",\\s+")[[1]]
+		suggests = strsplit(dcf[1, "Suggests"], ",\\s+")[[1]]
 
-	test_that("parent_dependency", {
-		expect_that(sort(depends), is_identical_to(sort(tb$parents[tb$dep_fields == "Depends"])))
-		expect_that(sort(imports), is_identical_to(sort(tb$parents[tb$dep_fields == "Imports"])))
-		expect_that(sort(suggests), is_identical_to(sort(tb$parents[tb$dep_fields == "Suggests"])))
-	})
+		depends = gsub("\\s+\\(.*\\)", "", depends); depends = depends[depends != "R"]
+		imports = gsub("\\s+\\(.*\\)", "", imports)
+		suggests = gsub("\\s+\\(.*\\)", "", suggests)
+
+		test_that("parent_dependency", {
+			expect_that(sort(depends), is_identical_to(sort(tb$parents[tb$dep_fields == "Depends"])))
+			expect_that(sort(imports), is_identical_to(sort(tb$parents[tb$dep_fields == "Imports"])))
+			expect_that(sort(suggests), is_identical_to(sort(tb$parents[tb$dep_fields == "Suggests"])))
+		})
+	}
 
 
 	test_that("parent relations", {
