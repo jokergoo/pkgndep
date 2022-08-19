@@ -7,11 +7,11 @@
     png(tmp_file, width = 1200*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-    color = ifelse(l, "highlight", "no")
+    color = ifelse(l, "highlight", "others")
     suppressMessages(suppressWarnings({
       p1 = ggplot2::ggplot(df, ggplot2::aes(n_children, heaviness_on_children, pch = repo, color = color, label = ifelse(l, df$package, ""))) +
         ggplot2::geom_point() + 
-        ggplot2::scale_color_manual(values = c("highlight" = "red", "no" = "grey")) +
+        ggplot2::scale_color_manual(values = c("highlight" = "red", "others" = "grey")) +
         ggplot2::scale_shape_manual(values = c("Bioconductor" = 16, "CRAN" = 4)) +
         ggplot2::scale_x_continuous(trans='log10') +
         ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
@@ -29,11 +29,11 @@
     png(tmp_file, width = 500*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-    color = ifelse(l, "highlight", "no")
+    color = ifelse(l, "highlight", "others")
     suppressWarnings({
       p1 = ggplot2::ggplot(df, ggplot2::aes(n_children, heaviness_on_children, pch = repo, color = color, label = ifelse(l, df$package, ""))) +
         ggplot2::geom_point() + 
-        ggplot2::scale_color_manual(values = c("highlight" = "red", "no" = "grey")) +
+        ggplot2::scale_color_manual(values = c("highlight" = "red", "others" = "grey")) +
         ggplot2::scale_shape_manual(values = c("Bioconductor" = 16, "CRAN" = 4)) +
         ggplot2::scale_x_continuous(trans='log10') +
         ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
@@ -78,7 +78,9 @@ namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/libra
 <br>
 <p>In total, <span class="package"><%=pkg$package%></span> has <%=n_total%> child packages. Only <%=n_used%> child packages with heaviness from <span class="package"><%=pkg$package%></span> larger than 10 are listed in the following table.</p>
 <p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
-<p><b>Heaviness of <span class="package"><%=pkg$package%></span> on child package:</b> number of required packages that can be reduced for each of the child packages by moving <span class="package"><%=pkg$package%></span> to its <code>Suggests</code>.</p>
+<p><b>Heaviness of <span class="package"><%=pkg$package%></span> on child package:</b> number of extra dependency packages that <span class="package"><%=pkg$package%></span> uniquely imports to.</p>
+<p>The full table can be obtained by <code>child_dependency('<%=pkg$package%>')</code>.</p>
+
 <% rev_tb$package = qq("<a href='?package=@{rev_tb$package}'>@{rev_tb$package}</a>", collapse = FALSE)
   rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a href='@{namespace_link}' target='_blank'>link</a>", collapse = FALSE), rev_tb[, 6:7, drop = FALSE])
     html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "imports", "importMethods", "importClasses", "NAMESPACE file", qq("Heaviness of <span class='package'>@{pkg$package}</span> on child package"), "Number of parent packages"), table.attr = "class='table table-striped' id='child-dependency'", align = c("l", rep("r", ncol(rev_tb) - 1))))

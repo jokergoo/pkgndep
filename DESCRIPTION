@@ -1,8 +1,8 @@
 Package: pkgndep
 Type: Package
 Title: Analyze Dependency Heaviness of R Packages
-Version: 1.1.5
-Date: 2022-07-28
+Version: 1.2.0
+Date: 2022-08-17
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 4.0.0)
@@ -14,7 +14,10 @@ Description: A new metric named 'dependency heaviness' is proposed that measures
     of additional dependency packages that a parent package brings to its child package 
     and are unique to the dependency packages imported by all other parents.  
     The dependency heaviness analysis is visualized by a customized heatmap. 
-    The package is described in Gu et al. 2022 <doi:10.1093/bioinformatics/btac449>.
+    The package is described in <doi:10.1093/bioinformatics/btac449>. We have also performed 
+    the dependency heaviness analysis on the CRAN/Bioconductor package ecosystem and the results 
+    are implemented as a web-based database which provides comprehensive tools for 
+    querying dependencies of individual R packages.
 URL: https://github.com/jokergoo/pkgndep
 VignetteBuilder: knitr
 License: MIT + file LICENSE

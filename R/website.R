@@ -1,10 +1,14 @@
 
-# Open the online website of package dependency analysis
-#
+# == title
+# The database of package dependency analysis
 #
 # == details
-# The analyis is based on all CRAN/Bioconductor packages retrieved on 2021-10-28.
+# The analyis is based on all 22076 CRAN/Bioconductor packages retrieved on 2022-06-08.
 #
+# == example
+# if(interactive()) {
+#     dependency_website()
+# }
 dependency_website = function() {
 
 	pkgs = c("knitr", "igraph", "ggrepel", "callr", "Rook", "cowplot")

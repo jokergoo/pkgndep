@@ -1,7 +1,7 @@
 
 CUTOFF = list()
-CUTOFF$adjusted_max_heaviness_from_parents = c(50, 70)
-CUTOFF$adjusted_total_heaviness_from_parents = c(70, 100)
+CUTOFF$adjusted_max_heaviness_from_parents = c(50, 60)
+CUTOFF$adjusted_total_heaviness_from_parents = c(70, 90)
 CUTOFF$adjusted_heaviness_on_children = c(15, 30)
 CUTOFF$adjusted_heaviness_on_indirect_downstream = c(10, 20)
 
@@ -783,27 +783,40 @@ make_heaviness_plot = function() {
 	upViewport()
 	dev.off()
 
-	png(paste0(env$figure_dir, "/plot-top-500-children-downstream-pct.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
+	png(paste0(env$figure_dir, "/plot-top-500-children-downstream-pct.png"), width = 800*1.5, height = 500*1.5, res = 72*2)
 	ind = intersect(order(-df$heaviness_on_children)[1:500], order(-df$heaviness_on_downstream)[1:500])
-	plot(sort(df$n_children[ind]/df$n_downstream[ind]), xlab = "", ylab = "n_children/n_downstream",
-		main = "Fraction of children in downstream for\ntop packages with the higest heaviness")
+	r = sort(df$n_children[ind]/df$n_downstream[ind])
+	p = ggplot(data.frame(x = seq_along(ind), y = r), aes(x = x, y = y)) +
+	    geom_point() + geom_line() +
+	    labs(x = "Packages ordered by the fraction", y = "fraction = n_child/n_downstream") +
+	    ggtitle("Fraction of child in downstream of top packages with the highest heaviness")
+	print(p)
 	dev.off()
 
-
+	N = nrow(df)
 	lta = load_from_pkgndep_db("adjusted_heaviness_select_a.rds")
-	d1 = lta$children
 	png(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-children.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
-	plot(d1[, 1], d1[, 2], xlab = "value of a", ylab = "#{|rank(h_a) - rank(h_{a-1})| > 50}", main = "Select a for adjusting heaviness on child packages"); abline(v = 10, col = "red")
+	d1 = lta$children; d1$v = 1 - d1$v/N
+	p1 = ggplot(d1, aes(x = a, y = v)) + geom_point() + geom_line() + geom_vline(xintercept= 10, col = "red", lty =2) +
+		labs(x = "Value of a", y = "Stability of rankings of all packages compared to previous a") +
+		ggtitle("Adjust heaviness on child packages")
+	print(p1)
 	dev.off()
 
-	d2 = lta$downstream
 	png(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-downstream.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
-	plot(d2[, 1], d2[, 2], xlab = "value of a", ylab = "#{|rank(h_a) - rank(h_{a-1})| > 50}", main = "Select a for adjusting heaviness on downstream packages"); abline(v = 10, col = "red")
+	d2 = lta$downstream; d2$v = 1 - d2$v/N
+	p2 = ggplot(d2, aes(x = a, y = v)) + geom_point() + geom_line() + geom_vline(xintercept= 6, col = "red", lty =2) +
+		labs(x = "Value of a", y = "Stability of rankings of all packages compared to previous a") +
+		ggtitle("Adjust heaviness on downstream packages")
+	print(p2)
 	dev.off()
 
-	d3 = lta$indirect_downstream
 	png(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-downstream-no-children.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
-	plot(d3[, 1], d3[, 2], xlab = "value of a", ylab = "#{|rank(h_a) - rank(h_{a-1})| > 50}", main = "Select a for adjusting heaviness\non indirect downstream packages"); abline(v = 6, col = "red")
+	d3 = lta$indirect_downstream; d3$v = 1 - d3$v/N
+	p3 = ggplot(d3, aes(x = a, y = v)) + geom_point() + geom_line() + geom_vline(xintercept= 6, col = "red", lty =2) +
+		labs(x = "Value of a", y = "Stability of rankings of all packages compared to previous a") +
+		ggtitle("Adjust heaviness on indirect downstream packages")
+	print(p3)
 	dev.off()
 
 	invisible(NULL)

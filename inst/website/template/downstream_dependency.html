@@ -6,11 +6,11 @@
     png(tmp_file, width = 1200*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-    color = ifelse(l, "highlight", "no")
+    color = ifelse(l, "highlight", "others")
     suppressMessages(suppressWarnings({
       p1 = ggplot2::ggplot(df, ggplot2::aes(n_downstream, heaviness_on_downstream, pch = repo, color = color, label = ifelse(l, df$package, ""))) +
         ggplot2::geom_point() + 
-        ggplot2::scale_color_manual(values = c("highlight" = "red", "no" = "grey")) +
+        ggplot2::scale_color_manual(values = c("highlight" = "red", "others" = "grey")) +
         ggplot2::scale_shape_manual(values = c("Bioconductor" = 16, "CRAN" = 4)) +
         ggplot2::scale_x_continuous(trans='log10') +
         ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
@@ -28,11 +28,11 @@
     png(tmp_file, width = 600*1.5, height = 500*1.5, res = 72*2)
     l = df$package == pkg$package
     repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-    color = ifelse(l, "highlight", "no")
+    color = ifelse(l, "highlight", "others")
     suppressWarnings({
       p1 = ggplot2::ggplot(df, ggplot2::aes(n_downstream, heaviness_on_downstream, pch = repo, color = color, label = ifelse(l, df$package, ""))) +
         ggplot2::geom_point() + 
-        ggplot2::scale_color_manual(values = c("highlight" = "red", "no" = "grey")) +
+        ggplot2::scale_color_manual(values = c("highlight" = "red", "others" = "grey")) +
         ggplot2::scale_shape_manual(values = c("Bioconductor" = 16, "CRAN" = 4)) +
         ggplot2::scale_x_continuous(trans='log10') +
         ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
@@ -73,7 +73,10 @@ details[open] > summary:first-of-type {
 also with dependency path depth within <code>[<%=min_depth%>, <%=max_depth%>]</code>,
 <% } %>
 are listed in the following table.</p>
-<p><b>Dependency path:</b> the shortest path from <span class="package"><%=pkg$package%></span> to downstream package in the global dependency graph. The form of <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span> means package A contribute a direct heaviness of <i>k</i> on package B.</p>
+<p><b>Dependency path:</b> the shortest path from <span class="package"><%=pkg$package%></span> to a downstream package in the global dependency graph. The form of <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span> means package A contributes a direct heaviness of <i>k</i> on package B.</p>
+<p><b>Heaviness of <span class="package"><%=pkg$package%></span> on downstream package:</b> Denote $n_{1k}$ as the number of strong dependencies of the downstream package. Since <span class="package"><%=pkg$package%></span> can affect the downstream pacakge in an indirect manner, we recalculate the global dependency relations for all packages after moving <span class="package"><%=pkg$package%></span> to all its child packages' <code>Suggests</code>. Then we denote $n_{2k}$
+as the number of strong dependencies of the downstream pacakge in the reduced dependency graph. The heaviness from <span class="package"><%=pkg$package%></span> on that downstream pacakge is calculated as $n_{1k} - n_{2k}$.</p>
+<p>The full table can be obtained by <code>downstream_dependency('<%=pkg$package%>')</code>.</p>
 
 <% 
   el = downstream_dependency(pkg$package)
@@ -183,7 +186,7 @@ for(i in seq_along(depth_tb)) {
 
 
 <hr>
-<p>Dependency paths in the table are merged as the following graph with <%=n_nodes%> nodes and <%=nrow(nt)%> edges. 
+<p>Dependency paths in the table are merged into the following graph with <%=n_nodes%> nodes and <%=nrow(nt)%> edges. 
 <% if(!(min_depth == global_min_depth && max_depth == global_max_depth)) { %>
 Dependency depth ranges between <%=min_depth%> and <%=max_depth%>. 
 <% } %>
@@ -256,16 +259,16 @@ if(n_nodes > 500) {
 
 <p>Legends (if there are such):</p>
 <ul>
-  <li><b>Orange dot:</b> the package <b><%=pkg$package%></b>.</li>
-  <li><b>Green dots:</b> Groups of leave nodes (number > 1) in the complete graph that connect to their parents nodes. It is for reducing the size of graph. </li>
-  <li><b>Red arrows:</b> Edges with high betweenness. Value on a edge is the heaviness from a parent on its child package.</li>
+  <li><b>Orange dot:</b> The package <b><%=pkg$package%></b>.</li>
+  <li><b>Green dots:</b> To reduce the size of the graph for visualization, leaf nodes sharing the same parent are grouped and colored in green. </li>
+  <li><b>Red arrows:</b> Edges with high betweenness. The cutoff of betweenness is selected as the 'elbow' of the curve of sorted betweenness of all edges in the graph.</li>
 </ul>
 
-<p>There are the two notes for the following graph:</p>
 <ul>
-<li>The number on an edge only corresponds to the direct heaviness from a parent on its child. It does not necessarily mean all the heaviness are inherited to the very downstream end nodes. E.g. for a dependency path: <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k1</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k2</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">C</span>, the <code>k1</code> heaviness from A to B are not necessarily all passed to package C, although most of them should be.</li>
-  <li>The graph is only a union of the shortest paths from <b><%=pkg$package%></b> to its downstream packages, thus it does not include all the dependency relations downstream of <b><%=pkg$package%></b> in the global dependency graph.</li>
+<li>The number on an edge only corresponds to the direct heaviness from a parent on its child. It does not necessarily mean all the heaviness are inherited to the very downstream nodes. E.g. for a dependency path: <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k1</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k2</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">C</span>, the <code>k1</code> heaviness from <i>A</i> to <i>B</i> is not necessarily all passed to package <i>C</i>, because it might be diluted by <i>C</i>'s other parents.</li>
+  <li>The graph is only a union of the shortest paths from upstream packages to <b><%=pkg$package%></b>, thus it does not include all the dependency relations from upstream of <b><%=pkg$package%></b> in the global dependency graph.</li>
 </ul>
+
 
 
 <div id='cy-downstream-dep' style="position:relative;">

@@ -2,7 +2,7 @@ context("Test pkgndep")
 
 library(pkgndep)
 
-if(!grepl("devel", R.version$status)) {
+if(!grepl("devel", R.version$status) && .Platform$OS.type != "windows") {
 	db = available.packages(repos = BiocManager::repositories())
 	p1 = tools::package_dependencies("cola", db = db, recursive = TRUE)[[1]]
 	db2 = reformat_db(db)

@@ -10,13 +10,15 @@ if(grepl("(bioc|books|annotation|experiment|workflow)", pkg$repository)) {
 }
 %>
 
-<p>"Import" information is from the <a href="<%= namespace_link %>" target="_blank">NAMESPACE</a> file of <span class="package"><%=pkg$package%></span>.</p>
+<p>"Imports" information is from the <a href="<%= namespace_link %>" target="_blank">NAMESPACE</a> file of <span class="package"><%=pkg$package%></span>.</p>
 <p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
-<p><b>Required packages:</b> number of strong dependency packages that each of the parent package requires (or in other words, number of dependency packages the parent package brings in).</p>
-<p><b>Heaviness from parent on <span class="package"><%=pkg$package%></span>:</b> number of required packages that can be reduced if moving parent package to <code>Suggests</code> of <span class="package"><%=pkg$package%></span>.</p>
+<p><b>Total required packages:</b> number of total dependency packages that a parent package brings in.</p>
+<p><b>Heaviness on <span class="package"><%=pkg$package%></span>:</b> number of extra dependency packages that a parent uniquely imported to <span class="package"><%=pkg$package%></span>.</p>
+
+<p>The full table can be obtained by <code>parent_dependency('<%=pkg$package%>')</code>.</p>
 
 <% tb[, 1] = qq("<a href='?package=@{tb[, 1]}'>@{tb[, 1]}</a>", collapse = FALSE)
-    html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Required packages", qq("Heaviness from parent on <span class='package'>@{pkg$package}</span>")), table.attr = "class='table table-striped' id='parent-dependency'", align = c("l", rep("r", ncol(tb) - 1))))
+    html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Total required packages", qq("Heaviness on <span class='package'>@{pkg$package}</span>")), table.attr = "class='table table-striped' id='parent-dependency'", align = c("l", rep("r", ncol(tb) - 1))))
     html_tb = gsub("(<td[^>]*?> Suggests </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>No object is imported into the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
     html_tb = gsub("(<td[^>]*?> Enhances </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>No object is imported into the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
     html_tb = gsub("(<td[^>]*?> Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from parent package is imported to the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
@@ -128,9 +130,10 @@ $("#parent-dependency tr td:nth-child(2)").each(function(index) {
         <hr>
 <p>The following table lists pairs of parent packages with co-heaviness larger than 10. The co-heaviness measures the number of additional 
 dependencies that two parent packages simultaneously import and are only imported by the two parents.</p>
-<p>Note the co-heaviness from parents can be always easily observed in the dependency heatmap.</p>
+<p>Note the co-heaviness from parents can be always easily observed from the dependency heatmap.</p>
             <%= as.character(knitr::kable(co_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent 1", "Parent 2", "Relation of two parents", qq("Co-heaviness on @{pkg$package}"), "Co-heaviness as Jaccard coeffcient"), table.attr = "class='table table-striped' style='width:1000px'", align = c("l", "l", "r", "r", "r") )) %>
-
+<p>Denote the heaviness from parent <i>A</i> on <i>P</i> as $h_A$, the heaviness from parent <i>B</i> on <i>P</i> as $h_B$, and the co-heaviness from <i>A</i> and <i>B</i> as $h_{co}$,
+the Jaccard coeffcient is calculated as: $h_{co}/(h_{co} + h_A + h_B)$.</p>
    <%     }
     }
   %>

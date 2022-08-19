@@ -6,105 +6,11 @@ Bioconductor (<a href='https://bioconductor.org/packages/3.14/BiocViews.html#___
 <div id="tabs">
   <ul>
     <li><a href="#table">Heaviness table</a></li>
+    <li><a href="#metrics">Heaviness metrics</a></li>
     <li><a href="#analysis">Heaviness analysis</a></li>
       </ul>
 
-<div id="table"> <details><summary>Measures in the table</summary>
-<br>
-For a package denoted as <i>P</i>, its direct
-dependency packages are listed in the <code>Depends</code>,
-<code>Imports</code>, <code>LinkingTo</code>, <code>Suggestes</code> and
-<code>Enhances</code> fields in its <code>DESCRIPTION</code> file. We define the following dependency categories
-for package <i>P</i>:</p>
-
-<ul>
-	<li><b>Parent packages</b>: the packages listed in the <code>Depends</code>, <code>Imports</code>and <code>LinkingTo</code> fields
-(packages in the red box in the following diagram). They are also called the
-<b>strong direct</b> dependency packages of <i>P</i>. Parent packages are enforced to be installed when installing package <i>P</i>.</li>
-<li><b>Strong dependency packages</b>: the total packages by recursively looking for parent
-packages (package category <b>A</b> and <b>B</b>, plus packages in the red
-box). They are also called <b>upstream packages</b>. Note strong dependency
-packages contain parent packages. Strong dependency packages are enforced to be installed when installing package <i>P</i>.</li>
-<li><b>All dependency packages</b>: the
-total packages by recursively looking for parent packages, but on the level of
-package <i>P</i>, parents for packages in <code>Suggests</code> and
-<code>Enhances</code> are also included (package category <b>A</b>, <b>B</b>,
-<b>C</b> and <b>D</b>, plus all packages listed in the box of package <i>P</i>). It
-simulates when moving all <code>Suggests</code> and <code>Enhances</code> packages to
-<code>Depends</code>/<code>Imports</code> of <i>P</i>, the number of strong dependency
-packages.</li>
-<li><b>Child packages</b>: the packages whose parent packages
-include package <i>P</i> (package category <b>E</b>).</li>
-<li><b>Downstream
-packages</b>: the total packages by recursively looking for child packages
-(package category <b>E</b> and <b>F</b>). Note downstream packages include
-child packages.</li>
-<li><b>Indirect downstream packages:</b> downstream packages excluding child packages (package category <b>F</b>).</li>
-</ul>
-
-<div style="padding:20px 206px;">
-<%= paste(readLines(system.file("website", "dependency_diagram.svg", package = "pkgndep")), collapse = "\n") %>
-</div>
-
-<p>Next various measures for the heaviness are defined as follows:</p>
-
-<ul> 
-	<li><b>Heaviness from a parent</b>: If package <i>A</i> is a
-parent of package <i>P</i> (i.e. package <i>P</i> strongly and directly depends on <i>A</i>),
-<b>the heaviness of <i>A</i> on <i>P</i></b> is calculated as $n_1 - n_2$ where
-$n_1$ is the number of parents of <i>P</i> and $n_2$ is
-the number of parents of <i>P</i> <i>if moving <i>A</i> to <code style="font-style: normal;">Suggests</code> of <i>P</i></i>. In
-other words, <b>the heaviness measures the number of additionally uniquely required
-packages that <i>A</i> brings to <i>P</i></b>.</li>
-
-<li>Since a package may have multiple parents, <b>max heaviness from parents</b> or <b>total heaviness from parents</b>
-are used to measure how heavy parents are.</li>
-
-<li><b>Heaviness of a package on all its child packages</b>: For package <i>P</i>,
-assuming it has $K_c$ child packages and the $k^{th}$ child is denoted
-as $A_k$. Denote $n_{1k}$ as the number of strong dependencies of
-$A_k$ and $n_{2k}$ as the number of strong dependencies of $A_k$ <i>if moving <i>P</i>
-to its</i> <code>Suggests</code>, the heaviness of <i>P</i> on its child packages is
-calculated as $\frac{1}{K_c} \sum_k^{K_c}(n_{1k} - n_{2k})$. So here the heaviness measures
-the average number of additional packages <i>P</i> brings to its child packages.</li>
-
-<li><b>Heaviness of a package on all its downstream packages</b>: The
-definition is similar to the heaviness of a package on all its child packages.
-For package <i>P</i>,
-assuming it has $K_d$ downstream packages and the $k^{th}$ downstream package is denoted
-as $B_k$. Denote $n_{1k}$ as the number of strong dependencies of package
-$B_k$. Since <i>P</i> can affect its downstream in an indirect manner, 
-we recalculate the global dependency relations for all packages after moving 
-<i>P</i> to all its child packages' <code>Suggests</code>. Then we denote 
-$n_{2k}$ as the number of strong dependencies of $B_k$ in the modified dependency graph.
-The heaviness of <i>P</i> on its downstream packages is
-calculated as $\frac{1}{K_d} \sum_k^{K_d}(n_{1k} - n_{2k})$.</li>
-
-<li><b>Heaviness of a package on all its indirect downstream packages</b>: The calculation is
-the same as "heaviness on downstream packages" except now the child packages are excluded from
-downstream packages. </li>
-</ul>
-
-<p>Here the measure of <b>Heaviness of a package on all its child packages</b> is more important to developers,
-since it tells how many additional depedency packages are expected to be imported when they add a new parent package to their packages.</p>
-
-<p>All these measures have a trend that small $K$ (i.e. number of parents, children or downstream packages) leads to high heaviness values.
-Packages with small $K$ are in general of less interests. What is more important is to see, e.g. which package heavily affects a lot of 
-children or downstream packages (i.e. with large $K$). Thus, the original definition of heaviness is <b>adjusted</b> correspondingly to decrease the heaviness more for smaller $K$.
-A detailed explanation of the adjusted heaviness can be found in the tab <b>"Heaviness analysis"</b>.</p>
-
-<p>The previous definition of heaviness only measures the effect of a single package. Here we define another measure called <b>"co-heaviness from parent package"</b> that measures the number of additional dependency packages simultaneously imported by two parents.
-Denote <i>P</i>'s two strong parent packages as <i>A</i> and <i>B</i>, 
-denote $S_A$ as the set of reduced dependency packages when only moving <i>A</i> to
-<code>Suggests</code> of <i>P</i>, denote $S_B$ as the set of reduced dependency packages when
-only moving <i>B</i> to <code>Suggests</code> of <i>P</i>, and denote $S_{AB}$ as the set of reduced dependency
-packages when moving <i>A</i> and <i>B</i> together to <code>Suggests</code> of <i>P</i>, the co-heaviness of
-<i>A</i>, <i>B</i> on <i>P</i> is calculatd as $ \left | S_{AB} \setminus  \cup (S_A, S_B) \right | $ where $|A|$
-is the number of elements in set <i>A</i> and $A \setminus B$ is the set of elements in <i>A</i> but not in <i>B</i>.
-</p>
-
-</details>
-
+<div id="table"> 
 <style>
 details summary {
     cursor: pointer;
@@ -122,19 +28,18 @@ details[open] > summary:first-of-type {
 }
 </style>
 
-<br>
 
 <div class="form-box">
 <form method="get" class="form-inline">
 
 <div>
-	<label> <b>Order table rows by: </b> <a id="order-by-note" class="fake-link" title="Note: adjusted heaviness values are not listed in the table because the absolute values of them are meaningless. They are only used for reordering the table." style="font-size: 0.8em;">Where are these columns?</a><br>
-		<input type="radio" name="order_by" value="adjusted_max_heaviness_from_parents" <%=ifelse(order_by == 'adjusted_max_heaviness_from_parents', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted max heaviness from parent packages,<br>
-      <input type="radio" name="order_by" value="adjusted_heaviness_on_children" <%=ifelse(order_by == 'adjusted_heaviness_on_children', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on child packages,<br>
+	<label> <b>Order table rows by: </b> <a id="order-by-note" class="fake-link" title="Adjusted heaviness is used to prioritize packages with high heaviness values but also affecting or being affected by a larger number of packgaes. The values themselves are not listed in the table because they are meaningless. They are only used for reordering the table." style="font-size: 0.8em;">Where are these columns?</a><br>
+		<input type="radio" name="order_by" value="adjusted_max_heaviness_from_parents" <%=ifelse(order_by == 'adjusted_max_heaviness_from_parents', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted max heaviness from parent packages
+      <input type="radio" name="order_by" value="adjusted_heaviness_on_children" <%=ifelse(order_by == 'adjusted_heaviness_on_children', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on child packages
       <% if(exclude_children) { %>
       <input type="radio" name="order_by" value="adjusted_heaviness_on_indirect_downstream" <%=ifelse(order_by == 'adjusted_heaviness_on_indirect_downstream', 'checked=1', '')%> onchange="this.form.submit()"> Adjusted heaviness on downstream packages (excluding child packages)
       <% } else { %>
-      <input type="radio" name="order_by" value="adjusted_heaviness_on_downstream" <%=ifelse(order_by == 'adjusted_heaviness_on_downstream', 'checked=1', '')%>onchange="this.form.submit()"> Adjusted heaviness on downstream packages.
+      <input type="radio" name="order_by" value="adjusted_heaviness_on_downstream" <%=ifelse(order_by == 'adjusted_heaviness_on_downstream', 'checked=1', '')%>onchange="this.form.submit()"> Adjusted heaviness on downstream packages
       <% } %>
         </label>
 </div>
@@ -142,13 +47,13 @@ details[open] > summary:first-of-type {
 
 <div>
   <label> <b>Other settings: </b><br>
-    <input id="input-reducible" type="checkbox" name="reducible" <%=ifelse(only_reducible, 'checked=1', '')%> onchange="this.form.submit()"> Only show packages whose parent's heaviness could be reduced, i.e. only a limited number of functions are imported from parent.
+    <input id="input-reducible" type="checkbox" name="reducible" <%=ifelse(only_reducible, 'checked=1', '')%> onchange="this.form.submit()"> Only show packages whose parent's heaviness could be reduced, <i>i.e.</i>, only a limited number of functions are imported from the heaviest parent.
   </label>
 </div>
 
 <div>
 <label>
-	<input id="input-exclude-children" type="checkbox" name="exclude_children" <%=ifelse(exclude_children, 'checked=1', '')%> onchange="this.form.submit()"> Exclude children from downstream packages or only list indirect downsteam packages. A package's downstream packages also include its child packages, so a package's heaviness on downstream packages would be very similar to the heaviness on its child packages if the dependency depth to downstream is small (if the max dependency depth is 2, then all downstream packages are child packages). Thus, excluding children from downstream packages helps to discover the heaviness that indirectly affects downstream packages.
+	<input id="input-exclude-children" type="checkbox" name="exclude_children" <%=ifelse(exclude_children, 'checked=1', '')%> onchange="this.form.submit()"> Exclude children from downstream packages or only list indirect downsteam packages. A package's downstream packages also include its child packages, so a package's heaviness on downstream packages would be very similar to the heaviness on its child packages if the dependency depth to downstream is small (if the max dependency depth is 1, then all downstream packages are child packages). Thus, excluding children from downstream packages helps to discover the heaviness that indirectly affects downstream packages.
 </label>
 </div>
 
@@ -163,7 +68,7 @@ $(function() {
 <p><b>Legends:</b></p>
 <p><span class="heaviness-high"><a>High heaviness</a></span> Packages with adjusted heaviness on child packages higher than <%=CUTOFF$adjusted_heaviness_on_children[2]%>.</p>
 <p><span class="heaviness-median"><a>Median heaviness</a></span> Packages with adjusted heaviness on child packages between <%=CUTOFF$adjusted_heaviness_on_children[1]%> and <%=CUTOFF$adjusted_heaviness_on_children[2]%>.</p>
-<p><span class="reducible" style="font-size:1em;">reducible</span> Packages whose parent's heaviness could be reduced, i.e. only a limited number of functions are imported from parent.</p>
+<p><span class="reducible" style="font-size:1em;">reducible</span> Packages whose parent's heaviness could be reduced, i.e. only a limited number of functions are imported from the heaviest parent.</p>
 <p><b>Columns:</b>
  <span style="width:20px;background-color:#FFFF10;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness from parent packages
  <span style="width:20px;background-color:#10FFFF;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness on child/downstream packages
@@ -171,7 +76,6 @@ $(function() {
  <br>
 <p>The full table of dependency heaviness analysis can be obtained by <code>df = pkgndep::all_pkg_stat_snapshot()</code>.</p>
 </div>
-
 
 <% reducible_str = ifelse(only_reducible, 'on', '') 
 	 exclude_children_str = ifelse(exclude_children, 'on', '') 
@@ -295,6 +199,77 @@ $(function() {
 
 </div>
 
+
+
+<div id="metrics">
+
+<div id="metrics-content">
+
+<h3>Dependency categories</h3>
+
+For a package denoted as <i>P</i>, its direct
+dependency packages are listed in the <code>Depends</code>,
+<code>Imports</code>, <code>LinkingTo</code>, <code>Suggestes</code> and
+<code>Enhances</code> fields in its <code>DESCRIPTION</code> file. We define the following dependency categories
+for package <i>P</i>:</p>
+
+<ul>
+<li><b>Strong parent packages:</b> Dependency packages listed in the <code>Depends</code>, <code>Imports</code>, and <code>LinkingTo</code> of <i>P</i> (red box in the figure). They are also called the <b>strong direct dependency packages</b> of <i>P</i>. Strong parent packages are mandatory to be installed when installing <i>P</i>.</li>
+
+<li><b>Weak parent packages:</b> Dependency packages listed in the <code>Suggest</code> and <code>Enhances</code> of <i>P</i> (green box in the figure). They are optionally required when installing <i>P</i>.</li>
+
+<li><b>Strong dependency packages:</b> Total dependency packages by recursively looking for parent packages (category A, B, as well as the packages in red box in the figure). They are also called the <b>upstream packages</b>. Note strong dependency packages include parent packages. Strong dependency packages are mandatory to be installed when installing <i>P</i>.</li>
+
+<li><b>All dependency packages:</b> Total dependencies by recursively looking for parent packages, but on the level of <i>P</i>, its weak parents are also included (package category A, B, C and D, plus all packages listed in the red and green boxes in the figure). It simulates when the full functionality of <i>P</i> is required, or all weak parents become strong parents, the total number of strong dependency packages <i>P</i> requires.</li>
+
+<li><b>Child packages:</b> Packages whose parents include <i>P</i> (category E in the figure). They are the packages on which <i>P</i> has a direct impact of dependencies.</li>
+
+<li><b>Downstream packages:</b> Total packages by recursively looking for child packages (category E and F in the figure). <i>P</i> is required for the installation of any of its downstream packages. Note downstream packages include child packages.</li>
+
+<li><b>Indirect downstream packages:</b> Downstream packages excluding child packages (category F in the figure), <i>i.e.</i>, these with distance to <i>P</i> of at least 2 in the global dependency graph. These are the packages on which <i>P</i> has an indirect influence of dependencies. Note in some of the current studies, they are also called <b>transitive packages</b>.</li>
+
+</ul>
+
+<div style="padding:20px 206px;">
+<%= paste(readLines(system.file("website", "dependency_diagram.svg", package = "pkgndep")), collapse = "\n") %>
+</div>
+
+<h3>Heaviness metrics</h3>
+
+<p>Various metrics for the heaviness are defined as follows:</p>
+
+<ul> 
+	<li><b>Heaviness from a parent.</b> If package <i>A</i> is a strong parent of <i>P</i>, the heaviness of <i>A</i> on <i>P</i> denoted as $h$ is calculated as $h = n_1 - n_2$ where $n_1$ is the number of strong dependencies of <i>P</i>, and $n_2$ is the number of strong dependencies of <i>P</i> after changing <i>A</i> from a strong parent to a weak parent, <i>i.e.</i>, by moving <i>A</i> to <code>Suggests</code> of <i>P</i>. Thus, the heaviness measures the number of additionally required strong dependencies that <i>A</i> brings to <i>P</i> and they are not brought by any other parent. 
+If package <i>B</i> is a weak parent of <i>P</i>, $n_2$ is defined as the number of strong dependencies of <i>P</i> after changing <i>B</i> to a strong parent of <i>P</i>, <i>i.e.</i>, by moving <i>B</i> to <code>Imports</code> of <i>P</i>. In this scenario, the heaviness of the weak parent is calculated as $n_2 - n_1$.</li>
+
+<li><b>Max heaviness from parents.</b> Assume package <i>P</i> has $K_p$ parents, the heaviness denoted as $h_{max}$ is defined as $h_{max}=\underset{k\in\{1..K_p\}}{\max}h_{k}$ where $h_k$ is the heaviness of the k<sup>th</sup> parent on <i>P</i>.
+</li>
+
+<li><b>Heaviness on the child packages.</b> Assume <i>P</i> has $K_c$ child packages and the k<sup>th</sup> child is denoted as <i>A<sub>k</sub></i>. Denote the number of strong dependencies of <i>A<sub>k</sub></i> as $n_{1k}$, and denote the number of strong dependencies of <i>A<sub>k</sub></i> after changing <i>P</i> as a weak parent of <i>A<sub>k</sub></i> as $n_{2k}$, the heaviness of <i>P</i> on its child packages denoted as $h_c$ is calculated as $h_c=\frac{1}{K_c}\sum_{k=1}^{K_c}(n_{1k}-n_{2k})$.
+The heaviness measures the average number of additional dependencies that <i>P</i> brings to its child packages.</li>
+
+<li><b>Heaviness on the downstream packages.</b> The definition is similar to the heaviness on the child packages. Assume <i>P</i> has $K_d$ downstream packages and the k<sup>th</sup> downstream package is denoted as <i>B<sub>k</sub></i>. Denote the number of strong dependencies of <i>B<sub>k</sub></i> as $n_{1k}$, and denote the number of strong parents of <i>B<sub>k</sub></i> after changing <i>P</i> to a weak parent of all <i>P</i>'s child packages as $n_{2k}$. The heaviness of <i>P</i> on its downstream packages denoted as $h_d$ is calculated as $h_d=\frac{1}{K_d}\sum_{k=1}^{K_d}(n_{1k}-n_{2k})$.</li>
+
+<li><b>Heaviness on the indirect downstream packages.</b>The calculation is the same as $h_d$ except here child packages are excluded from downstream packages. Denote the heaviness as $h_{id}$ and denote the set of <i>P</i>'s child packages as $S_c$, $h_{id}$ is defined as $h_{id}=\frac{1}{K_d-K_c}\sum_{k=1}^{K_d}(n_{1k}-n_{2k})\cdot I(B_k\notin S_c)$,
+where $K_c$ and $K_d$ are the numbers of child and downstream packages respectively, and $I()$ is an indicator function. $h_{id}$ is set to 0 if $K_c = K_d$, <i>i.e.</i>, <i>P</i> has no indirect downstream packages. $h_{id}$ measures the contribution of dependencies of <i>P</i> to the ecosystems in an indirect way.</li>
+
+</ul>
+
+<h3> Adjusted heaviness</h3>
+
+<p>If grouping packages by $K$ which can be the number of parent, child or downstream packages depending on the type of the heaviness metrics, the distributions of heaviness values always have long tails, and the tails are especially longer for smaller $K$. Thus, if simply ranking packages based on the original heaviness values, top packages are preferably associated with small $K$. In general, packages with small $K$ are of less interest because they only have very small impacts to the ecosystem. To prioritize packages with broader impacts to the ecosystem, the original definitions of various heaviness metrics are adjusted to decrease the weights of packages with smaller $K$. Please note, the designs of the adjusted heaviness metrics are empirical and the absolute values of adjusted heaviness are meaningless, which are only used for ranking packages. 
+A detailed explanation of various adjusted heaviness metrics can be found in the tab <b>"Heaviness analysis"</b>.</p>
+
+<h3>Co-heaviness from parent pairs</h3>
+<p>The co-heaviness measures the number of additional dependency packages simultaneously brought by two parent packages. Let <i>A</i> and <i>B</i> be two parents of <i>P</i>, denote $S_A$ as the set of reduced dependency packages when only changing <i>A</i> to a weak parent of <i>P</i>, denote $S_B$ as the set of reduced dependency packages when only changing <i>B</i> to a weak parent of <i>P</i>, and denote $S_{AB}$ as the set of reduced dependency packages when changing both <i>A</i> and <i>B</i> to weak parents of <i>P</i>, then the co-heaviness of <i>A</i> and <i>B</i> on <i>P</i> denoted as $h_{co}$ is defined as $h_{co} = \left|S_{AB}\setminus\cup(S_A,S_B)\right|$ where the symbol $X \setminus Y$ corresponds to the set of elements in $X$ but not in $Y$, and $|X|$ is the number of elements in set $X$. The co-heaviness measures the number of reduced packages only caused by co-action of <i>A</i> and <i>B</i>.
+</p>
+
+
+
+</div>
+</div>
+
+
 <div id="analysis">
 
 <div id="analysis-content">
@@ -309,6 +284,7 @@ $.ajax({
 
 </div>
 </div>
+
 </div>
 
 <script>

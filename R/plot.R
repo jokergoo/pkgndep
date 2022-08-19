@@ -357,7 +357,7 @@ plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		if(w - ds[1] > 0.1 || h - ds[2] > 0.1) {
 			message(paste0("The best device size to visualize the complete plot is ", 
 				ceiling(w*100)/100, " x ", 
-				ceiling(h*100)/100, " (in inches),\nor use plot(obj, fix_size = FALSE) so that heatmap cells are not in fixed sizes."))
+				ceiling(h*100)/100, " (in inches),\nor use `plot(obj, fix_size = FALSE)` so that heatmap cells are not in fixed sizes."))
 		}
 	}
 
