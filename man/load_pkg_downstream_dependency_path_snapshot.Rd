@@ -10,7 +10,7 @@ Load downstream dependency paths for all packages
 load_pkg_downstream_dependency_path_snapshot()
 }
 \details{
-It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
+It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
 }
 \value{
 A list.

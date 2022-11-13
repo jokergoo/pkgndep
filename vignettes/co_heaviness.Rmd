@@ -36,7 +36,7 @@ x = lt[["DESeq2"]]
 ```
 
 ```{r, fig.width = 36.96, fig.height = 8.34, out.width="1200px"}
-plot(x)
+dependency_heatmap(x)
 ```
 
 You can drag the plot into a new tab if it is too small to read.

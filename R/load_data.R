@@ -24,7 +24,7 @@ load_from_pkgndep_db = function(file) {
 # Load all package dependency statistics
 #
 # == details
-# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
+# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
 #
 # == value
 # A data frame of various columns.
@@ -76,7 +76,7 @@ all_pkg_stat_snapshot = function() {
 # Load downstream dependency paths for all packages
 #
 # == details
-# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
+# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
 #
 # == value
 # A list.
@@ -103,7 +103,7 @@ load_pkg_downstream_dependency_path_snapshot = function() {
 # -hash Whether to convert the named list to a hash table by `hash::hash`.
 #
 # == details
-# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
+# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
 #
 # == value
 # A list (as a hash table) of ``pkgndep`` objects where each element corresponds to the analysis on one package.
@@ -130,10 +130,10 @@ load_all_pkg_dep = function(hash = TRUE) {
 #
 # == param
 # -lib Local library path. If the value is ``NA``, only remote package database is used.
-# -snapshot Internally used. If it is ``TRUE``, the package database generated on 2021-10-28 is used.
+# -snapshot Internally used. If it is ``TRUE``, the package database generated on 2022-06-08 is used.
 # -verbose Whetehr to print messages.
 # -online If the value is ``TRUE``, it will directly use the package database file from CRAN/Bioconductor. If the 
-#        value is ``FALSE``, it uses the cached package database retrieved on 2021-10-28.
+#        value is ``FALSE``, it uses the cached package database retrieved on 2022-06-08.
 #
 # == details
 # It loads the package database from CRAN/Bioconductor and locally installed packages.

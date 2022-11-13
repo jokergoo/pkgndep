@@ -26,6 +26,10 @@
 # heaviness(x, rel = TRUE)
 heaviness = function(x, rel = FALSE, a = 10, only_strong_dep = FALSE) {
 
+	if(is.character(x)) {
+		stop("`x` should be returned by `pkgndep()`.")
+	}
+
 	v1 = length(required_dependency_packages(x, FALSE))
 	nr = nrow(x$dep_mat)
 	v = numeric(nr)
@@ -211,6 +215,7 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 # == param
 # -package A package name.
 # -add_values_attr Whether to include "values" attribute? Internally used.
+# -via Whether to only consider downstream packages via a intermediate package?
 #
 # == Value
 # The value is the mean heaviness of the package on all its downstream packages. Denote ``n`` as the number of all its downstream packages,
@@ -227,7 +232,7 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 # \dontrun{
 # heaviness_on_downstream("ComplexHeatmap")
 # }
-heaviness_on_downstream = function(package, add_values_attr = FALSE) {
+heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL) {
 
 	if(inherits(package, "pkgndep")) package = package$package
 
@@ -280,10 +285,20 @@ heaviness_on_downstream = function(package, add_values_attr = FALSE) {
 	if(interactive()) cat("\n")
 
 	s = abs(s1 - s2)
-	v = mean(s)
-	attr(v, "all_downstream_pkgs") = length(pkg)
-	if(add_values_attr) attr(v, "values") = structure(s, names = pkg)
 
+	if(is.null(via)) {
+		v = mean(s)
+		attr(v, "all_downstream_pkgs") = length(pkg)
+		if(add_values_attr) attr(v, "values") = structure(s, names = pkg)
+	} else {
+		tb2 = downstream_dependency(via)
+		pkg2 = intersect(pkg, unique(tb2[, 2]))
+		names(s) = pkg
+		s2 = s[pkg2]
+		v = mean(s2)
+		attr(v, "all_downstream_pkgs") = length(pkg2)
+		if(add_values_attr) attr(v, "values") = structure(s2, names = pkg2)
+	}
 	v
 }
 

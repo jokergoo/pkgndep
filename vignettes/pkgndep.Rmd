@@ -1,8 +1,8 @@
 ---
-title: "Check the Heaviness of Package Dependencies"
+title: "Check the heaviness of package dependencies"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Check the Heaviness of Package Dependencies}
+  %\VignetteIndexEntry{Check the heaviness of package dependencies}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -51,12 +51,12 @@ The dependency heatmap looks like follows (please drag the figure to a new tab t
 ```{r, echo = FALSE}
 x = pkgndep:::env$all_pkg_dep[["cola"]]
 pdf(NULL)
-size = plot(x, help = FALSE)
+size = dependency_heatmap(x, help = FALSE)
 invisible(dev.off())
 ```
 
 ```{r, fig.width = size[1], fig.height = size[2], out.width = "1000px", echo = FALSE}
-plot(x)
+dependency_heatmap(x)
 ```
 
 In the heatmap, rows are the packages listed in `Depends`, `Imports` and
@@ -82,14 +82,14 @@ To use this package:
 ```r
 library(pkgndep)
 pkg = pkgndep("package-name")  # if the package is already installed
-plot(pkg)
+dependency_heatmap(pkg)
 ```
 
 or
 
 ```r
 pkg = pkgndep("path-of-the-package")  # if the package has not been installed yet
-plot(pkg)
+dependency_heatmap(pkg)
 ```
 
 The value for `pkgndep()` should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.
@@ -114,23 +114,23 @@ pkg
 can see the message from above code. This only happens once and the database is internally
 saved and re-used.
 
-We can directly use `plot()` function to create the dependency heatmap:
+We can directly use `dependency_heatmap()` function to create the dependency heatmap:
 
 ```{r, echo = FALSE}
 pdf(NULL)
-size = plot(pkg, help = FALSE)
+size = dependency_heatmap(pkg, help = FALSE)
 invisible(dev.off())
 ```
 
 ```{r, fig.width = size[1], fig.height = size[2], out.width = "1000px"}
-plot(pkg)
+dependency_heatmap(pkg)
 ```
 
 You can set the `file` argument to directly save the image into a figure where the figure
 size is automatically calculated. Supported image formats are `png`/`jpg`/`svg`/`pdf`.
 
 ```{r, eval = FALSE}
-plot(pkg, file = "test.png")
+dependency_heatmap(pkg, file = "test.png")
 ```
 
 `dependency_report()` function can generate an HTML report for the dependency analysis on the package.

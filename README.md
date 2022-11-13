@@ -83,14 +83,14 @@ To use this package:
 ```r
 library(pkgndep)
 pkg = pkgndep("package-name")
-plot(pkg)
+dependency_heatmap(pkg)
 ```
 
 or
 
 ```r
 pkg = pkgndep("path-of-the-package")
-plot(pkg)
+dependency_heatmap(pkg)
 ```
 
 An executable example:
@@ -108,7 +108,7 @@ pkg
 ```
 
 ```r
-plot(pkg)
+dependency_heatmap(pkg)
 ```
 
 ![image](https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png)

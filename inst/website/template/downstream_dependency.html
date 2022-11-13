@@ -205,6 +205,11 @@ Dependency depth ranges between <%=min_depth%> and <%=max_depth%>.
 
 <% 
   knee_finder2 = function (x) {
+
+    if(length(x) < 2) {
+      return(c(NA, NA))
+    }
+
     y = sort(x)
     x = seq_along(y)
     n = length(x)
@@ -285,6 +290,7 @@ load_downstream_dep_nt = function(rankDir = "TB") {
   if(nt.nodes.length > 30) {
     layout = {
       name: 'euler',
+      springLength: edge => 100,
       randomize: true,
       animate: false
     };
@@ -306,17 +312,19 @@ load_downstream_dep_nt = function(rankDir = "TB") {
       {
         selector: 'node',
         style: {
+          "width": 30,
+          "height": 30,
           'content': 'data(id)',
           'text-valign': 'center',
           'text-halign': 'center',
-          'background-color': '#11479e'
+          'background-color': '#74ADD1'
         }
       },
 
       {
         selector: 'edge',
         style: {
-          'width': 4,
+          'width': function(ele){ return ele.data("weight")/8; },
           "label": "data(weight)",
           'target-arrow-shape': 'triangle',
           'line-color': '#9dbaea',
@@ -335,7 +343,8 @@ load_downstream_dep_nt = function(rankDir = "TB") {
       {
         selector: "[group = 'leafgroup']",
         style: {
-          'background-color': 'green',
+          'background-color': '#4CC26C',
+          'content': 'data(label)'
         }
       },
 

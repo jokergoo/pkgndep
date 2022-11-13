@@ -590,7 +590,7 @@ html_global_heaviness_analysis = function(response) {
 network_in_json = function(edge) {
 	node = unique(c(edge[, 1], edge[, 2]))
 	node_lt = lapply(node, function(x) {
-		list(data = list(id = x, group = ifelse(grepl("\\d+ leaves", x), "leafgroup", "node")))
+		list(data = list(id = x, group = ifelse(grepl("\\d+ leaves", x), "leafgroup", "node"), label = ifelse(grepl("\\d+ leaves", x), gsub("^.*?: ", "", x), x)))
 	})
 	edge_lt = lapply(seq_len(nrow(edge)), function(i) {
 		data_lt = list(id = paste(edge[i, 1], edge[i, 2], sep = "|"),

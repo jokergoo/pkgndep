@@ -1,3 +1,11 @@
+CHANGES in VERSION 1.2.1
+
+* add the object `heaviness_db`.
+* `dependency_website()` is renamed to `dependency_database()`.
+* add `dependency_heatmap()`.
+
+==================================
+
 CHANGES in VERSION 1.2.0
 
 * set `dependency_website()` public.
@@ -9,7 +17,6 @@ CHANGES in VERSION 1.1.4
 * updated package database
 
 ====================================
-
 
 CHANGES in VERSION 1.1.3
 

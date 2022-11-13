@@ -4,6 +4,20 @@
 #
 # == param
 # -x An object from `pkgndep`.
+# -... Other arguments.
+#
+# == details
+# Please use `dependency_heatmap` instead.
+#
+plot.pkgndep = function(x, ...) {
+	dependency_heatmap(x, ...)
+}
+
+# == title
+# Make the dependency heatmap
+#
+# == param
+# -x An object from `pkgndep`.
 # -pkg_fontsize Font size for the package names.
 # -title_fontsize Font size for the title.
 # -legend_fontsize Font size for the legends.
@@ -12,12 +26,11 @@
 # -help Whether to print help message?
 # -file A path of the figure. The size of the figure is automatically calculated.
 # -res Resolution of the figure (only for png and jpeg).
-# -... Other arguments.
 #
 # == details
 # If ``fix_size`` is set to ``TRUE``. The size of the whole plot can be obtained by:
 #
-#     size = plot(x, fix_size = TRUE)
+#     size = dependency_heatmap(x, fix_size = TRUE)
 #
 # where ``size`` is a numeric vector of length two which are the width and height of the whole heatmap.
 # If ``file`` argument is set, the size of the figure is automatically calculated.
@@ -30,9 +43,9 @@
 # == example
 # # See examples in `pkgndep()`.
 #
-plot.pkgndep = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, 
+dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, 
 	legend_fontsize = 10*cex, fix_size = !dev.interactive(), cex = 1, 
-	help = TRUE, file = NULL, res = 144, ...) {
+	help = TRUE, file = NULL, res = 144) {
 
 	if(!is.null(file)) {
 		if(grepl("\\.png$", file, ignore.case = TRUE)) {

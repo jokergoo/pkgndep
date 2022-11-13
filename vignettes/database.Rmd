@@ -1,0 +1,11 @@
+---
+title: "The database of heaviness analysis on the CRAN/Bioconductor ecosystem"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The database of heaviness analysis on the CRAN/Bioconductor ecosystem}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+Simply run the function `pkgndep::dependency_database()`.

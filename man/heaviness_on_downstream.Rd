@@ -7,12 +7,13 @@ Heaviness on all downstream packages
 Heaviness on all downstream packages
 }
 \usage{
-heaviness_on_downstream(package, add_values_attr = FALSE)
+heaviness_on_downstream(package, add_values_attr = FALSE, via = NULL)
 }
 \arguments{
 
   \item{package}{A package name.}
   \item{add_values_attr}{Whether to include "values" attribute? Internally used.}
+  \item{via}{Whether to only consider downstream packages via a intermediate package?}
 
 }
 \value{

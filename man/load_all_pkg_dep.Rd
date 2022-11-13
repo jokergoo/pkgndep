@@ -15,7 +15,7 @@ load_all_pkg_dep(hash = TRUE)
 
 }
 \details{
-It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.
+It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
 }
 \value{
 A list (as a hash table) of \code{pkgndep} objects where each element corresponds to the analysis on one package.
