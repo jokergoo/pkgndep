@@ -928,18 +928,18 @@ html_show_namespace = function(response, package) {
 }
 
 html_compare_to_other_versions = function(response, package) {
-	lt = load_lt_history()
+	lt = load_heaviness_timeline()
 
 	if(is.null(lt[[package]])) {
 		html = paste0("No package called ", package)
 	} else {
 		tb = lt[[package]]
 		rownames(tb) = NULL
-		fields = c("version", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "n_children",
+		fields = c("date", "version", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "n_children",
 			"heaviness_on_children", "n_downstream", "heaviness_on_downstream", "n_indirect_downstream", "heaviness_on_indirect_downstream")
 
 		tb = tb[, fields]
-		colnames(tb) = c("Version", "N_strong", "N_all", "N_p", "MHP", "N_c", "HC", "N_d", "HD", "N_id", "HID", "Date")
+		colnames(tb) = c("Date", "Version", "N_strong", "N_all", "N_p", "MHP", "N_c", "HC", "N_d", "HD", "N_id", "HID")
 		tb = tb[, c("Date", "Version", "N_strong", "N_all", "N_p", "MHP", "N_c", "HC", "N_d", "HD", "N_id", "HID")]
 
 		col_def = c("N_strong" = "Number of strong dependencies",

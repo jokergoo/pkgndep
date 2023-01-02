@@ -229,7 +229,15 @@ load_pkg_db = function(lib = NULL, online = TRUE, db = NULL, verbose = TRUE) {
 	}
 }
 
-load_lt_history = function() {
+# == title
+# Load heaviness statistics at all time points
+#
+# == details
+# Used internally.
+#
+# == value
+# A list of data frames.
+load_heaviness_timeline = function() {
 	if(is.null(ENV$lt_history)) {
 		ENV$lt_history = load_from_heaviness_db("../lt_history.rds")
 	}
