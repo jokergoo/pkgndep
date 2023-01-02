@@ -7,11 +7,12 @@ Format the package database
 Format the package database
 }
 \usage{
-reformat_db(db)
+reformat_db(db, version = NULL)
 }
 \arguments{
 
   \item{db}{A data frame returned from \code{\link[utils]{available.packages}} or \code{\link[utils]{installed.packages}}.}
+  \item{version}{Version of the database, a self-defined text.}
 
 }
 \details{
@@ -33,7 +34,7 @@ db = available.packages()
 db2 = reformat_db(db)
 
 # a pkg_db object generated on 2021-10-28 can be loaded by load_pkg_db()
-db2 = load_pkg_db(snapshot = TRUE)
+db2 = load_pkg_db(online = FALSE)
 db2
 db2$get_meta("ComplexHeatmap")
 db2$get_dependency_table("ComplexHeatmap")

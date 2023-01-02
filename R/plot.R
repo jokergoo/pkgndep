@@ -51,7 +51,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		if(grepl("\\.png$", file, ignore.case = TRUE)) {
 			tmp_file = tempfile(fileext = ".png")
 			png(tmp_file, width = 1000)
-			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+			size = dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 			dev.off()
 			file.remove(tmp_file)
@@ -60,7 +60,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 				size[1] = max(size[1], 7)
 				size[2] = max(size[2], 3)
 				png(file, width = size[1], height = size[2], units = "in", res = res)
-				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
@@ -77,7 +77,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		} else if(grepl("\\.(jpg|jpeg)$", file, ignore.case = TRUE)) {
 			tmp_file = tempfile()
 			jpeg(tmp_file)
-			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+			size = dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 			dev.off()
 			file.remove(tmp_file)
@@ -86,7 +86,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 				size[1] = max(size[1], 7)
 				size[2] = max(size[2], 3)
 				jpeg(file, width = size[1], height = size[2], units = "in", res = res)
-				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
@@ -102,7 +102,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			return(invisible(NULL))
 		} else if(grepl("\\.pdf$", file, ignore.case = TRUE)) {
 			pdf(NULL)
-			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+			size = dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 			dev.off()
 
@@ -110,7 +110,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 				size[1] = max(size[1], 7)
 				size[2] = max(size[2], 3)
 				pdf(file, width = size[1], height = size[2])
-				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
@@ -127,7 +127,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 		} else if(grepl("\\.svg$", file, ignore.case = TRUE)) {
 			tmp_file = tempfile()
 			svg(tmp_file)
-			size = plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+			size = dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 				legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 			dev.off()
 			file.remove(tmp_file)
@@ -142,7 +142,7 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 				size[1] = max(size[1], 7)
 				size[2] = max(size[2], 3)
 				svg_fun(file, width = size[1], height = size[2])
-				plot(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
+				dependency_heatmap(x, fix_size = TRUE, pkg_fontsize = pkg_fontsize, title_fontsize = title_fontsize,
 					legend_fontsize = legend_fontsize, cex = cex, help = FALSE, file = NULL)
 				dev.off()
 			} else {
@@ -277,15 +277,23 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 	}
 	
 	df_imports = x$df_imports
-	if(any(x$which_suggested_but_also_loaded)) {
-		df_imports[x$which_suggsted_but_also_loaded, 1] = -Inf
+	if(any(is.na(df_imports[, 1]))) {
+		parse_namespace = FALSE
+	} else {
+		parse_namespace = TRUE
 	}
-	ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$dep_fields, width = unit(1, "cm"),
-			gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7"), col = NA),
-			axis_param = list(gp = gpar(fontsize = 8*cex))),
-			annotation_label = "Imported\nmethods", annotation_name_rot = 60,
-			annotation_name_gp = gpar(fontsize = pkg_fontsize),
-			annotation_name_offset = unit(8, "mm"))
+
+	if(parse_namespace) {
+		if(any(x$which_suggested_but_also_loaded)) {
+			df_imports[x$which_suggsted_but_also_loaded, 1] = -Inf
+		}
+		ht = ht + rowAnnotation("n_import" = anno_nimports_barplot(df_imports, x$dep_fields, width = unit(1, "cm"),
+				gp = gpar(fill = c("#ff7f00", "#cab2d6", "#8dd3c7"), col = NA),
+				axis_param = list(gp = gpar(fontsize = 8*cex))),
+				annotation_label = "Imported\nmethods", annotation_name_rot = 60,
+				annotation_name_gp = gpar(fontsize = pkg_fontsize),
+				annotation_name_offset = unit(8, "mm"))
+	}
 
 	ht = ht + rowAnnotation(n_pkg = anno_barplot(rowSums(x$dep_mat), width = unit(1, "cm"),
 								axis_param = list(gp = gpar(fontsize = 8*cex)), gp = gpar(fill = "#808080", col = NA)),
@@ -299,58 +307,60 @@ dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex,
 			annotation_name_gp = gpar(fontsize = pkg_fontsize),
 			annotation_name_offset = unit(8, "mm"))
 	
-	lgd1 = NULL
-	if(any(rowSums(df_imports) > 0)) {
-		if(all(df_imports[, 1] == 0 & df_imports[, 2] == 0)) {
-			ind = 3
-		} else if(all(df_imports[, 1] == 0 & df_imports[, 3] == 0)) {
-			ind = 2
-		} else if(all(df_imports[, 2] == 0 & df_imports[, 3] == 0)) {
-			ind = 1
-		} else if(all(df_imports[, 1] == 0)) {
-			ind = 2:3
-		} else if(all(df_imports[, 2] == 0)) {
-			ind = c(1, 3)
-		} else if(all(df_imports[, 3] == 0)) {
-			ind = 1:2
-		} else {
-			ind = 1:3
+	if(parse_namespace) {
+		lgd1 = NULL
+		if(any(rowSums(df_imports) > 0)) {
+			if(all(df_imports[, 1] == 0 & df_imports[, 2] == 0)) {
+				ind = 3
+			} else if(all(df_imports[, 1] == 0 & df_imports[, 3] == 0)) {
+				ind = 2
+			} else if(all(df_imports[, 2] == 0 & df_imports[, 3] == 0)) {
+				ind = 1
+			} else if(all(df_imports[, 1] == 0)) {
+				ind = 2:3
+			} else if(all(df_imports[, 2] == 0)) {
+				ind = c(1, 3)
+			} else if(all(df_imports[, 3] == 0)) {
+				ind = 1:2
+			} else {
+				ind = 1:3
+			}
+			lgd1 = Legend(title = "", at = c("Imported functions", "Imported S4 methods", "Imported S4 classes")[ind], 
+				graphics = list(
+					function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#ff7f00", col = "white")),
+					function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#cab2d6", col = "white")),
+					function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#8dd3c7", col = "white"))
+				)[ind],
+				grid_width = unit(0.6, "cm"),
+				labels_gp = gpar(fontsize = legend_fontsize))
 		}
-		lgd1 = Legend(title = "", at = c("Imported functions", "Imported S4 methods", "Imported S4 classes")[ind], 
-			graphics = list(
-				function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#ff7f00", col = "white")),
-				function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#cab2d6", col = "white")),
-				function(x, y, w, h) grid.rect(x, y, w, unit(1.6, "mm"), gp = gpar(fill = "#8dd3c7", col = "white"))
-			)[ind],
-			grid_width = unit(0.6, "cm"),
-			labels_gp = gpar(fontsize = legend_fontsize))
-	}
 
-	lgd2 = NULL
-	mdf = x$df_imports[is_field_required(x$dep_fields), , drop = FALSE]
-	ind = numeric(0)
-	if(any(mdf[, 1] == 0 & mdf[, 2] == 0 & mdf[, 3] == 0)) {
-		ind = c(ind, 1)
-	}
-	if(any(mdf[, 1] < 0 & is.finite(mdf[, 1]))) {
-		ind = c(ind, 2)
-	}
-	if(any(is.infinite(mdf[, 1]))) {
-		ind = c(ind, 3)
-	}
-	if(length(ind)) {
-		lgd2 = Legend(title = "", at = c("The whole namespace is imported", "The whole namespace is imported except some functions", "Package is listed in 'Imports' but namespace is not imported")[ind], 
-			type = "lines",
-			legend_gp = gpar(lty = 2, col = c("red", "blue", "#808080")[ind]), grid_width = unit(0.6, "cm"), 
-			labels_gp = gpar(fontsize = legend_fontsize))
-	}
+		lgd2 = NULL
+		mdf = x$df_imports[is_field_required(x$dep_fields), , drop = FALSE]
+		ind = numeric(0)
+		if(any(mdf[, 1] == 0 & mdf[, 2] == 0 & mdf[, 3] == 0)) {
+			ind = c(ind, 1)
+		}
+		if(any(mdf[, 1] < 0 & is.finite(mdf[, 1]))) {
+			ind = c(ind, 2)
+		}
+		if(any(is.infinite(mdf[, 1]))) {
+			ind = c(ind, 3)
+		}
+		if(length(ind)) {
+			lgd2 = Legend(title = "", at = c("The whole namespace is imported", "The whole namespace is imported except some functions", "Package is listed in 'Imports' but namespace is not imported")[ind], 
+				type = "lines",
+				legend_gp = gpar(lty = 2, col = c("red", "blue", "#808080")[ind]), grid_width = unit(0.6, "cm"), 
+				labels_gp = gpar(fontsize = legend_fontsize))
+		}
 
-	if(!is.null(lgd1) && !is.null(lgd2)) {
-		lgd_list = c(lgd_list, list(packLegend(lgd1, lgd2, row_gap = unit(2, "pt"), max_height = unit(10, "cm"))))
-	} else if(!is.null(lgd1)) {
-		lgd_list = c(lgd_list, list(lgd1))
-	} else if(!is.null(lgd2)) {
-		lgd_list = c(lgd_list, list(lgd2))
+		if(!is.null(lgd1) && !is.null(lgd2)) {
+			lgd_list = c(lgd_list, list(packLegend(lgd1, lgd2, row_gap = unit(2, "pt"), max_height = unit(10, "cm"))))
+		} else if(!is.null(lgd1)) {
+			lgd_list = c(lgd_list, list(lgd1))
+		} else if(!is.null(lgd2)) {
+			lgd_list = c(lgd_list, list(lgd2))
+		}
 	}
 
 	ht = ht + rowAnnotation(pkg = anno_text(rownames(m), gp = gpar(fontsize = pkg_fontsize)))

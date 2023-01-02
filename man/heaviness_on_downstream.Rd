@@ -7,14 +7,20 @@ Heaviness on all downstream packages
 Heaviness on all downstream packages
 }
 \usage{
-heaviness_on_downstream(package, add_values_attr = FALSE, via = NULL)
+heaviness_on_downstream(package, add_values_attr = FALSE, via = NULL,
+    total = FALSE, internal = FALSE)
 }
 \arguments{
 
   \item{package}{A package name.}
   \item{add_values_attr}{Whether to include "values" attribute? Internally used.}
   \item{via}{Whether to only consider downstream packages via a intermediate package?}
+  \item{total}{Whether to return the total heaviness?}
+  \item{internal}{Whether to use internally calculated heaviness?}
 
+}
+\details{
+It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via \code{\link{pkgndep_opt}}$heaviness_db_version.
 }
 \value{
 The value is the mean heaviness of the package on all its downstream packages. Denote \code{n} as the number of all its downstream packages,

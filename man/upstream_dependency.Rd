@@ -7,12 +7,12 @@ Get upstream dependency for a package
 Get upstream dependency for a package
 }
 \usage{
-upstream_dependency(package, snapshot = TRUE)
+upstream_dependency(package, online = FALSE)
 }
 \arguments{
 
   \item{package}{Package name.}
-  \item{snapshot}{If it is \code{TRUE}, the package database generated on 2021-10-28 is used. If it is \code{FALSE}, the pakage database is directly retrieved from CRAN/Bioconductor.}
+  \item{online}{Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database?  The version of the pre-computated package database can be set via \code{\link{pkgndep_opt}}$heaviness_db_version.}
 
 }
 \details{

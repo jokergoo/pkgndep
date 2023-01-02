@@ -1,23 +1,28 @@
 <% if(n_total > 0) { %>
 
 <% 
-if(grepl("(bioc|books|annotation|experiment|workflow)", pkg$repository)) {
-  namespace_link = paste0("https://code.bioconductor.org/browse/", pkg$package, "/blob/master/NAMESPACE")
-} else if(pkg$package %in% BASE_PKGS) {
-  namespace_link = paste0("https://github.com/wch/r-source/blob/trunk/src/library/", pkg$package, "/NAMESPACE")
-} else {
-  namespace_link = paste0("https://github.com/cran/", pkg$package, "/blob/master/NAMESPACE")
-}
+has_imports = !any(is.na(pkg$df_imports[, 1]))
 %>
 
-<p>"Imports" information is from the <a href="<%= namespace_link %>" target="_blank">NAMESPACE</a> file of <span class="package"><%=pkg$package%></span>.</p>
+<% if(has_imports) { %>
+<p>"Imports" information is from the <a onclick='show_namespace("<%=pkg$package%>")' class="fake-link">NAMESPACE</a> file of <span class="package"><%=pkg$package%></span>.</p>
 <p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+<% } %>
+
 <p><b>Total required packages:</b> number of total dependency packages that a parent package brings in.</p>
 <p><b>Heaviness on <span class="package"><%=pkg$package%></span>:</b> number of extra dependency packages that a parent uniquely imported to <span class="package"><%=pkg$package%></span>.</p>
 
-<p>The full table can be obtained by <code>parent_dependency('<%=pkg$package%>')</code>.</p>
+<p>The full table can be obtained by:</p>
+
+<pre class="code">
+library(pkgndep)
+pkgndep_opt$heaviness_db_version = "<%=pkgndep_opt$heaviness_db_version%>"
+parent_dependency("<%=pkg$package%>")</pre>
+
+ <code></code>.</p>
 
 <% tb[, 1] = qq("<a href='?package=@{tb[, 1]}'>@{tb[, 1]}</a>", collapse = FALSE)
+if(has_imports) {
     html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "imports", "importMethods", "importClasses", "Total required packages", qq("Heaviness on <span class='package'>@{pkg$package}</span>")), table.attr = "class='table table-striped' id='parent-dependency'", align = c("l", rep("r", ncol(tb) - 1))))
     html_tb = gsub("(<td[^>]*?> Suggests </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>No object is imported into the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
     html_tb = gsub("(<td[^>]*?> Enhances </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>No object is imported into the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
@@ -30,6 +35,10 @@ if(grepl("(bioc|books|annotation|experiment|workflow)", pkg$repository)) {
     html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>No object is imported into the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
     html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from parent package excluding \\2 objects is imported to the namespace of <span class='package'>@{pkg$package}</span>.</td>\n"), html_tb)
     html_tb = gsub("(<td[^>]*?> LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>Parent package is listed in <code>LinkingTo</code> of <span class='package'>@{pkg$package}</span> but no object from parent package is imported.</td>\n"), html_tb)
+} else {
+    tb = tb[, !colnames(tb) %in% c("imports", "importMethods", "importClasses"), drop = FALSE]
+    html_tb = as.character(knitr::kable(tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Parent package", "Field", "Total required packages", qq("Heaviness on <span class='package'>@{pkg$package}</span>")), table.attr = "class='table table-striped' id='parent-dependency'", align = c("l", rep("r", ncol(tb) - 1))))
+}
 %>
 
 <%= html_tb %>

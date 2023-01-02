@@ -1,13 +1,31 @@
 
-<h2>Analysis on the dependency heaviness of R packages</h2> <p>R packages under analysis were retrieved from CRAN/Biocoductor on <%=readLines(url("https://pkgndep.github.io/date.txt"))[1]%>. There are
+<%
+db = load_pkg_db(online = FALSE)
+date = attr(db, ".version")
+bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == date]
+bioc_url = ALL_BIOC_RELEASES$URL[ALL_BIOC_RELEASES$Date == date]
+
+n_cran = sum(grepl("(bioc|books|annotation|experiment|workflows)/src/contrib$", db$meta$Repository))
+n_bioc = sum(grepl("src/contrib$", db$meta$Repository)) - n_cran
+
+if(n_cran == 0 && n_bioc == 0) {
+	n_cran = sum(db$meta$Repository == "CRAN")
+	n_bioc = sum(db$meta$Repository == "Bioconductor")
+}
+%>
+
+<h2>Dependency heaviness analysis on all R packages</h2>
+<p>The snapshot of the CRAN/Biocoductor ecosystem was captured on <b><%=date%></b>. There are
 <b><%=n_cran%></b> packages from CRAN and <b><%=n_bioc%></b> packages from
-Bioconductor (<a href='https://bioconductor.org/packages/3.14/BiocViews.html#___Software' target='_blank'>bioc version 3.15</a>).</p>
+Bioconductor (<a href='<%=bioc_url%>' target='_blank'>bioc version <%=bioc_version%></a>).</p>
 
 <div id="tabs">
   <ul>
     <li><a href="#table">Heaviness table</a></li>
     <li><a href="#metrics">Heaviness metrics</a></li>
     <li><a href="#analysis">Heaviness analysis</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#datasets">Datasets</a></li>
       </ul>
 
 <div id="table"> 
@@ -66,15 +84,19 @@ $(function() {
 
  </form>
 <p><b>Legends:</b></p>
-<p><span class="heaviness-high"><a>High heaviness</a></span> Packages with adjusted heaviness on child packages higher than <%=CUTOFF$adjusted_heaviness_on_children[2]%>.</p>
-<p><span class="heaviness-median"><a>Median heaviness</a></span> Packages with adjusted heaviness on child packages between <%=CUTOFF$adjusted_heaviness_on_children[1]%> and <%=CUTOFF$adjusted_heaviness_on_children[2]%>.</p>
+<p><span class="heaviness-high"><a>High heaviness</a></span> Packages with adjusted heaviness on child packages higher than <%=CUTOFF$adjusted_heaviness_on_children%>.</p>
 <p><span class="reducible" style="font-size:1em;">reducible</span> Packages whose parent's heaviness could be reduced, i.e. only a limited number of functions are imported from the heaviest parent.</p>
 <p><b>Columns:</b>
  <span style="width:20px;background-color:#FFFF10;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness from parent packages
  <span style="width:20px;background-color:#10FFFF;padding:0px 4px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;Heaviness on child/downstream packages
  </p>
  <br>
-<p>The full table of dependency heaviness analysis can be obtained by <code>df = pkgndep::all_pkg_stat_snapshot()</code>.</p>
+<p>The full table of dependency heaviness analysis can be obtained by:<p>
+
+<pre class="code">
+library(pkgndep)
+pkgndep_opt$heaviness_db_version = "<%=pkgndep_opt$heaviness_db_version%>"
+df = all_pkg_stat_snapshot()</pre>
 </div>
 
 <% reducible_str = ifelse(only_reducible, 'on', '') 
@@ -274,6 +296,7 @@ A detailed explanation of various adjusted heaviness metrics can be found in the
 
 <div id="analysis-content">
 <p>Loading content...</p>
+<div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div>
 <script>
 $.ajax({
   url: "global_heaviness_analysis"
@@ -283,6 +306,65 @@ $.ajax({
 </script>
 
 </div>
+</div>
+
+<div id="timeline">
+
+<div id="timeline-content">
+<p>Loading content...</p>
+<div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div>
+<script>
+$.ajax({
+  url: "timeline"
+}).done(function(html) {
+  $("#timeline-content").html(html);
+});
+</script>
+
+</div>
+</div>
+
+
+
+<div id="datasets">
+
+<h3>Datasets for specific versions</h3>
+<details>
+	<summary>File descriptions</summary>
+	<ul>
+		<li><code>all_pkgs_{bioc_version}.rds</code>: A list of objects from the dependency heaviness analysis on individual packages by the function <code>pkgndep()</code>.</li>
+		<li><code>pkg_db_snapshot_{bioc_version}.rds</code>: A package database, in <code>pkg_db</code> class. Please go to <code>?reformat_db</code> to see all supported methods.</li>
+		<li><code>all_pkg_stat_snapshot_{bioc_version}.rds</code>: A data frame of various metrics of packages.</li>
+		<li><code>pkg_igraph_{bioc_version}.rds</code>: A <code>igraph</code> object of all strong dependency relations.</li>
+		<li><code>pkg_df_{bioc_version}.rds</code>: A matrix in the same format as the one from <code>available.packages()</code>.</li>
+		<li><code>pkg_description_{bioc_version}.rds</code>: A list of texts from the <code>DESCRIPTION</code> files.</li>
+		<li><code>pkg_namespace_{bioc_version}.rds</code>: A list of texts from the <code>NAMESPACE</code> files.</li>
+	</ul>
+	</details>
+<%
+tb = ALL_BIOC_RELEASES[, c("Date", "Release", "R")]
+tb[["f1"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/all_pkgs_@{tb$Release}.rds'>all_pkgs_@{tb$Release}.rds</a>", collapse = FALSE)
+tb[["f2"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/pkg_db_snapshot_@{tb$Release}.rds'>pkg_db_snapshot_@{tb$Release}.rds</a>", collapse = FALSE)
+tb[["f3"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/all_pkg_stat_snapshot_@{tb$Release}.rds'>all_pkg_stat_snapshot_@{tb$Release}.rds</a>", collapse = FALSE)
+tb[["f3.5"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/pkg_igraph_@{tb$Release}.rds'>pkg_igraph_@{tb$Release}.rds</a>", collapse = FALSE)
+tb[["f4"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/pkg_df_@{tb$Release}.rds'>pkg_df_@{tb$Release}.rds</a>", collapse = FALSE)
+tb[["f5"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/pkg_description_@{tb$Release}.rds'>pkg_description_@{tb$Release}.rds</a>", collapse = FALSE)
+tb[["f6"]] = qq("<a href='https://pkgndep.github.io/@{tb$Date}/pkg_namespace_@{tb$Release}.rds'>pkg_namespace_@{tb$Release}.rds</a>", collapse = FALSE)
+%>
+
+<%=knitr::kable(tb, format = "html", escape = FALSE, row.names = FALSE, col.names = c("Date", "Bioc release", "R version", "", "", "", "", "", "", ""), table.attr = "class='table table-striped' style='font-size:0.9em'")%>
+
+<h3>Datasets for all versions</h3>
+<ul>
+<li><a href="https://pkgndep.github.io/all_bioc_links.rds">all_bioc_links.rds</a>: URL of Bioconductor packages.</li>
+<li><a href="https://pkgndep.github.io/all_packages_dcf.rds">all_packages_dcf.rds</a>: A list of matrices where each matrix is generated by <code>read.dcf()</code> on the <code>DESCRIPTION</code> file.</li>
+<li><a href="https://pkgndep.github.io/all_packages_df.rds">all_packages_df.rds</a>: A data frame which is transformed from <code>all_packages_dcf.rds</code>, also dates are properly parsed.</li>
+<li><a href="https://pkgndep.github.io/all_packages_description.rds">all_packages_description.rds</a>: A list of texts from the <code>DESCRIPTION</code> files.</li>
+<li><a href="https://pkgndep.github.io/all_packages_namespaces.rds">all_packages_namespaces.rds</a>: A list of texts from the <code>NAMESPACE</code> files.</li>
+<li><a href="https://pkgndep.github.io/cran_archived_all_time.rds">cran_archived_all_time.rds</a>: The archived dates of CRAN packages.</li>
+<li><a href="https://pkgndep.github.io/cran_removed.rds">cran_removed.rds</a>: The removed dates of CRAN packages.</li>
+<li><a href="https://pkgndep.github.io/lt_duration.rds">lt_duration.rds</a>: The timeline of all packages.</li>
+</ul>
 </div>
 
 </div>

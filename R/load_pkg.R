@@ -22,7 +22,7 @@ loaded_packages = function(pkg, verbose = TRUE) {
 		stop("You need to install 'callr' package.")
 	}
 		
-	tb = callr::r(load_pkg, args = list(pkg = pkg), user_profile = FALSE)
+	tb = callr::r(load_pkg_freshly, args = list(pkg = pkg), user_profile = FALSE)
 	if(is.null(tb)) {
     	if(verbose) qqcat("@{pkg} cannot be loaded.\n")
     	return(NULL)
@@ -37,7 +37,7 @@ loaded_packages = function(pkg, verbose = TRUE) {
     return(tb)
 }
 
-load_pkg = function(pkg) {
+load_pkg_freshly = function(pkg) {
 	tmp_file = tempfile()
 	base::sink(tmp_file)
 	oe = try(suppressWarnings(suppressPackageStartupMessages(tm <- system.time(library(pkg, character.only = TRUE)))), silent = TRUE)

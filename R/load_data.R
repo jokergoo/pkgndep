@@ -1,33 +1,36 @@
 
 
 # == title
-# Load pre-computed results
+# Load pre-computed objects
 #
 # == param
 # -file File name.
 #
 # == details
+# The pathway of the file can be set via `pkgndep_opt`$db_file_template.
+#
 # Internally used.
-load_from_pkgndep_db = function(file) {
-
-	if(is.null(env$db[[file]])) {
-
+load_from_heaviness_db = function(file) {
+	version = pkgndep_opt$heaviness_db_version
+	file = pkgndep_opt$db_file_template(file, version)
+	if(grepl("^http", file)) {
 		tmp_file = tempfile(fileext = ".rds")
 		on.exit(file.remove(tmp_file))
-		download.file(paste0("https://pkgndep.github.io/", file), tmp_file, quiet = TRUE)
-		env$db[[file]] = readRDS(tmp_file)
+		download.file(file, tmp_file, quiet = TRUE)
+		readRDS(tmp_file)
+	} else {
+		readRDS(file)
 	}
-	env$db[[file]]
 }
 
 # == title
 # Load all package dependency statistics
 #
 # == details
-# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
 #
 # == value
-# A data frame of various columns.
+# A data frame.
 #
 # == example
 # \dontrun{
@@ -35,18 +38,28 @@ load_from_pkgndep_db = function(file) {
 # head(df)
 # }
 load_pkg_stat_snapshot = function() {
-	if(is.null(env$pkg_stat_snapshot)) {
-		df = load_from_pkgndep_db("pkg_stat_snapshot.rds")
-		env$pkg_stat_snapshot = df
+	version = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
+	file = paste0("pkg_stat_snapshot_", bioc_version, ".rds")
+	if(is.null(ENV$pkg_stat_snapshot)) {
+		df = load_from_heaviness_db(file)
+		ENV$pkg_stat_snapshot = df
+		ENV$pkg_db_snapshot_version = version
+	} else {
+		if(ENV$pkg_db_snapshot_version != version) {
+			df = load_from_heaviness_db(file)
+			ENV$pkg_stat_snapshot = df
+			ENV$pkg_db_snapshot_version = version
+		}
 	}
-	invisible(env$pkg_stat_snapshot)
+	invisible(ENV$pkg_stat_snapshot)
 }
 
 # == title
 # The complete table of dependency heaviness for all CRAN/Bioconductor packages
 #
 # == value
-# The columns are self-explanatory from the column names.
+# The returned data frame is directly from `load_pkg_stat_snapshot`, but with only a subset of columns of heaviness metrics.
 all_pkg_stat_snapshot = function() {
 	df = load_pkg_stat_snapshot()
 	df[, c("package",
@@ -76,7 +89,7 @@ all_pkg_stat_snapshot = function() {
 # Load downstream dependency paths for all packages
 #
 # == details
-# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
 #
 # == value
 # A list.
@@ -87,23 +100,33 @@ all_pkg_stat_snapshot = function() {
 # downstream_path_list[["ComplexHeatmap"]]
 # }
 load_pkg_downstream_dependency_path_snapshot = function() {
-	if(is.null(env$pkg_downstream_dependency_path_snapshot)) {
-		lt = load_from_pkgndep_db("pkg_downstream_dependency_path_snapshot.rds")
-		env$pkg_downstream_dependency_path_snapshot = lt
+	version = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
+	file = paste0("pkg_downstream_dependency_path_snapshot_", bioc_version, ".rds")
+	if(is.null(ENV$pkg_downstream_dependency_path_snapshot)) {
+		lt = load_from_heaviness_db(file)
+		ENV$pkg_downstream_dependency_path_snapshot = lt
+		ENV$pkg_db_snapshot_version = version
+	} else {
+		if(ENV$pkg_db_snapshot_version != version) {
+			lt = load_from_heaviness_db(file)
+			ENV$pkg_downstream_dependency_path_snapshot = lt
+			ENV$pkg_db_snapshot_version = version
+		}
 	}
-	invisible(env$pkg_downstream_dependency_path_snapshot)
+	invisible(ENV$pkg_downstream_dependency_path_snapshot)
 }
 
 
 
 # == title
-# Load dependency data of all packages
+# Load dependency analysis results of all packages
 #
 # == param
 # -hash Whether to convert the named list to a hash table by `hash::hash`.
 #
 # == details
-# It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2022-06-08.
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
 #
 # == value
 # A list (as a hash table) of ``pkgndep`` objects where each element corresponds to the analysis on one package.
@@ -116,11 +139,29 @@ load_pkg_downstream_dependency_path_snapshot = function() {
 # lt[["ggplot2"]]
 # }
 load_all_pkg_dep = function(hash = TRUE) {
-	if(is.null(env$all_pkg_dep)) {
-		lt = load_from_pkgndep_db("all_pkgs.rds")
-		if(hash) env$all_pkg_dep = hash::hash(names(lt), lt)
+	version = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
+	file = paste0("all_pkgs_", bioc_version, ".rds")
+	if(is.null(ENV$all_pkg_dep)) {
+		lt = load_from_heaviness_db(file)
+		if(hash) {
+			ENV$all_pkg_dep = hash::hash(names(lt), lt)
+		} else {
+			ENV$all_pkg_dep = lt
+		}
+		ENV$pkg_db_snapshot_version = version
+	} else {
+		if(ENV$pkg_db_snapshot_version != version) {
+			lt = load_from_heaviness_db(file)
+			if(hash) {
+				ENV$all_pkg_dep = hash::hash(names(lt), lt)
+			} else {
+				ENV$all_pkg_dep = lt
+			}
+			ENV$pkg_db_snapshot_version = version
+		}
 	}
-	invisible(invisible(env$all_pkg_dep))
+	invisible(invisible(ENV$all_pkg_dep))
 }
 
 
@@ -130,10 +171,11 @@ load_all_pkg_dep = function(hash = TRUE) {
 #
 # == param
 # -lib Local library path. If the value is ``NA``, only remote package database is used.
-# -snapshot Internally used. If it is ``TRUE``, the package database generated on 2022-06-08 is used.
+# -online If the value is ``TRUE``, it will directly use the newest package database file from CRAN/Bioconductor. If the 
+#        value is ``FALSE``, it uses the pre-computated package database on a specific CRAN/Bioconductor snapshot. 
+#        The version of the pre-computated package database can be set via `pkgndep_opt`$heaviness_db_version.
+# -db A pre-computed ``pkg_db`` object.
 # -verbose Whetehr to print messages.
-# -online If the value is ``TRUE``, it will directly use the package database file from CRAN/Bioconductor. If the 
-#        value is ``FALSE``, it uses the cached package database retrieved on 2022-06-08.
 #
 # == details
 # It loads the package database from CRAN/Bioconductor and locally installed packages.
@@ -141,27 +183,55 @@ load_all_pkg_dep = function(hash = TRUE) {
 # The database object internaly is cached for repeated use of other functions in this package.
 #
 # == value
-# A ``pkg_db`` class object.
+# A ``pkg_db`` class object. See `reformat_db` for how to use the ``pkg_db`` object.
 #
 # == example
 # \dontrun{
 # pkg_db = load_pkg_db(lib = NA)
 # pkg_db
 # }
-load_pkg_db = function(lib = NULL, snapshot = FALSE, verbose = TRUE, online = TRUE) {
-	if(snapshot) {
-		if(is.null(env$pkg_db_snapshot)) {
-			env$pkg_db_snapshot = load_from_pkgndep_db("pkg_db_snapshot.rds")
-		}
-		invisible(env$pkg_db_snapshot)
+load_pkg_db = function(lib = NULL, online = TRUE, db = NULL, verbose = TRUE) {
+
+	if(!is.null(db)) {
+		ENV$pkg_db = db
+		ENV$pkg_db_snapshot = db
+		ENV$pkg_db_snapshot_version =  pkgndep_opt$heaviness_db_version
+		pkgndep_opt$heaviness_db_version = "db_object"
+		invisible(ENV$pkg_db)
 	} else {
-		if(!online) {
-			env$pkg_db = load_from_pkgndep_db("pkg_db_snapshot.rds")
-		} else {
-			if(is.null(env$pkg_db)) {
-				env$pkg_db = prepare_db(lib = lib, verbose = verbose)
+		if(online) {
+			if(is.null(ENV$pkg_db)) {
+				ENV$pkg_db = prepare_db(lib = lib, verbose = verbose)
+				ENV$pkg_db_snapshot_version = "online"
+			} else {
+				if(ENV$pkg_db_snapshot_version != "online") {
+					ENV$pkg_db = prepare_db(lib = lib, verbose = verbose)
+					ENV$pkg_db_snapshot_version = "online"
+				}
 			}
+			invisible(ENV$pkg_db)
+		} else {
+			version = pkgndep_opt$heaviness_db_version
+			bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
+			file = paste0("pkg_db_snapshot_", bioc_version, ".rds")
+			
+			if(is.null(ENV$pkg_db_snapshot)) {
+				ENV$pkg_db_snapshot = load_from_heaviness_db(file)	
+				ENV$pkg_db_snapshot_version = version
+			} else {
+				if(ENV$pkg_db_snapshot_version != version) {
+					ENV$pkg_db_snapshot = load_from_heaviness_db(file)	
+					ENV$pkg_db_snapshot_version = version	
+				}
+			}
+			invisible(ENV$pkg_db_snapshot)
 		}
-		invisible(env$pkg_db)
 	}
+}
+
+load_lt_history = function() {
+	if(is.null(ENV$lt_history)) {
+		ENV$lt_history = load_from_heaviness_db("../lt_history.rds")
+	}
+	ENV$lt_history
 }

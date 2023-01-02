@@ -62,13 +62,9 @@ packages are reduced to only 64.
 
 Gu Z. et al., pkgndep: a tool for analyzing dependency heaviness of R packages. Bioinformatics 2022. https://doi.org/10.1093/bioinformatics/btac449
 
+Gu Z, On the Dependency Heaviness of CRAN/Bioconductor Ecosystem. arXiv 2022. https://doi.org/10.48550/arXiv.2208.11674
+
 ## Installation
-
-Prior to installing this package, you'll need to install the Bioconductor package [**ComplexHeatmap**](https://bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html) by
-
-```r
-BiocManager::install("ComplexHeatmap")
-```
 
 The **pkgndep** package can be installed from CRAN by
 
@@ -113,6 +109,13 @@ dependency_heatmap(pkg)
 
 ![image](https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png)
 
+## Heaviness database
+
+There is an integrated dependency heaviness database for all R packages for a lot of R/Bioc versions. The database can be obtained by:
+
+```r
+heaviness_database()
+```
 
 ## License
 

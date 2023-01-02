@@ -7,17 +7,13 @@ Get child dependency for a package
 Get child dependency for a package
 }
 \usage{
-child_dependency(package, fields = NULL, snapshot = TRUE)
+child_dependency(package, fields = NULL, online = FALSE)
 }
 \arguments{
 
   \item{package}{Package name.}
-  \item{fields}{Which fields in DESCRIPTION? Values should be in \code{Depends}, \code{Imports}, \code{LinkingTo}, \code{Suggests} and \code{Enhances}.}
-  \item{snapshot}{If it is \code{TRUE}, the package database generated on 2021-10-28 is used. If it is \code{FALSE}, the pakage database is directly retrieved from CRAN/Bioconductor.}
-
-}
-\details{
-The dependency information is based on packages retrieved from CRAN/Bioconductor on 2021-10-28.
+  \item{fields}{Which fields in DESCRIPTION? Values should be in \code{Depends}, \code{Imports}, \code{LinkingTo}, \code{Suggests} and \code{Enhances}. The value can also be set to \code{strong} or \code{weak}.}
+  \item{online}{Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database?  The version of the pre-computated package database can be set via \code{\link{pkgndep_opt}}$heaviness_db_version.}
 
 }
 \value{

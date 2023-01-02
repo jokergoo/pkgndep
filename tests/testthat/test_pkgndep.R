@@ -31,7 +31,7 @@ if(!grepl("devel", R.version$status) && .Platform$OS.type != "windows") {
 
 	dcf = read.dcf(system.file("DESCRIPTION", package = "ComplexHeatmap"))
 
-	v1 = pkgndep:::env$pkg_db_snapshot$meta["ComplexHeatmap", "Version"]
+	v1 = pkgndep:::ENV$pkg_db_snapshot$meta["ComplexHeatmap", "Version"]
 	v2 = dcf[1, "Version"]
 
 	if(v1 == v2) {

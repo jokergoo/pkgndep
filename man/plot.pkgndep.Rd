@@ -18,11 +18,8 @@ Make the dependency heatmap
 \details{
 Please use \code{\link{dependency_heatmap}} instead.
 }
-\value{
-A vector of two numeric values (in inches) that correspond to the width and height of the plot.
-
-}
 \examples{
-# See examples in `pkgndep()`.
+# There is no example
+NULL
 
 }

@@ -76,7 +76,12 @@ are listed in the following table.</p>
 <p><b>Dependency path:</b> the shortest path from <span class="package"><%=pkg$package%></span> to a downstream package in the global dependency graph. The form of <span style="display:inline-block;vertical-align:top;color:#c7254e;">A</span><span style="display:inline-block;vertical-align:top;padding:0px 4px;color:#c7254e;">→<br><span style="font-size:0.8em;color:#c7254e;">k</span></span><span style="display:inline-block;vertical-align:top;color:#c7254e;">B</span> means package A contributes a direct heaviness of <i>k</i> on package B.</p>
 <p><b>Heaviness of <span class="package"><%=pkg$package%></span> on downstream package:</b> Denote $n_{1k}$ as the number of strong dependencies of the downstream package. Since <span class="package"><%=pkg$package%></span> can affect the downstream pacakge in an indirect manner, we recalculate the global dependency relations for all packages after moving <span class="package"><%=pkg$package%></span> to all its child packages' <code>Suggests</code>. Then we denote $n_{2k}$
 as the number of strong dependencies of the downstream pacakge in the reduced dependency graph. The heaviness from <span class="package"><%=pkg$package%></span> on that downstream pacakge is calculated as $n_{1k} - n_{2k}$.</p>
-<p>The full table can be obtained by <code>downstream_dependency('<%=pkg$package%>')</code>.</p>
+<p>The full table can be obtained by:</p>
+
+<pre class="code">
+library(pkgndep)
+pkgndep_opt$heaviness_db_version = "<%=pkgndep_opt$heaviness_db_version%>"
+downstream_dependency("<%=pkg$package%>")</pre>
 
 <% 
   el = downstream_dependency(pkg$package)
@@ -379,7 +384,7 @@ $('#cy-downstream-dep').resizable();
 
 <% } else { %>
 
-<p>In total there are <%=n_total%> downstream dependencies, but no package on which <%=pkg$package%> has heaviness larger than 10.</p>
+<p>In total there are <%=n_total%> downstream dependencies, but no package on which <span class="package"><%=pkg$package%></span> has heaviness larger than 10.</p>
 
 <% } %>
 

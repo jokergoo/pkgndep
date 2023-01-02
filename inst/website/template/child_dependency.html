@@ -1,3 +1,4 @@
+
 <% if(n_total > 0) { %>
 
 <details><summary>Dependency plot</summary>
@@ -66,23 +67,31 @@ details[open] > summary:first-of-type {
 }
 </style>
 
+<% 
+has_imports = !any(is.na(pkg$df_imports[, 1]))
+%>
+
 <% if(n_used > 0) { %>
 <% 
-l = grepl("(bioc|books|annotation|experiment|workflow)", pkg_db_snapshot$meta[rev_tb[, 1], "Repository"])
-namespace_link = paste0("https://github.com/cran/", rev_tb[, 1], "/blob/master/NAMESPACE")
-namespace_link[l] = paste0("https://code.bioconductor.org/browse/", rev_tb[l, 1], "/blob/master/NAMESPACE")
-l = rev_tb[, 1] %in% BASE_PKGS
-namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/library/", rev_tb[l, 1], "/NAMESPACE")
+namespace_link = paste0("show_namespace(\"", rev_tb[, 1], "\")")
 %>
 
 <br>
 <p>In total, <span class="package"><%=pkg$package%></span> has <%=n_total%> child packages. Only <%=n_used%> child packages with heaviness from <span class="package"><%=pkg$package%></span> larger than 10 are listed in the following table.</p>
+<% if(has_imports) { %>
 <p><b>imports:</b> number of imported functions/objects; <b>importMethods</b>: number of imported S4 methods; <b>importClasses</b>: number of imported S4 classes.</p>
+<% } %>
 <p><b>Heaviness of <span class="package"><%=pkg$package%></span> on child package:</b> number of extra dependency packages that <span class="package"><%=pkg$package%></span> uniquely imports to.</p>
-<p>The full table can be obtained by <code>child_dependency('<%=pkg$package%>')</code>.</p>
+<p>The full table can be obtained by:</p> 
+
+<pre class="code">
+library(pkgndep)
+pkgndep_opt$heaviness_db_version = "<%=pkgndep_opt$heaviness_db_version%>"
+child_dependency("<%=pkg$package%>")</pre>
 
 <% rev_tb$package = qq("<a href='?package=@{rev_tb$package}'>@{rev_tb$package}</a>", collapse = FALSE)
-  rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a href='@{namespace_link}' target='_blank'>link</a>", collapse = FALSE), rev_tb[, 6:7, drop = FALSE])
+  rev_tb = cbind(rev_tb[, 1:5], "namespace" = qq("<a onclick='@{namespace_link}' class='fake-link'>link</a>", collapse = FALSE), rev_tb[, 6:7, drop = FALSE])
+if(has_imports) {
     html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "imports", "importMethods", "importClasses", "NAMESPACE file", qq("Heaviness of <span class='package'>@{pkg$package}</span> on child package"), "Number of parent packages"), table.attr = "class='table table-striped' id='child-dependency'", align = c("l", rep("r", ncol(rev_tb) - 1))))
     html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from <span class='package'>@{pkg$package}</span> is imported to the namespace of child package.</td>\n"), html_rev_tb)
     html_rev_tb = gsub("(<td[^>]*?> Reverse Depends </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from <span class='package'>@{pkg$package}</span> excluding \\2 objects is imported to the namespace of child package.</td>\n"), html_rev_tb)
@@ -93,15 +102,21 @@ namespace_link[l] = paste0("https://github.com/wch/r-source/blob/trunk/src/libra
     html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>The whole set of functions/methods/classes from <span class='package'>@{pkg$package}</span> is imported to the namespace of child package.</td>\n"), html_rev_tb)
     html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -(\\d+) </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>he whole set of functions/methods/classes from <span class='package'>@{pkg$package}</span> excluding \\2 objects is imported to the namespace of child package.</td>\n"), html_rev_tb)
     html_rev_tb = gsub("(<td[^>]*?> Reverse LinkingTo </td>\\s+)<td[^>]*?> -Inf </td>\\s+<td[^>]*?> 0 </td>\\s+<td[^>]*?> 0 </td>\\s+", qq("\\1<td colspan=3 style='text-align:right;'>'@{pkg$package}' is listed in <code>LinkingTo</code> of <span class='package'>@{pkg$package}</span> but no object from <span class='package'>@{pkg$package}</span> is imported.</td>\n"), html_rev_tb)
+} else {
+    rev_tb = rev_tb[, !colnames(rev_tb) %in% c("imports", "importMethods", "importClasses"), drop = FALSE]
+    html_rev_tb = as.character(knitr::kable(rev_tb, format = "html", row.names = FALSE, escape = FALSE, col.names = c("Child package", "Field", "NAMESPACE file", qq("Heaviness of <span class='package'>@{pkg$package}</span> on child package"), "Number of parent packages"), table.attr = "class='table table-striped' id='child-dependency'", align = c("l", rep("r", ncol(rev_tb) - 1))))
+}
 %>
 
 
 <div class="form-box">
 <form method="get" class="form-inline">
 <div class="checkbox">
+<% if(has_imports) { %> 
   <label>
       <input id="input-child-dep-prioritize-reducible" name="child_dep_prioritize_reducible" type="checkbox" <%=ifelse(child_dep_prioritize_reducible, 'checked=1', '')%>> Prioritize child packages of which the dependency from <span class="package"><%=pkg$package%></span> is reducible. In other words, they only import a limited number of functions from <span class="package"><%=pkg$package%></span>.
     </label>
+<% } %>
   <label>
       <input id="input-child-dep-internal-ordering" name="child_dep_internal_ordering" type="checkbox" <%=ifelse(child_dep_internal_ordering, 'checked=1', '')%>> By default the table is ordered by <b>"Heaviness of <span class="package"><%=pkg$package%></span> on child package"</b>. Normally, if a child package has only a few parent packages (including <span class="package"><%=pkg$package%></span>), it is very likely that <span class="package"><%=pkg$package%></span> contributes dominant heaviness on it. By checking this box, the table will be reordered by values of <b>"heaviness of <span class="package"><%=pkg$package%></span> * number of parent packages"</b>, which will prioritize the child packages with large numbers of parent packages and <span class="package"><%=pkg$package%></span> still contribute high heaviness on them.
     </label>
@@ -180,7 +195,7 @@ $("#child-dependency tr td:nth-child(2)").each(function(index) {
 
 <% } else { %>
 
-<p>In total there are <%=n_total%> child dependencies, but no package on which '<%=pkg$package%>' has heaviness larger than 10.</p>
+<p>In total there are <%=n_total%> child dependencies, but no package on which <span class="package"><%=pkg$package%></span> has heaviness larger than 10.</p>
 
 <% } %>
 

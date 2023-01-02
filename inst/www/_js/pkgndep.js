@@ -143,4 +143,40 @@ function reset_ht_size() {
 }
 
 
+function show_description(package) {
+	$.ajax({
+	  url: "show_description?package="+package
+	}).done(function(html) {
+		html = "<div id='desc_ns'><div id='desc_ns_inner'><h3>DESCRIPTION file for <span class='package'>" + package + "</span></h3>\n" + html + "<p><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();'>Close</button><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();' style='position:absolute;top:6px;right:6px;'>Close</button></p></div></div>"
+	  $("body").append(html);
+	});
+}
 
+function show_namespace(package) {
+	$.ajax({
+	  url: "show_namespace?package="+package
+	}).done(function(html) {
+		html = "<div id='desc_ns'><div id='desc_ns_inner'><h3>NAMESPACE file for <span class='package'>" + package + "</h3>\n" + html + "</span><p><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();'>Close</button><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();' style='position:absolute;top:6px;right:6px;'>Close</button></p></div></div>"
+	  $("body").append(html);
+
+	});
+}
+
+function load_version_change() {
+	html = "<div id='desc_ns'><div id='desc_ns_inner'><p style='font-size:1.2em;'>loading the new version of the heaviness database...</p><ul><li>Load heaviness database.</li><li>Load pre-calculated dependency results of all packages.</li><li>Load pre-calculated heaviness metrics of all packages.</li></ul><p><div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div></p><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();'>Close</button></div></div>"
+	$("body").append(html);
+}
+
+
+function compare_to_other_versions(package) {
+
+	html = "<div id='desc_ns'><div id='desc_ns_inner2'><div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div></div></div>";
+	 $("body").append(html);
+
+	$.ajax({
+	  url: "compare_to_other_versions?package="+package
+	}).done(function(html) {
+	  html = "<h3>Compare <span class='package'>" + package + "</span> in all versions</h3>\n" + html + "<p><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();'>Close</button><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();' style='position:absolute;top:6px;right:6px;'>Close</button></p>"
+	  $("#desc_ns_inner2").html(html);
+	});
+}

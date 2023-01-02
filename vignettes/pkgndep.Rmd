@@ -49,7 +49,7 @@ packages](https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
 The dependency heatmap looks like follows (please drag the figure to a new tab to see it in its actual size):
 
 ```{r, echo = FALSE}
-x = pkgndep:::env$all_pkg_dep[["cola"]]
+x = pkgndep:::ENV$all_pkg_dep[["cola"]]
 pdf(NULL)
 size = dependency_heatmap(x, help = FALSE)
 invisible(dev.off())

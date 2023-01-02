@@ -1,13 +1,13 @@
-\name{dependency_report}
-\alias{dependency_report}
+\name{heaviness_report}
+\alias{heaviness_report}
 \title{
-HTML report for package dependency analysis
+HTML report for package dependency heaviness analysis
 }
 \description{
-HTML report for package dependency analysis
+HTML report for package dependency heaviness analysis
 }
 \usage{
-dependency_report(pkg, file = NULL)
+heaviness_report(pkg, file = NULL)
 }
 \arguments{
 

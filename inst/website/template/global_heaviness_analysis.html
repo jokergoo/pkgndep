@@ -1,5 +1,7 @@
 
-<% df = load_pkg_stat_snapshot() %>
+<% df = load_pkg_stat_snapshot() 
+make_heaviness_plot()
+%>
 
 <div style="width:1100px;">
 <br>
@@ -25,7 +27,7 @@ capture these packages with heavy parents, we define <b>"adjusted max heaviness 
 where $a$ is a zooming factor. $a$ is calculated as $a = (n+30)/n_{max}$ where $n$ is the number of parents for package <i>P</i> and $n_{max}$ is the maximal number of parents of all packages (<i>i.e.</i>, all CRAN/Bioconductor packages). The value of 30 is selected emperically to balance the zooming rate on different $n$.</p></div>
 
 <p>The zooming factor $a$ decreases the heaviness faster for small number of parents, thus, it actually transforms the original distribution of point cloud more horizontal so that it is easy to set a cutoff to mark extream points. The plot of adjusted heaviness verse number of parents can be seen by clicking the radio button <b>"Adjusted max heaviness verse number of parent packages"</b> below. 
-We simply mark a package as <span style="color:red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_max_heaviness_from_parents[2]%> and <span style="color:orange">having median heavy parents</span> if the adjusted heaviness is between <%=CUTOFF$adjusted_max_heaviness_from_parents[1]%> and <%=CUTOFF$adjusted_max_heaviness_from_parents[2]%>. The packages with highly heavy parents are listed
+We simply mark a package as <span style="color:red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_max_heaviness_from_parents%>. The packages with highly heavy parents are listed
 on the right of the following figure.</p>
 
 
@@ -40,10 +42,10 @@ on the right of the following figure.</p>
   </label>
 </div>
 
-<% df2 = df[df$adjusted_max_heaviness_from_parents >= CUTOFF$adjusted_max_heaviness_from_parents[2], , drop = FALSE]
+<% df2 = df[df$adjusted_max_heaviness_from_parents >= CUTOFF$adjusted_max_heaviness_from_parents, , drop = FALSE]
 	top_pkgs = rownames(df2)[order(df2$adjusted_max_heaviness_from_parents, decreasing = TRUE)]
 	generate_top_pkgs_html = function(top_pkgs, caption = "Top packages") {
-		nr = max(12, ceiling(length(top_pkgs)/3))
+		nr = max(15, ceiling(length(top_pkgs)/3))
 		n_col = ceiling(length(top_pkgs) / nr) 
   		html_tb = matrix("", nrow = nr, ncol = n_col)
 		for(i in seq_along(top_pkgs)) { 
@@ -68,53 +70,6 @@ on the right of the following figure.</p>
 </div>
 <p><%= img(paste0(env$figure_dir, "/plot-parent-adjusted-max-heaviness.png"), style="height:500px")%></p>
 </div>
-
-<p>A package may have more than one heavy parents, thus, we next look at the total heaviness from all parents for a package. Note, heaviness
-from a parent measures the number of additional unique packages it brings in, that are not brought by any of the other parents, therefore, total heaviness from parents is actually the number of dependency packages that are brought by only one parent package.
-Generally, for a package, majority of its parents only contribute very small heaviness while only a few parents (mostly 1 ~ 3) contribute
-high heaviness. Thus, the "total heaviness from all parents" can be approximately treated as "total heaviness from heavy parents". </p>
-
-<p>Similarly, we define an <b>"adjusted total heaviness from parents"</b> to adjust the point distribution more horizontally. It is defined as:</p>
-
-<div class="method"><p>
-$h^{adj} = h \cdot a$, where $a = \sqrt{n}/\sqrt{n_{max}}$. Note here $h$ is the total heaviness from parents for package <i>P</i>.
-</p></div>
-
-<p>The plot of adjusted heaviness verse number of parents can be seen by clicking the radio button <b>"Adjusted total heaviness verse number of parent packages"</b>. We simply set a package as <span style="red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_total_heaviness_from_parents[2]%> and <span style="color: orange;">having median heavy parents</span> if the adjusted heaviness is between <%=CUTOFF$adjusted_total_heaviness_from_parents[1]%> and <%=CUTOFF$adjusted_total_heaviness_from_parents[2]%>.</p>
-
-<div class="form-box">
-<input type="radio" name="plot-parent-total-heaviness-radio" onchange="$('#plot-parent-total-heaviness').show();$('#plot-parent-adjusted-total-heaviness').hide();" checked>
-  <label >
-    Total heaviness verse number of parent packages
-  </label>
-<input type="radio" name="plot-parent-total-heaviness-radio" onchange="$('#plot-parent-total-heaviness').hide();$('#plot-parent-adjusted-total-heaviness').show();">
-  <label>
-    Adjusted total heaviness verse number of parent packages
-  </label>
-</div>
-
-<% df2 = df[df$adjusted_total_heaviness_from_parents >= CUTOFF$adjusted_total_heaviness_from_parents[2], , drop = FALSE]
-	top_pkgs = rownames(df2)[order(df2$adjusted_total_heaviness_from_parents, decreasing = TRUE)]
-%>
-
-<div id="plot-parent-total-heaviness" style="position:relative">
-<div style="position:absolute;left:1140px;">
-<%=generate_top_pkgs_html(top_pkgs)%>
-</div>
-<p><%= img(paste0(env$figure_dir, "/plot-parent-total-heaviness.png"), style="height:500px")%></p>
-</div>
-
-<div id="plot-parent-adjusted-total-heaviness" style="display:none;position:relative;">
-<div style="position:absolute;left:1140px;">
-<%=generate_top_pkgs_html(top_pkgs)%>
-</div>
-<p><%= img(paste0(env$figure_dir, "/plot-parent-adjusted-total-heaviness.png"), style="height:500px")%></p>
-</div>
-
-<p>According to both figures in this section, CRAN packages have very similar trends for the max and total heaviness from parents. But Bioconductor packages
-in general have heavier parents, <i>e.g.</i>,
-<a href="package?package=musicatk"><b>musicatk</b></a> and <a href="package?package=singleCellTK"><b>singleCellTK</b></a>.</p>
-
 
 <h3>Heaviness on child packages</h3>
 
@@ -152,7 +107,7 @@ where $N$ is the total number of packages in the ecosystem, $R_{k,a}$ and $R_{k,
 <br>
 
 <p>The plot of adjusted heaviness verse number of children can be seen by clicking the radio button <b>"Adjusted heaviness verse number of child packages"</b>. 
-We simply set a package <span style="color:red">having a highly heavy impact on its children</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_heaviness_on_children[2]%> and <span style="color:orange">having a median heavy impact</span> if the adjusted haviness is between <%=CUTOFF$adjusted_heaviness_on_children[1]%> and <%=CUTOFF$adjusted_heaviness_on_children[2]%>.</p>
+We simply set a package <span style="color:red">having a highly heavy impact on its children</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_heaviness_on_children%>.</p>
 
 <div class="form-box">
 <input class="form-check-input" type="radio" name="plot-child-heaviness-radio" onchange="$('#plot-child-heaviness').show();$('#plot-child-adjusted-heaviness').hide();" checked>
@@ -165,7 +120,7 @@ We simply set a package <span style="color:red">having a highly heavy impact on 
   </label>
 </div>
 
-<% df2 = df[df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[2], , drop = FALSE]
+<% df2 = df[df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, , drop = FALSE]
 	top_pkgs = rownames(df2)[order(df2$adjusted_heaviness_on_children, decreasing = TRUE)]
 %>
 
@@ -226,7 +181,7 @@ $h^{adj} = \frac{1}{K-K_c + a} \sum_{k}^K(n_{1k} - n_{2k}) \cdot I(B_{k} \notin 
 <br>
 
 <p>The plot of adjusted heaviness verse number of downstream can be seen by clicking the radio button <b>"Adjusted heaviness verse number of indirect downstream packages"</b>. 
-We simply set a package <span style="color:red">having a highly heavy impact on its indirect downstream packages</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_heaviness_on_indirect_downstream[2]%> and <span style="color:orange">having median heavy impact</span> if the adjusted haviness is between <%=CUTOFF$adjusted_heaviness_on_indirect_downstream[1]%> and <%=CUTOFF$adjusted_heaviness_on_indirect_downstream[2]%>.</p>
+We simply set a package <span style="color:red">having a highly heavy impact on its indirect downstream packages</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_heaviness_on_indirect_downstream%>.</p>
 
 <div class="form-box">
 <input class="form-check-input" type="radio" name="plot-downstream-heaviness-radio" onchange="$('#plot-downstream-heaviness').show();$('#plot-downstream-adjusted-heaviness').hide();" checked>
@@ -239,7 +194,7 @@ We simply set a package <span style="color:red">having a highly heavy impact on 
   </label>
 </div>
 
-<% df2 = df[df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], , drop = FALSE]
+<% df2 = df[df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, , drop = FALSE]
 	top_pkgs = rownames(df2)[order(df2$adjusted_heaviness_on_indirect_downstream, decreasing = TRUE)]
 %>
 

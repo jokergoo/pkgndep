@@ -180,6 +180,10 @@ co_heaviness = function(x, rel = FALSE, a = 10, jaccard = FALSE) {
 # == param
 # -package A package name.
 # -add_values_attr Whether to include "values" attribute? Internally used.
+# -total Whether to return the total heaviness?
+#
+# == details
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
 #
 # == Value
 # The value is the mean heaviness of the package on all its child packages.
@@ -188,7 +192,7 @@ co_heaviness = function(x, rel = FALSE, a = 10, jaccard = FALSE) {
 # \dontrun{
 # heaviness_on_children("ComplexHeatmap")
 # }
-heaviness_on_children = function(package, add_values_attr = FALSE) {
+heaviness_on_children = function(package, add_values_attr = FALSE, total = FALSE) {
 	tb = child_dependency(package, fields = c("Depends", "Imports", "LinkingTo"))
 	if(nrow(tb)) {
 		hv = tb$heaviness
@@ -197,7 +201,11 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 			attr(v, "all_children_pkgs") = 0
 			if(add_values_attr) attr(v, "values") = numeric(0)
 		} else {
-			v = mean(hv)
+			if(total) {
+				v = sum(hv)
+			} else {
+				v = mean(hv)
+			}
 			attr(v, "all_children_pkgs") = length(hv)
 			if(add_values_attr) attr(v, "values") = structure(hv, names = tb[, 2])
 		}
@@ -216,6 +224,11 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 # -package A package name.
 # -add_values_attr Whether to include "values" attribute? Internally used.
 # -via Whether to only consider downstream packages via a intermediate package?
+# -total Whether to return the total heaviness?
+# -internal Whether to use internally calculated heaviness?
+#
+# == details
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
 #
 # == Value
 # The value is the mean heaviness of the package on all its downstream packages. Denote ``n`` as the number of all its downstream packages,
@@ -232,16 +245,21 @@ heaviness_on_children = function(package, add_values_attr = FALSE) {
 # \dontrun{
 # heaviness_on_downstream("ComplexHeatmap")
 # }
-heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL) {
+heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL, 
+	total = FALSE, internal = FALSE) {
 
 	if(inherits(package, "pkgndep")) package = package$package
 
-	load_pkg_db(snapshot = TRUE)
-	load_all_pkg_dep()
+	if(internal) {
+		df = load_pkg_stat_snapshot()
+		s = df[package, "hv_downstream_values"][[1]]
+		pkg = names(s)
+	} else {
+		load_pkg_db(online = FALSE)
+		load_all_pkg_dep()
 
-	pkg_db = env$pkg_db_snapshot$copy()
+		pkg_db = ENV$pkg_db_snapshot$copy()
 
-	# if(move_to_suggests) {
 		pkg_db$dependency = lapply(pkg_db$dependency, function(db) {
 			l = db[, "dependency"] == package
 			if(any(l)) {
@@ -249,53 +267,60 @@ heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL)
 			}
 			db
 		})
-	# } else {
-	# 	pkg_db$dependency = lapply(pkg_db$dependency, function(db) {
-	# 		l = db[, "dependency"] == package
-	# 		if(any(l)) {
-	# 			db[l, "dep_fields"] = "Imports"
-	# 		}
-	# 		db
-	# 	})
-	# }
 
-	# only rerun for downstrema packages
-	lt = env$all_pkg_dep
-	tb = downstream_dependency(package)
+		# only rerun for downstrema packages
+		lt = ENV$all_pkg_dep
+		tb = downstream_dependency(package)
 
-	if(nrow(tb) == 0) {
-		if(interactive()) qqcat("no downstream dependency found for @{package}.\n")
-		return(structure(0, all_downstream_pkgs = 0))
+		if(nrow(tb) == 0) {
+			if(interactive()) qqcat("no downstream dependency found for @{package}.\n")
+			return(structure(0, all_downstream_pkgs = 0))
+		}
+
+		pkg = unique(tb[, "children"])
+
+		pkg = intersect(pkg, names(lt))
+
+		n = length(pkg)
+		s1 = s2 = numeric(n)
+		for(i in seq_len(n)) {
+			if(interactive()) cat(strrep("\r", 100))
+			if(interactive()) cat("recalculating dependency for", i, "/", n, "packages...")
+			x = lt[[ pkg[i] ]]
+			s1[i] = x$n_by_strong
+			x = pkgndep_simplified(x$package, pkg_db)
+			s2[i] = x$n_by_strong
+		}
+		if(interactive()) cat("\n")
+
+		s = abs(s1 - s2)
 	}
-
-	pkg = unique(tb[, "children"])
-
-	pkg = intersect(pkg, names(lt))
-
-	n = length(pkg)
-	s1 = s2 = numeric(n)
-	for(i in seq_len(n)) {
-		if(interactive()) cat(strrep("\r", 100))
-		if(interactive()) cat("recalculating dependency for", i, "/", n, "packages...")
-		x = lt[[ pkg[i] ]]
-		s1[i] = x$n_by_strong
-		x = pkgndep_simplified(x$package, pkg_db)
-		s2[i] = x$n_by_strong
-	}
-	if(interactive()) cat("\n")
-
-	s = abs(s1 - s2)
 
 	if(is.null(via)) {
-		v = mean(s)
+		if(total) {
+			v = sum(s)
+		} else {
+			v = mean(s)
+		}
 		attr(v, "all_downstream_pkgs") = length(pkg)
 		if(add_values_attr) attr(v, "values") = structure(s, names = pkg)
 	} else {
-		tb2 = downstream_dependency(via)
-		pkg2 = intersect(pkg, unique(tb2[, 2]))
-		names(s) = pkg
-		s2 = s[pkg2]
-		v = mean(s2)
+		if(internal) {
+			pkg2 = names(df[via, "hv_downstream_values"][[1]])
+			s2 = s[pkg2]
+		} else {
+			tb2 = downstream_dependency(via)
+			pkg2 = intersect(pkg, unique(tb2[, 2]))
+
+			names(s) = pkg
+			s2 = s[pkg2]
+		}
+		
+		if(total) {
+			v = sum(s2)
+		} else {
+			v = mean(s2)
+		}
 		attr(v, "all_downstream_pkgs") = length(pkg2)
 		if(add_values_attr) attr(v, "values") = structure(s2, names = pkg2)
 	}
@@ -307,6 +332,9 @@ heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL)
 # 
 # == param
 # -package A package name.
+#
+# == details
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
 #
 # == value
 # A named vector.

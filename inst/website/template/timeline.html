@@ -1,0 +1,97 @@
+
+<h3>Timeline of all packages</h3>
+<p>Note: for Bioconductor packages, the segments are left-closed and right-open, i.e., $[t_1, t_2)$.</p>
+<p><img src="https://pkgndep.github.io/image/timeline.png" style='width:1400px;' /></p>
+
+<hr>
+<h3>Number of packages and dependencies</h3>
+
+<p><img src="https://pkgndep.github.io/image/timeline_number_of_pkgs.png" /></p>
+<p><img src="https://pkgndep.github.io/image/timeline_number_of_deps.png" /></p>
+<p><img src="https://pkgndep.github.io/image/timeline_number_of_deps_per_pkg.png" /></p>
+<p><img src="https://pkgndep.github.io/image/package_removed.png" /></p>
+
+<hr>
+<h3>Number of strong dependencies</h3>
+<p><img src="https://pkgndep.github.io/image/timeline_metric_n_by_strong.png" /></p>
+
+<h3>Heaviness from parent packages</h3>
+
+<p><img src="https://pkgndep.github.io/image/timeline_metric_n_parents.png" /></p>
+
+<div class="form-box">
+<input class="form-check-input" type="radio" name="max_heaviness_from_parents_radio" onchange="$('#max_heaviness_from_parents_1').show();$('#max_heaviness_from_parents_2').hide();">
+  <label >
+    Max heaviness from parents
+  </label>
+<input class="form-check-input" type="radio" name="max_heaviness_from_parents_radio" onchange="$('#max_heaviness_from_parents_1').hide();$('#max_heaviness_from_parents_2').show();" checked>
+  <label>
+    Adjusted max heaviness from parents
+  </label>
+</div>
+
+<p id="max_heaviness_from_parents_1" style="display: none;"><img src="https://pkgndep.github.io/image/timeline_metric_max_heaviness_from_parents.png" /></p>
+<p id="max_heaviness_from_parents_2"><img src="https://pkgndep.github.io/image/timeline_metric_adjusted_max_heaviness_from_parents.png" /></p>
+
+<hr>
+<h3>Heaviness from child packages</h3>
+
+<p><img src="https://pkgndep.github.io/image/timeline_metric_n_children.png" /></p>
+
+<div class="form-box">
+<input class="form-check-input" type="radio" name="heaviness_on_children_radio" onchange="$('#heaviness_on_children_1').show();$('#heaviness_on_children_2').hide();">
+  <label >
+    Heaviness on child packages
+  </label>
+<input class="form-check-input" type="radio" name="heaviness_on_children_radio" onchange="$('#heaviness_on_children_1').hide();$('#heaviness_on_children_2').show();" checked>
+  <label>
+    Adjusted heaviness on child packages
+  </label>
+</div>
+
+<p id="heaviness_on_children_1" style="display: none;"><img src="https://pkgndep.github.io/image/timeline_metric_heaviness_on_children.png" /></p>
+<p id="heaviness_on_children_2"><img src="https://pkgndep.github.io/image/timeline_metric_adjusted_heaviness_on_children.png" /></p>
+
+<!--
+<p><img src="https://pkgndep.github.io/image/timeline_metric_n_downstream.png" /></p>
+
+
+<div class="form-box">
+<input class="form-check-input" type="radio" name="heaviness_on_downstream_radio" onchange="$('#heaviness_on_downstream_1').show();$('#heaviness_on_downstream_2').hide();">
+  <label >
+    Heaviness on downstream packages
+  </label>
+<input class="form-check-input" type="radio" name="heaviness_on_downstream_radio" onchange="$('#heaviness_on_downstream_1').hide();$('#heaviness_on_downstream_2').show();" checked>
+  <label>
+    Adjusted heaviness on downstream packages
+  </label>
+</div>
+
+<p id="heaviness_on_downstream_1" style="display:none;"><img src="https://pkgndep.github.io/image/timeline_metric_heaviness_on_downstream.png" /></p>
+<p id="heaviness_on_downstream_2"><img src="https://pkgndep.github.io/image/timeline_metric_adjusted_heaviness_on_downstream.png" /></p>
+-->
+
+<hr>
+
+<h3>Heaviness from indirect downstream packages</h3>
+
+<p><img src="https://pkgndep.github.io/image/timeline_metric_n_indirect_downstream.png" /></p>
+
+<div class="form-box">
+<input class="form-check-input" type="radio" name="heaviness_on_indirect_downstream_radio" onchange="$('#heaviness_on_indirect_downstream_1').show();$('#heaviness_on_indirect_downstream_2').hide();">
+  <label >
+    Heaviness on indirect downstream packages
+  </label>
+<input class="form-check-input" type="radio" name="heaviness_on_indirect_downstream_radio" onchange="$('#heaviness_on_indirect_downstream_1').hide();$('#heaviness_on_indirect_downstream_2').show();" checked>
+  <label>
+    Adjusted heaviness on indirect downstream packages
+  </label>
+</div>
+
+<p id="heaviness_on_indirect_downstream_1" style="display:none;"><img src="https://pkgndep.github.io/image/timeline_metric_heaviness_on_indirect_downstream.png" /></p>
+<p id="heaviness_on_indirect_downstream_2"><img src="https://pkgndep.github.io/image/timeline_metric_adjusted_heaviness_on_indirect_downstream.png" /></p>
+<style>
+#timeline img {
+	width: 1000px;
+}
+</style>

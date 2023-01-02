@@ -45,19 +45,40 @@ $( function() {
 </script>
 </head>
 <body>
+<%
+t = range(as.Date(ALL_BIOC_RELEASES$Date))
+t[1] = t[1] - 30
+p = as.numeric(as.Date(pkgndep_opt$heaviness_db_version) - t[1])/as.numeric(t[2] - t[1])
+%>
 <div style='width:1600px; margin-left:20px;' id="main">
+	<div id="timeline-topbar" style="height:4px;width:<%=p*100%>%;background-color:#BBBBBB"></div>
 	<nav class="navbar navbar-default">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
-	      <a class="navbar-brand" href="main">Dependency heaviness table for all packages</a>
-	      <form class="navbar-form navbar-right" method="get">
-		      <div class="input-group">
+	      <img src="image/icons8-fitness-64.png" style="float:left;padding-right:20px;" />
+	      <a class="navbar-brand" href="main">Dependency Heaviness Database of R Packages</a>
+	      	
+	      	<form class="navbar-form navbar-right" method="get">
+		      <div class="input-group" style="margin-left:380px;">
 		        <input type="text" class="form-control" id="typeahead" placeholder="" name="package" value="<%=package%>" />
 		        <div class="input-group-btn">
 		          <button class="btn btn-default" type="submit">Search package</button>
 		        </div>
 		      </div>
 		    </form>
+
+	      	<form id="form-version" class="navbar-form navbar-right" method="get" action="change_version">
+	      		<input type="hidden" name="url" value="<%=url%>" />
+		      <div class="input-group">
+				<select class="form-control" name="version" onchange="load_version_change();$('#form-version').submit()">
+		        	 <%=version_select_txt%>
+		        </select>
+		        
+		      </div>
+		    </form>
+
+	     	
+
 	    </div>
 	 </div>
 	 </nav>

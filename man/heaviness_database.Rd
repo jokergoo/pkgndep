@@ -1,5 +1,5 @@
-\name{dependency_database}
-\alias{dependency_database}
+\name{heaviness_database}
+\alias{heaviness_database}
 \title{
 Database of package dependency heaviness of all R packages
 }
@@ -7,7 +7,7 @@ Database of package dependency heaviness of all R packages
 Database of package dependency heaviness of all R packages
 }
 \usage{
-dependency_database(version = pkgndep_opt$heaviness_db_version)
+heaviness_database(version = pkgndep_opt$heaviness_db_version)
 }
 \arguments{
 
@@ -16,6 +16,6 @@ dependency_database(version = pkgndep_opt$heaviness_db_version)
 }
 \examples{
 if(interactive()) {
-    dependency_database()
+    heaviness_database()
 }
 }

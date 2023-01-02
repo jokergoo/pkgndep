@@ -1,7 +1,7 @@
 Package: pkgndep
 Type: Package
 Title: Analyze Dependency Heaviness of R Packages
-Version: 1.2.1
+Version: 1.99.0
 Date: 2022-11-13
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))

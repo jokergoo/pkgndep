@@ -1,7 +1,7 @@
 
 
 # == title
-# HTML report for package dependency analysis
+# HTML report for package dependency heaviness analysis
 #
 # == param
 # -pkg An object from `pkgndep`.
@@ -15,7 +15,7 @@
 #     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
 #     dependency_report(x)
 # }
-dependency_report = function(pkg, file = NULL) {
+heaviness_report = function(pkg, file = NULL) {
 	
 	template_file = system.file("extdata", "package_report.html", package = "pkgndep")
 
@@ -53,4 +53,10 @@ dependency_report = function(pkg, file = NULL) {
 	}
 
 	invisible(file)
+}
+
+
+
+dependency_report = function(...) {
+	heaviness_report(...)
 }

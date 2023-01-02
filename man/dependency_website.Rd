@@ -1,16 +1,18 @@
 \name{dependency_website}
 \alias{dependency_website}
 \title{
-The database of package dependency analysis
+Database of package dependency heaviness of all R packages
 }
 \description{
-The database of package dependency analysis
+Database of package dependency heaviness of all R packages
 }
 \usage{
-dependency_website()
+dependency_website(version = pkgndep_opt$heaviness_db_version)
 }
-\details{
-The analyis is based on all 22076 CRAN/Bioconductor packages retrieved on 2022-06-08.
+\arguments{
+
+  \item{version}{Version of the heaviness database. See \code{\link{pkgndep_opt}}$heaviness_db_version.}
+
 }
 \examples{
 if(interactive()) {

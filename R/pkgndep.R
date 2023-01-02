@@ -3,15 +3,16 @@
 # Package dependency analysis
 #
 # == param
-# -package Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.
-# -load Check which other packages are loaded into R session (directly or indirectly) when loading ``pkg``. 
+# -package Package name. The value can be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.
 # -verbose Whether to show messages.
-# -online If the value is ``TRUE``, it will directly use the package database file from CRAN/Bioconductor. If the 
-#        value is ``FALSE``, it uses the cached package database retrieved on 2021-10-28.
+# -online If the value is ``TRUE``, it will directly use the newest package database file from CRAN/Bioconductor. Note the default Bioconductor
+#      version is the one corresponding to the current R version. If you want to use a higher bioc version, you need to set the global
+#      option ``pkgndep_opt$bioc_version``. If the value of ``online`` is ``FALSE``, a snapshot of the CRAN/Bioconductor package database
+#      will be used. The version of the package database snapshot can be via the global option `pkgndep_opt`$heaviness_db_version.
+# -load If the value is ``TRUE``, the ``package`` is loaded into a fresh new R session and the function will check which upstream packages are also loaded
+#      into the R session. Note it is possible that an "Imports" package is not loaded or a "Suggests" package is loaded in the R session when loading ``package``.
+# -parse_namespace Whether to also parse the NAMESPACE file. It is only used internally.
 #
-# == details
-# The package database for dependency analysis is always directly retrieved from CRAN/Bioconductor.
-# 
 # == value
 # A ``pkgndep`` object.
 #
@@ -24,11 +25,19 @@
 # x
 # dependency_heatmap(x)
 # 
-pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
+pkgndep = function(package, verbose = TRUE, online = TRUE, load = FALSE, parse_namespace = TRUE) {
 
-	## check whether package is an CRAN/Bioc package, a installed package, a path or a github link
+	# by default, it tests with the newest CRAN/Bioconductor
+	# the default Bioconductor is the one corresponding to current R version, but higher bioc version or devel version
+	# can be set via pkgndep_opt$bioc_version.
+
+	## check whether package is an CRAN/Bioc package, an installed package, a path or a github link
 	load_pkg_db(verbose = verbose, online = online)
-	pkg_db = env$pkg_db
+	if(online) {
+		pkg_db = ENV$pkg_db
+	} else {
+		pkg_db = ENV$pkg_db_snapshot
+	}
 
 	if(is.null(pkg_db$dep_ind_hash[[package]])) { 
 
@@ -36,14 +45,14 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 			package_name = package
 		} else if(file.exists(package)) {
 			package_name = basename(package)
-			if(load) message("`package` is specified as a path, reset `load` to `FALSE`.")
+			if(load) message_wrap("`package` is specified as a path, reset `load` to `FALSE`.")
 			load = FALSE
 		} else if(grepl("^https://github.com/", package)) {
 			package_name = basename(package)
-			if(load) message("`package` is a GitHub URL, reset `load` to `FALSE`.")
+			if(load) message_wrap("`package` is a GitHub URL, reset `load` to `FALSE`.")
 			load = FALSE
 		} else {
-			stop("`package` should be 1. a CRAN/Bioconductor package, 2. an installed package,\n3. a path of a local package, 4. URL of a GitHub repository.")
+			stop_wrap("`package` should be 1. a CRAN/Bioconductor package, 2. an installed package,\n3. a path of a local package, 4. URL of a GitHub repository.")
 		}
 		res = get_package_info_by_path(package)
 
@@ -84,9 +93,9 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 	if(pkg_exists(package_name) && load) {
 		qqcat("loading @{package_name} into a new R session to test number of namespaces loaded...")
 		if(!requireNamespace("callr", quietly = TRUE)) {
-			stop("You need to install 'callr' package.")
+			stop_wrap("You need to install 'callr' package.")
 		}
-		tb = callr::r(load_pkg, args = list(pkg = package_name), user_profile = FALSE)
+		tb = callr::r(load_pkg_freshly, args = list(pkg = package_name), user_profile = FALSE)
 		cat(" done.\n")
 
 		if(is.null(tb)) {
@@ -139,25 +148,30 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 	colnames(df_imports) = c("imports", "importMethods", "importClasses")
 	rownames(df_imports) = rn
 
-	lt_imports2 = lt_imports = parse_imports_from_namespace(package, package_name)
-	if(!is.null(lt_imports)) {
-		if(length(lt_imports$n_imports)) {
-			lt_imports$n_imports = lt_imports$n_imports[intersect(names(lt_imports$n_imports), rn)]
-			df_imports[names(lt_imports$n_imports), "imports"] = lt_imports$n_imports
+	if(parse_namespace) {
+		lt_imports2 = lt_imports = parse_imports_from_namespace(package, package_name, online = online)
+		if(!is.null(lt_imports)) {
+			if(length(lt_imports$n_imports)) {
+				lt_imports$n_imports = lt_imports$n_imports[intersect(names(lt_imports$n_imports), rn)]
+				df_imports[names(lt_imports$n_imports), "imports"] = lt_imports$n_imports
+			}
+			if(length(lt_imports$n_import_methods)) {
+				lt_imports$n_import_methods = lt_imports$n_import_methods[intersect(names(lt_imports$n_import_methods), rn)]
+				df_imports[names(lt_imports$n_import_methods), "importMethods"] = lt_imports$n_import_methods
+			}
+			if(length(lt_imports$n_import_classes)) {
+				lt_imports$n_import_classes = lt_imports$n_import_classes[intersect(names(lt_imports$n_import_classes), rn)]
+				df_imports[names(lt_imports$n_import_classes), "importClasses"] = lt_imports$n_import_classes
+			}
 		}
-		if(length(lt_imports$n_import_methods)) {
-			lt_imports$n_import_methods = lt_imports$n_import_methods[intersect(names(lt_imports$n_import_methods), rn)]
-			df_imports[names(lt_imports$n_import_methods), "importMethods"] = lt_imports$n_import_methods
-		}
-		if(length(lt_imports$n_import_classes)) {
-			lt_imports$n_import_classes = lt_imports$n_import_classes[intersect(names(lt_imports$n_import_classes), rn)]
-			df_imports[names(lt_imports$n_import_classes), "importClasses"] = lt_imports$n_import_classes
-		}
-	}
 
-	not_used = setdiff(rownames(df_imports), c(unlist(lapply(lt_imports, names)), rn[!is_field_required(dep_fields)]))
-	if(length(not_used)) {
-		df_imports[not_used, 1] = -Inf
+		not_used = setdiff(rownames(df_imports), c(unlist(lapply(lt_imports, names)), rn[!is_field_required(dep_fields)]))
+		if(length(not_used)) {
+			df_imports[not_used, 1] = -Inf
+		}
+	} else {
+		df_imports[, 1] = NA
+		lt_imports2 = lt_imports = NULL
 	}
 
 	obj = list(
@@ -200,6 +214,10 @@ pkgndep = function(package, load = FALSE, verbose = TRUE, online = TRUE) {
 	obj$df_imports = obj$df_imports[row_order, , drop = FALSE]
 
 	obj$gini_index = gini_index(obj$heaviness[obj$which_required])
+
+	if(!online) {
+		obj$pkgndep_db_version = ENV$pkg_db_snapshot_version
+	}
 
 	return(obj)
 }
@@ -303,7 +321,7 @@ pkgndep_simplified = function(package, pkg_db) {
 print.pkgndep = function(x, ...) {
 	qqcat("'@{x$package}', version @{x$version}\n")
 	qqcat("- @{x$n_by_strong} package@{ifelse(x$n_by_strong > 1, 's', '')} @{ifelse(x$n_by_strong > 1, 'are', 'is')} required for installing '@{x$package}'.\n")
-	qqcat("- @{x$n_by_all} package@{ifelse(x$n_by_strong > 1, 's', '')} @{ifelse(x$n_by_strong > 1, 'are', 'is')} required if installing packages listed in all fields in DESCRIPTION.\n")
+	qqcat("- @{x$n_by_all} package@{ifelse(x$n_by_all > 1, 's', '')} @{ifelse(x$n_by_all > 1, 'are', 'is')} required if installing packages listed in all fields in DESCRIPTION.\n")
 
 	if(nrow(x$dep_mat) == 0) {
 		return(invisible(NULL))
@@ -325,6 +343,9 @@ print.pkgndep = function(x, ...) {
 		l2 = colSums(m[l1, , drop = FALSE]) > 0
 		n_by_strong2 = length(unique(c(unlist(dimnames(m[l1, l2, drop = FALSE]))))) 
 		qqcat("Moving all mentioned packages to 'Suggests' will reduce the dependency packages from @{x$n_by_strong} to @{n_by_strong2}.\n")
+	}
+	if(!is.null(x$pkgndep_db_version)) {
+		qqcat("Using pkgndep_db snapshot, version: @{x$pkgndep_db_version}\n")
 	}
 }
 
@@ -379,10 +400,41 @@ pkg_installed = pkg_exists
 
 
 # x can be 1. an installed package, 2. a path (local or github), 3. a cran/bioc package
-parse_imports_from_namespace = function(x, pkg = basename(x)) {
+parse_imports_from_namespace = function(x, pkg = basename(x), online = TRUE) {
 
-	if(pkg %in% names(env$ns_data_list)) {
-		ns_data = env$ns_data_list[[pkg]]
+	if(pkg %in% names(ENV$ns_data_list)) {
+		ns_data = ENV$ns_data_list[[pkg]]
+	} else if(!online) {
+		bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == pkgndep_opt$heaviness_db_version]
+		lt_desc = load_from_heaviness_db(qq("pkg_description_@{bioc_version}.rds"))
+		lt_ns = load_from_heaviness_db(qq("pkg_namespace_@{bioc_version}.rds"))
+
+		if(ENV$pkg_db_snapshot$meta[x, "Repository"] == "CRAN") {
+			nm = paste0(x, "_", ENV$pkg_db_snapshot$meta[x, "Version"])
+			x1 = lt_ns[[nm]]
+			x2 = lt_desc[[nm]]
+		} else {
+			nm = paste0(bioc_version, "/", x, "_", ENV$pkg_db_snapshot$meta[x, "Version"])
+			x1 = lt_ns[[nm]]
+			x2 = lt_desc[[nm]]
+		}
+		if(!is.null(x1) && !is.null(x2)) {
+			tmpfile1 = tempfile()
+			tmpfile2 = tempfile()
+			writeLines(x1, tmpfile1)
+			writeLines(x2, tmpfile2)
+			on.exit(file.remove(c(tmpfile1, tmpfile2)))
+
+			oe = try(ns_data <- parseNamespaceFile_cp(x, tmpfile1, tmpfile2), silent = TRUE)
+			if(inherits(oe, "try-error")) {
+				ns_data = NULL
+			}
+		} else {
+			ns_data = NULL
+		}
+
+		ENV$ns_data_list[[pkg]] = ns_data
+
 	} else if(pkg_installed(x)) {
 		lib_dir = dirname(system.file(package = x))
 		if(packageHasNamespace(x, lib_dir)) {
@@ -391,7 +443,7 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 			ns_data = NULL
 		}
 
-		env$ns_data_list[[pkg]] = ns_data
+		ENV$ns_data_list[[pkg]] = ns_data
 	} else if(grepl("^https://github.com/", x)) {
 		x = gsub("https://github.com/", "https://raw.githubusercontent.com/", x)
 		namespace_link = paste0(x, "/master/NAMESPACE")
@@ -409,7 +461,7 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 			ns_data = parseNamespaceFile_cp(x, tmpfile1, tmpfile2)
 		}
 
-		env$ns_data_list[[pkg]] = ns_data
+		ENV$ns_data_list[[pkg]] = ns_data
 
 	} else if(file.exists(x)) {
 		namespace_link = paste0(x, "/NAMESPACE")
@@ -421,32 +473,43 @@ parse_imports_from_namespace = function(x, pkg = basename(x)) {
 			ns_data = NULL
 		}
 
-		env$ns_data_list[[pkg]] = ns_data
+		ENV$ns_data_list[[pkg]] = ns_data
 	} else {
 
 		load_pkg_db()
 
-		if(grepl("(bioc|books|annotation|experiment|workflow)", env$pkg_db$meta[x, "Repository"])) {
-			namespace_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/NAMESPACE")
-			description_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/DESCRIPTION")
+		if("Repository" %in% colnames(ENV$pkg_db$meta)) {
+			if(any(ENV$pkg_db$meta[x, "Repository"] %in% c("CRAN", "Bioconductor"))) {
+				ns_data = NULL
+			} else {
+				if(grepl("(bioc|books|annotation|experiment|workflow)", ENV$pkg_db$meta[x, "Repository"])) {
+					namespace_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/NAMESPACE")
+					description_link = paste0("https://code.bioconductor.org/browse/", x, "/raw/master/DESCRIPTION")
+				} else {
+					namespace_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/NAMESPACE")
+					description_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/DESCRIPTION")
+				}
+
+				tmpfile1 = tempfile()
+				tmpfile2 = tempfile()
+				oe1 = try(download.file(namespace_link, tmpfile1, quiet = TRUE), silent = TRUE)
+				oe2 = try(download.file(description_link, tmpfile2, quiet = TRUE), silent = TRUE)
+				on.exit({
+					if(file.exists(tmpfile1)) file.remove(tmpfile1)
+					if(file.exists(tmpfile2)) file.remove(tmpfile2)
+				})
+
+				if(inherits(oe1, "try-error") || inherits(oe2, "try-error")) {
+					ns_data = NULL
+				} else {
+					ns_data = parseNamespaceFile_cp(x, tmpfile1, tmpfile2)
+				}
+			} 
 		} else {
-			namespace_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/NAMESPACE")
-			description_link = paste0("https://raw.githubusercontent.com/cran/", x, "/master/DESCRIPTION")
-		}
-
-		tmpfile1 = tempfile()
-		tmpfile2 = tempfile()
-		oe1 = try(download.file(namespace_link, tmpfile1, quiet = TRUE), silent = TRUE)
-		oe2 = try(download.file(description_link, tmpfile2, quiet = TRUE), silent = TRUE)
-		on.exit(file.remove(c(tmpfile1, tmpfile2)))
-
-		if(inherits(oe1, "try-error") || inherits(oe2, "try-error")) {
 			ns_data = NULL
-		} else {
-			ns_data = parseNamespaceFile_cp(x, tmpfile1, tmpfile2)
 		}
 
-		env$ns_data_list[[pkg]] = ns_data
+		ENV$ns_data_list[[pkg]] = ns_data
 	}
 
 	if(is.null(ns_data)) {
@@ -583,14 +646,14 @@ parseNamespaceFile_cp <- function(package, nsFile, descfile, mustExist = TRUE) {
     nS3 <- 0L
     parseDirective <- function(e) {
         ## trying to get more helpful error message:
-	asChar <- function(cc) {
-	    r <- as.character(cc)
-	    if(any(r == ""))
-		stop(gettextf("empty name in directive '%s' in 'NAMESPACE' file",
-			      as.character(e[[1L]])),
-		     domain = NA)
-	    r
-	}
+		asChar <- function(cc) {
+		    r <- as.character(cc)
+		    if(any(r == ""))
+			stop(gettextf("empty name in directive '%s' in 'NAMESPACE' file",
+				      as.character(e[[1L]])),
+			     domain = NA)
+		    r
+		}
         evalToChar <- function(cc) {
             vars <- all.vars(cc)
             names(vars) <- vars
@@ -598,10 +661,17 @@ parseNamespaceFile_cp <- function(package, nsFile, descfile, mustExist = TRUE) {
                               .GlobalEnv))
         }
         switch(as.character(e[[1L]]),
-               "if" = if (eval(e[[2L]], .GlobalEnv))
-               parseDirective(e[[3L]])
-               else if (length(e) == 4L)
-               parseDirective(e[[4L]]),
+               "if" = {
+               		oe = try(lll <- eval(e[[2L]], .GlobalEnv), silent = TRUE)
+               		if(inherits(oe, "try-error")) {
+               			lll = FALSE
+               		}
+	               if (lll) {
+	               		parseDirective(e[[3L]])
+	               } else if (length(e) == 4L) {
+	               		parseDirective(e[[4L]])
+	              	}
+	             },
                "{" =  for (ee in as.list(e[-1L])) parseDirective(ee),
                "=" =,
                "<-" = {
@@ -870,19 +940,27 @@ get_package_info_by_path = function(path) {
 
 
 # == title
-# Get functions that are imported to child packages
+# Get functions that are imported to its child packages
 #
 # == param
 # -package Package name.
 #
+# == details
+# The information is based on pre-computated results for a specific CRAN/Bioconductor snapshot. See `pkgndep`$heaviness_db_version for how to set the version of the snapshot.
+#
 # == value
-# It returns a list of names of functions that are imported to every of its child packages.
+# It returns a list of function names that are imported to every of its child packages.
+#
+# == example
+# \dontrun{
+# get_all_functions_imported_to_children("circlize")
+# }
 get_all_functions_imported_to_children = function(package) {
 	
 	load_all_pkg_dep()
-	lt = env$all_pkg_dep
+	lt = ENV$all_pkg_dep
 
-	children = unique(child_dependency(package, fields = c("Depends", "LinkingTo", "Imports"), snapshot = TRUE)[, 2])
+	children = unique(child_dependency(package, fields = c("Depends", "LinkingTo", "Imports"), online = FALSE)[, 2])
 
 	fl = list()
 	for(p in children) {

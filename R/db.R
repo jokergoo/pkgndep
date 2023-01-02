@@ -1,18 +1,35 @@
 
-prepare_db = function(lib = NULL, verbose = TRUE) {
+get_bioc_repo = function(version) {
+	if(as.numeric_version(version) < as.numeric_version("1.8")) {
+		stop("Bioc 'version' should be no earlier than 1.8.")
+	}
+	version = as.character(version)
+	
+	c("BioCsoft" = paste0("https://bioconductor.org/packages/", version, "/bioc"),
+      "BioCann"  = paste0("https://bioconductor.org/packages/", version, "/data/annotation"),
+      "BioCexp"  = paste0("https://bioconductor.org/packages/", version, "/data/experiment")
+     )
+}
 
-	op = getOption("repo")
-	on.exit(options(repo = op))
+prepare_db = function(lib = NULL, bioc_version = pkgndep_opt$bioc_version, verbose = TRUE) {
 
-	bioc_version = pkgndep_opt$bioc_version
-	suppressMessages(repos <- BiocManager::repositories(version = bioc_version))
-	repos = repos[intersect(names(repos), c("BioCsoft", "BioCann", "BioCexp", "CRAN"))]
-	if(verbose) qqcat("retrieve package database from CRAN/Bioconductor(@{bioc_version})...\n")
+	op = getOption("repos")
+	on.exit(options(repos = op))
+	
+	cran_repo = getOption("repos")[["CRAN"]]
+	if(!grepl("http", cran_repo, ignore.case = TRUE)) {
+		chooseCRANmirror(ind = 1)
+		cran_repo = getOption("repos")[["CRAN"]]
+	}
+	bioc_repo = get_bioc_repo(bioc_version)
+	repos = c(cran_repo, bioc_repo)
+
+	if(verbose) qqcat("retrieve package database from CRAN/Bioconductor (@{bioc_version})...\n")
 	oe = try(suppressMessages(db_remote <- available.packages(repos = repos)))
 
 	if(inherits(oe, "try-error") || nrow(db_remote) == 0) {
 		warning("Can not load package database from remote repositories, use the snapshot database.")
-		return(load_from_pkgndep_db("pkg_db_snapshot.rds"))
+		return(load_from_heaviness_db(paste0("pkg_db_snapshot", pkgndep_opt$heaviness_db_version, ".rds")))
 	}
 
 	db_fields = c("Package", "Version", "Depends", "Imports", "LinkingTo", "Suggests", "Enhances", "Repository")
@@ -60,6 +77,7 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 #
 # == param
 # -db A data frame returned from `utils::available.packages` or `utils::installed.packages`.
+# -version Version of the database, a self-defined text.
 #
 # == details
 # It reformats the data frame of the package database into a ``pkg_db`` class object.
@@ -78,7 +96,7 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 # db2 = reformat_db(db)
 #
 # # a pkg_db object generated on 2021-10-28 can be loaded by load_pkg_db()
-# db2 = load_pkg_db(snapshot = TRUE)
+# db2 = load_pkg_db(online = FALSE)
 # db2
 # db2$get_meta("ComplexHeatmap")
 # db2$get_dependency_table("ComplexHeatmap")
@@ -86,7 +104,7 @@ prepare_db = function(lib = NULL, verbose = TRUE) {
 # db2$package_dependencies("ComplexHeatmap")
 # db2$package_dependencies("ComplexHeatmap", recursive = TRUE)
 # }
-reformat_db = function(db) {
+reformat_db = function(db, version = NULL) {
 
 	get_package_list_from_text = function(x) {
 		if(is.na(x)) {
@@ -95,6 +113,10 @@ reformat_db = function(db) {
 		x = gsub("\\s*\\(.*?\\)", "", x)
 		x = strsplit(x, "\\s*,\\s*")[[1]]
 		setdiff(x, c("R", ""))
+	}
+
+	if(any(duplicated(db[, "Package"]))) {
+		stop_wrap("Package should be unique in the table.")
 	}
 
 	n = nrow(db)
@@ -133,7 +155,8 @@ reformat_db = function(db) {
 		dependency = lt,
 		rev_dependency = lt_rev,
 		dep_ind_hash = hash::hash(names(lt), seq_along(lt)),
-		rev_dep_ind_hash = hash::hash(names(lt_rev), seq_along(lt_rev))
+		rev_dep_ind_hash = hash::hash(names(lt_rev), seq_along(lt_rev)),
+		version = version
 	)
 }
 
@@ -144,7 +167,8 @@ pkg_db = setRefClass("pkg_db",
 		"dependency" = "list",
 		"rev_dependency" = "list",
 		"dep_ind_hash" = "ANY",
-		"rev_dep_ind_hash" = "ANY"
+		"rev_dep_ind_hash" = "ANY",
+		"version" = "ANY"
 	),
 	methods = list(
 		show = function() {
@@ -157,8 +181,13 @@ pkg_db = setRefClass("pkg_db",
 			if("Repository" %in% colnames(.self$meta)) {
 				n1 = sum(grepl("(bioc|books|annotation|experiment|workflows)/src/contrib$", .self$meta$Repository))
 				n2 = sum(grepl("src/contrib$", .self$meta$Repository)) - n1
+
+				if(n1 == 0 && n2 == 0) {
+					n1 = sum(.self$meta$Repository == "Bioconductor")
+					n2 = sum(.self$meta$Repository == "CRAN")
+				}
 				n3 = nrow(.self$meta) - n1 - n2
-				qqcat("  - @{n1} Bioconductor / @{n2} CRAN / @{n3} other packages.\n")
+				qqcat("  - @{n2} CRAN / @{n1} Bioconductor / @{n3} other packages.\n")
 			}
 		})
 )
@@ -209,9 +238,33 @@ pkg_db$methods(
 		colnames(empty_tb) = c("package", "dependency", "dep_fields")
 
 		if(reverse) {
-			tb = .self$get_rev_dependency_table(package)
-			if(is.null(tb)) tb = empty_tb
-			tb = tb[tb[, "dep_fields"] %in% which, , drop = FALSE]
+			if(recursive) {
+				tb = .self$get_rev_dependency_table(package)
+				if(is.null(tb)) tb = empty_tb
+				tb = tb[tb[, "dep_fields"] %in% which, , drop = FALSE]
+
+				if(nrow(tb) > 0) {
+					tbl = list(tb)
+					dep_pkg = tb[, "package"]
+					while(length(dep_pkg)) {
+						tbl2 = lapply(dep_pkg, function(p) {
+							tb = .self$get_rev_dependency_table(p)
+							if(is.null(tb)) tb = empty_tb
+							tb = tb[tb[, "dep_fields"] %in% which, , drop = FALSE]
+							tb
+						})
+						tbl2 = tbl2[sapply(tbl2, nrow) > 0]
+
+						tbl = c(tbl, tbl2)
+						dep_pkg = setdiff(unique(unlist(lapply(tbl2, function(x) x[, "package"]))), unlist(lapply(tbl, function(x) x[, "dependency"])))
+					}
+					tb = do.call(rbind, tbl)
+				}	
+			} else {
+				tb = .self$get_rev_dependency_table(package)
+				if(is.null(tb)) tb = empty_tb
+				tb = tb[tb[, "dep_fields"] %in% which, , drop = FALSE]
+			}
 
 			if(simplify) {
 				tb[, "package"][!duplicated(tb[, "package"])]
@@ -231,12 +284,13 @@ pkg_db$methods(
 						tbl2 = lapply(dep_pkg, function(p) {
 							tb = .self$get_dependency_table(p)
 							if(is.null(tb)) tb = empty_tb
-							tb[tb[, "dep_fields"] %in% which, , drop = FALSE]
+							tb = tb[tb[, "dep_fields"] %in% which, , drop = FALSE]
+							tb
 						})
 						tbl2 = tbl2[sapply(tbl2, nrow) > 0]
 
 						tbl = c(tbl, tbl2)
-						dep_pkg = unique(unlist(lapply(tbl2, function(x) x[, "dependency"])))
+						dep_pkg = setdiff(unique(unlist(lapply(tbl2, function(x) x[, "dependency"]))), unlist(lapply(tbl, function(x) x[, "package"])))
 					}
 					tb = do.call(rbind, tbl)
 				}				
@@ -254,3 +308,27 @@ pkg_db$methods(
 		}
 	}
 )
+
+validate_pkg_db = function(db) {
+	all_pkgs = names(db$dependency)
+
+	lt = list()
+
+	all_strong = lapply(db$dependency, function(x) x[x[, "dep_fields"] %in% c("Depends", "Imports", "LinkingTo"), "dependency"])
+	all_strong = unique(unlist(all_strong))
+	not_in = setdiff(all_strong, all_pkgs)
+	lt$strong = not_in
+
+	all = lapply(db$dependency, function(x) x[x[, "dep_fields"] %in% c("Suggests"), "dependency"])
+	all = unique(unlist(all))
+	not_in = setdiff(all, all_pkgs)
+	lt$suggests = not_in
+
+	all = lapply(db$dependency, function(x) x[x[, "dep_fields"] %in% c("Enhances"), "dependency"])
+	all = unique(unlist(all))
+	not_in = setdiff(all, all_pkgs)
+	lt$enhances = not_in
+
+	return(lt)
+}
+

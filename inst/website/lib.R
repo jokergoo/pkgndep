@@ -1,10 +1,4 @@
 
-CUTOFF = list()
-CUTOFF$adjusted_max_heaviness_from_parents = c(50, 60)
-CUTOFF$adjusted_total_heaviness_from_parents = c(70, 90)
-CUTOFF$adjusted_heaviness_on_children = c(15, 30)
-CUTOFF$adjusted_heaviness_on_indirect_downstream = c(10, 20)
-
 page_select = function(current_page, n_page, param_str = '') {
 	pages = seq(current_page - 4, current_page + 4)
 	n_select = length(pages)
@@ -79,6 +73,14 @@ html_template = function(template, vars = list()) {
 	paste(readLines(f), collapse = "\n")
 }
 
+version_select = function() {
+	version = pkgndep_opt$heaviness_db_version
+	options = qq("<option value='@{ALL_BIOC_RELEASES$Date}'>@{ALL_BIOC_RELEASES$Date} (R version @{ALL_BIOC_RELEASES$R}, Bioc @{ALL_BIOC_RELEASES$Release})</option>", collapse = FALSE)
+	i = which(ALL_BIOC_RELEASES$Date == version)
+	options[i] = qq("<option value='@{ALL_BIOC_RELEASES$Date[i]}' selected>@{ALL_BIOC_RELEASES$Date[i]} (R version @{ALL_BIOC_RELEASES$R[i]}, Bioc @{ALL_BIOC_RELEASES$Release[i]})</option>")
+	paste(options, collapse = "\n")
+}
+
 # html for main page
 html_main_page = function(response, package = "", order_by = NULL, page = 1, records_per_page = 20, only_reducible = FALSE, 
 	exclude_children = FALSE) {
@@ -93,6 +95,8 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 	response$write(html_template("header", 
 		vars = list(title = "Dependency table",
 			        all_pkgs = df$package,
+			        version_select_txt = version_select(),
+			        url = "main",
 			        package = package)))
 
 	if(is.null(order_by)) {
@@ -103,8 +107,8 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 		order_by = "adjusted_heaviness_on_children"
 	}
 
-	n_cran = sum(!grepl('bioconductor', df$repository))
-	n_bioc = sum(grepl('bioconductor', df$repository))
+	n_cran = sum(!grepl('bioconductor', df$repository, ignore.case = TRUE))
+	n_bioc = sum(grepl('bioconductor', df$repository, ignore.case = TRUE))
 
 	if(only_reducible) {
 		df = df[df$reducible, , drop = FALSE]
@@ -135,12 +139,9 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 	}
 
 	if(nrow(df2) > 0) {
-		
 		pkgs = df2[, 1]
 		df2[, 1] = qq("<a href='package?package=@{pkgs}'>@{pkgs}</a>", collapse = FALSE)
-		l = df2[, "adjusted_heaviness_on_children"] >= CUTOFF$adjusted_heaviness_on_children[1] & df2[, "adjusted_heaviness_on_children"] < CUTOFF$adjusted_heaviness_on_children[2]
-		df2[l, 1] = paste0("<span class='heaviness-median'>", df2[l, 1], "</span>")
-		l = df2[, "adjusted_heaviness_on_children"] >= CUTOFF$adjusted_heaviness_on_children[2]
+		l = df2[, "adjusted_heaviness_on_children"] >= CUTOFF$adjusted_heaviness_on_children
 		df2[l, 1] = paste0("<span class='heaviness-high'>", df2[l, 1], "</span>")
 
 		df2[, "max_heaviness_from_parents"] = round(df2[, "max_heaviness_from_parents"], 1)
@@ -171,7 +172,7 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 				"heaviness_on_children",  "n_children", 
 				"heaviness_on_downstream", "n_downstream"), drop = FALSE]
 		}
-		df2$repository = ifelse(grepl("bioconductor", df2$repository), "Bioconductor", "CRAN")
+		df2$repository = ifelse(grepl("bioconductor", df2$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 
 		response$write(html_template("dependency_table",
 			vars = list(df = df,
@@ -197,7 +198,6 @@ html_main_page = function(response, package = "", order_by = NULL, page = 1, rec
 
 html_single_package = function(response, package) {
 
-	load_pkg_db(snapshot = TRUE)
 	lt = load_all_pkg_dep()
 
 	df = load_pkg_stat_snapshot()
@@ -206,6 +206,8 @@ html_single_package = function(response, package) {
 		response$write(html_template("header",
 			vars = list(title = qq("Dependency heatmap"),
 			all_pkgs = df$package,
+			version_select_txt = version_select(),
+			url = qq("package?package=@{package}"),
 			package = "")))
 
 		response$write(html_template("error",
@@ -220,6 +222,8 @@ html_single_package = function(response, package) {
 		response$write(html_template("header",
 			vars = list(title = qq("Dependency heatmap"),
 			all_pkgs = df$package,
+			version_select_txt = version_select(),
+			url = qq("package?package=@{package}"),
 			package = "")))
 
 		if(package %in% BASE_PKGS) {
@@ -235,7 +239,11 @@ html_single_package = function(response, package) {
 		response$write(html_template("header",
 			vars = list(title = qq("Dependency heatmap for package '@{pkg$package}'"),
 			all_pkgs = df$package,
-			package = "")))
+			version_select_txt = version_select(),
+			url = qq("package?package=@{package}"),
+			package = ""
+			)
+		))
 
 	}
 
@@ -484,7 +492,7 @@ html_parent_dependency = function(response, package, page) {
 
 html_child_dependency = function(response, package, page, records_per_page = 20, child_dep_prioritize_reducible = FALSE, child_dep_internal_ordering = FALSE) {
 
-	pkg_db_snapshot = load_pkg_db(snapshot = TRUE)
+	pkg_db_snapshot = load_pkg_db(online = FALSE)
 
 	lt = load_all_pkg_dep()
 	pkg = lt[[package]]
@@ -587,6 +595,12 @@ html_global_heaviness_analysis = function(response) {
 }
 
 
+html_timeline = function(response) {
+
+	response$write(html_template("timeline"))
+}
+
+
 network_in_json = function(edge) {
 	node = unique(c(edge[, 1], edge[, 2]))
 	node_lt = lapply(node, function(x) {
@@ -613,15 +627,16 @@ network_in_json = function(edge) {
 make_heaviness_plot = function() {
 
 	df = load_pkg_stat_snapshot()
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == pkgndep_opt$heaviness_db_version]
 
-	cat("  - generate plots for heaviness on child packages.\n")
+	# cat("  - generate plots for heaviness on child packages.\n")
 	png(paste0(env$figure_dir, "/plot-child-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	heaviness = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[2], "high", ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[1], "median", "low"))
+	df$heaviness = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, "high", "low")
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_children, heaviness_on_children, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[2], df$package, ""))) +
+		p = ggplot2::ggplot(df[df$n_children > 0, , drop = FALSE], ggplot2::aes(n_children, heaviness_on_children, color = heaviness, 
+				label = ifelse(adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
@@ -634,12 +649,12 @@ make_heaviness_plot = function() {
 	dev.off()
 
 	png(paste0(env$figure_dir, "/plot-child-adjusted-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	heaviness = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[2], "high", ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[1], "median", "low"))
+	df$heaviness = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, "high", "low")
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_children, adjusted_heaviness_on_children, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children[2], df$package, ""))) +
+		p = ggplot2::ggplot(df[df$n_children > 0, , drop = FALSE], ggplot2::aes(n_children, adjusted_heaviness_on_children, color = heaviness, 
+				label = ifelse(adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
@@ -651,14 +666,14 @@ make_heaviness_plot = function() {
 	})
 	dev.off()
 
-	cat("  - generate plots for heaviness on downstream packages.\n")
+	# cat("  - generate plots for heaviness on downstream packages.\n")
 	png(paste0(env$figure_dir, "/plot-downstream-no-children-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], "high", ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[1], "median", "low"))
+	df$heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, "high", "low")
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_indirect_downstream, heaviness_on_indirect_downstream, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], df$package, ""))) +
+		p = ggplot2::ggplot(df[df$n_indirect_downstream > 0, , drop = FALSE], ggplot2::aes(n_indirect_downstream, heaviness_on_indirect_downstream, color = heaviness, 
+				label = ifelse(adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
@@ -671,12 +686,12 @@ make_heaviness_plot = function() {
 	dev.off()
 
 	png(paste0(env$figure_dir, "/plot-downstream-no-children-adjusted-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], "high", ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[1], "median", "low"))
+	df$heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, "high", "low")
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_indirect_downstream, adjusted_heaviness_on_indirect_downstream, color = heaviness, 
-				label = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream[2], df$package, ""))) +
+		p = ggplot2::ggplot(df[df$n_indirect_downstream > 0, , drop = FALSE], ggplot2::aes(n_indirect_downstream, adjusted_heaviness_on_indirect_downstream, color = heaviness, 
+				label = ifelse(adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggplot2::scale_x_continuous(trans='log10') +
@@ -688,15 +703,15 @@ make_heaviness_plot = function() {
 	})
 	dev.off()
 
-	cat("  - generate plots for heaviness from parent packages.\n")
+	# cat("  - generate plots for heaviness from parent packages.\n")
 	png(paste0(env$figure_dir, "/plot-parent-max-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	v = df$adjusted_max_heaviness_from_parents
-	heaviness = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents[2], "high", ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents[1], "median", "low"))
+	df$heaviness = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents, "high", "low")
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_parents, max_heaviness_from_parents, color = heaviness, 
-				label = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents[2], df$package, ""))) +
+		p = ggplot2::ggplot(df[df$n_parents > 0, , drop = FALSE], ggplot2::aes(n_parents, max_heaviness_from_parents, color = heaviness, 
+				label = ifelse(adjusted_max_heaviness_from_parents >= CUTOFF$adjusted_max_heaviness_from_parents, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
@@ -709,12 +724,12 @@ make_heaviness_plot = function() {
 
 	png(paste0(env$figure_dir, "/plot-parent-adjusted-max-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	v = df$adjusted_max_heaviness_from_parents
-	heaviness = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents[2], "high", ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents[1], "median", "low"))
+	df$heaviness = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents, "high", "low")
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_parents, v, color = heaviness, 
-				label = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents[2], df$package, ""))) +
+		p = ggplot2::ggplot(df[df$n_parents > 0, , drop = FALSE], ggplot2::aes(n_parents, max_heaviness_from_parents, color = heaviness, 
+				label = ifelse(adjusted_max_heaviness_from_parents >= CUTOFF$adjusted_max_heaviness_from_parents, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
 			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
@@ -725,43 +740,7 @@ make_heaviness_plot = function() {
 	})
 	dev.off() 
 
-	png(paste0(env$figure_dir, "/plot-parent-total-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	v = df$adjusted_total_heaviness_from_parents
-	heaviness = ifelse(v >= CUTOFF$adjusted_total_heaviness_from_parents[2], "high", ifelse(v >= CUTOFF$adjusted_total_heaviness_from_parents[1], "median", "low"))
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
-	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_parents, total_heaviness_from_parents, color = heaviness, 
-				label = ifelse(v >= CUTOFF$adjusted_total_heaviness_from_parents[2], df$package, ""))) +
-			ggplot2::geom_point() + 
-			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
-			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
-			ggplot2::labs(x = "Number of parent packages", y = "Total heaviness from parents") +
-			ggplot2::ggtitle("Total heaviness from parents") +
-			ggplot2::facet_wrap(ggplot2::vars(repo))
-		ggplot2:::print.ggplot(p)
-	})
-	dev.off()
-
-	png(paste0(env$figure_dir, "/plot-parent-adjusted-total-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
-	v = df$adjusted_total_heaviness_from_parents
-	heaviness = ifelse(v >= CUTOFF$adjusted_total_heaviness_from_parents[2], "high", ifelse(v >= CUTOFF$adjusted_total_heaviness_from_parents[1], "median", "low"))
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
-	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
-	suppressWarnings({
-		p = ggplot2::ggplot(df, ggplot2::aes(n_parents, v, color = heaviness, 
-				label = ifelse(v >= CUTOFF$adjusted_total_heaviness_from_parents[2], df$package, ""))) +
-			ggplot2::geom_point() + 
-			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
-			ggrepel::geom_text_repel(min.segment.length = 0, box.padding = 0.5, max.overlaps = Inf, show.legend = FALSE, size =3) +
-			ggplot2::labs(x = "Number of parent packages", y = "Adjusted total heaviness from parents") +
-			ggplot2::ggtitle("Adjusted total heaviness from parents") +
-			ggplot2::facet_wrap(ggplot2::vars(repo))
-		ggplot2:::print.ggplot(p)
-	})
-	dev.off() 
-
-	cat("  - generate plots for comparing downstream and indirect downstream (exluding children) packages.\n")
+	# cat("  - generate plots for comparing downstream and indirect downstream (exluding children) packages.\n")
 	png(paste0(env$figure_dir, "/plot-compare-downstream-and-downstream2.png"), width = 800*1.5, height = 500*1.5, res = 72*2)
 	grid.newpage()
 	pushViewport(viewport(layout = grid.layout(nrow = 1, ncol = 2)))
@@ -786,7 +765,8 @@ make_heaviness_plot = function() {
 	png(paste0(env$figure_dir, "/plot-top-500-children-downstream-pct.png"), width = 800*1.5, height = 500*1.5, res = 72*2)
 	ind = intersect(order(-df$heaviness_on_children)[1:500], order(-df$heaviness_on_downstream)[1:500])
 	r = sort(df$n_children[ind]/df$n_downstream[ind])
-	p = ggplot(data.frame(x = seq_along(ind), y = r), aes(x = x, y = y)) +
+
+	p = ggplot(data.frame(x = seq_along(r), y = r), aes(x = x, y = y)) +
 	    geom_point() + geom_line() +
 	    labs(x = "Packages ordered by the fraction", y = "fraction = n_child/n_downstream") +
 	    ggtitle("Fraction of child in downstream of top packages with the highest heaviness")
@@ -794,7 +774,7 @@ make_heaviness_plot = function() {
 	dev.off()
 
 	N = nrow(df)
-	lta = load_from_pkgndep_db("adjusted_heaviness_select_a.rds")
+	lta = load_from_heaviness_db(qq("adjusted_heaviness_select_a_@{bioc_version}.rds"))
 	png(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-children.png"), width = 600*1.5, height = 500*1.5, res = 72*2)
 	d1 = lta$children; d1$v = 1 - d1$v/N
 	p1 = ggplot(d1, aes(x = a, y = v)) + geom_point() + geom_line() + geom_vline(xintercept= 10, col = "red", lty =2) +
@@ -896,4 +876,171 @@ add_transparency = function (col, transparency = 0) {
     rgb(t(col2rgb(col)/255), alpha = 1 - transparency)
 }
 
+html_show_description = function(response, package) {
+	date = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == date]
+	lt_desc = load_from_heaviness_db(qq("pkg_description_@{bioc_version}.rds"))
+
+	lt = load_all_pkg_dep()
+	pkg = lt[[package]]
+	if(is.null(pkg)) {
+		txt = paste0("No package called ", package)
+	} else {
+		if(grepl("bioconductor", pkg$repository, ignore.case = TRUE)) {
+			nm = paste0(bioc_version, "/", package, "_", pkg$version)
+		} else {
+			nm = paste0(package, "_", pkg$version)
+		}
+
+		if(is.null(lt_desc[[nm]])) {
+			txt = paste0("No DESCRIPTION file for ", nm)
+		} else {
+			txt = paste(lt_desc[[nm]], collapse = "\n")
+		}
+	}
+	response$write(paste0("<pre>\n", txt, "</pre>"))
+}
+
+html_show_namespace = function(response, package) {
+	date = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == date]
+	lt_desc = load_from_heaviness_db(qq("pkg_namespace_@{bioc_version}.rds"))
+
+	lt = load_all_pkg_dep()
+	pkg = lt[[package]]
+	if(is.null(pkg)) {
+		txt = paste0("No package called ", package)
+	} else {
+		if(grepl("bioconductor", pkg$repository, ignore.case = TRUE)) {
+		nm = paste0(bioc_version, "/", package, "_", pkg$version)
+		} else {
+			nm = paste0(package, "_", pkg$version)
+		}
+
+		if(is.null(lt_desc[[nm]])) {
+			txt = paste0("No NAMESPACE file for ", nm)
+		} else {
+			txt = paste(lt_desc[[nm]], collapse = "\n")
+		}
+	}
+
+	response$write(paste0("<pre>\n", txt, "</pre>"))
+}
+
+html_compare_to_other_versions = function(response, package) {
+	lt = load_lt_history()
+
+	if(is.null(lt[[package]])) {
+		html = paste0("No package called ", package)
+	} else {
+		tb = lt[[package]]
+		rownames(tb) = NULL
+		fields = c("version", "n_by_strong", "n_by_all", "n_parents", "max_heaviness_from_parents", "n_children",
+			"heaviness_on_children", "n_downstream", "heaviness_on_downstream", "n_indirect_downstream", "heaviness_on_indirect_downstream")
+
+		tb = tb[, fields]
+		colnames(tb) = c("Version", "N_strong", "N_all", "N_p", "MHP", "N_c", "HC", "N_d", "HD", "N_id", "HID", "Date")
+		tb = tb[, c("Date", "Version", "N_strong", "N_all", "N_p", "MHP", "N_c", "HC", "N_d", "HD", "N_id", "HID")]
+
+		col_def = c("N_strong" = "Number of strong dependencies",
+		            "N_all" = "Number of total dependencies",
+		            "N_p" = "Number of direct strong parents",
+		            "MHP" = "Max heaviness from parents",
+		            "N_c" =  "Number of child packages",
+		            "HC" = "Heaviness on children",
+		            "N_d" = "Number of downstream packages",
+		            "HD" = "Heaviness on downstream",
+		            "N_id" = "Number of indirect downstream packages",
+		            "HID" = "Heaviness on indirect downstream")
+		i = tb$Date == pkgndep_opt$heaviness_db_version
+		
+		## make the plots
+		trg = range(as.Date(ALL_BIOC_RELEASES$Date))
+		tmp_file = tempfile(fileext = ".png")
+		png(tmp_file, width = 800*2, height = 1500*2, res = 140)
+		layout(matrix(1:15, nrow = 5, byrow = TRUE), widths = c(0.8, 4, 4))
+		for(field in c("N_strong", "N_all", "N_p", "MHP", "N_c", "HC", "N_d", "HD", "N_id", "HID")) {
+			if(field == "N_strong") {
+				par(mar = c(4, 0, 4, 0))
+				plot(NULL, xlim = c(0, 1), ylim = c(0, 1), ann = FALSE, axes = FALSE, type = "n")
+				text(0.5, 0.5, "Number of upstream dependencies", cex = 1.75, srt = 90)
+				par(mar= c(4, 4, 4, 1))
+			}
+			if(field == "N_p") {
+				par(mar = c(4, 0, 4, 0))
+				plot(NULL, xlim = c(0, 1), ylim = c(0, 1), ann = FALSE, axes = FALSE, type = "n")
+				text(0.5, 0.5, "Heaviness from parents", cex = 1.75, srt = 90)
+				par(mar= c(4, 4, 4, 1))
+			}
+			if(field == "N_c") {
+				par(mar = c(4, 0, 4, 0))
+				plot(NULL, xlim = c(0, 1), ylim = c(0, 1), ann = FALSE, axes = FALSE, type = "n")
+				text(0.5, 0.5, "Heaviness on children", cex = 1.75, srt = 90)
+				par(mar= c(4, 4, 4, 1))
+			}
+			if(field == "N_d") {
+				par(mar = c(4, 0, 4, 0))
+				plot(NULL, xlim = c(0, 1), ylim = c(0, 1), ann = FALSE, axes = FALSE, type = "n")
+				text(0.5, 0.5, "Heaviness on downstream", cex = 1.75, srt = 90)
+				par(mar= c(4, 4, 4, 1))
+			}
+			if(field == "N_id") {
+				par(mar = c(4, 0, 4, 0))
+				plot(NULL, xlim = c(0, 1), ylim = c(0, 1), ann = FALSE, axes = FALSE, type = "n")
+				text(0.5, 0.5, "Heaviness on indirect downstream", cex = 1.75, srt = 90)
+				par(mar= c(4, 4, 4, 1))
+			}
+
+			if(all(tb[[field]] == 0)) {
+				plot(as.Date(tb$Date), tb[[field]], xlim = trg, ylim = c(0, 1), type = "h", xlab = "Version/Date of the db snapshot", ylab = field, main = col_def[field])
+			} else {
+				plot(as.Date(tb$Date), tb[[field]], xlim = trg, type = "h", xlab = "Version/Date of the db snapshot", ylab = field, main = col_def[field])	
+			}
+			points(as.Date(tb$Date), tb[[field]], pch = 16, cex = 1)
+			points(as.Date(tb$Date)[i], tb[[field]][i], pch = 16, cex = 1.5, col = "red")
+			lines(as.Date(tb$Date)[i], tb[[field]][i], type = "h", col = "red")
+		}
+		dev.off()
+
+		ddd = qq("<a id='selected_version' href='change_version?version=@{tb$Date[i]}&url=package?package=@{package}'>@{tb$Date[i]}</a>")
+		tb$Date = qq("<a href='change_version?version=@{tb$Date}&url=package?package=@{package}'>@{tb$Date}</a>", collapse = FALSE)
+		tb$Date[i] = ddd
+		tb$HC = round(tb$HC, 1)
+		tb$HD = round(tb$HD, 1)
+		tb$HID = round(tb$HID, 1)
+		html = knitr::kable(tb, format = "html", table.attr = "class='table table-striped' id='version-table'", escape = FALSE)
+		html = as.character(html)
+
+		html = paste0(qq("
+<details style='margin-bottom:20px;'>
+<summary>Columns in the table</summary>
+<ul>
+<li><b>Date</b>: Date of the CRAN/Bioconductor snapshot.</li>
+<li><b>Version</b>: Version of <span>@{package}</span>.</li>
+<li><b>N_strong</b>: Number of strong dependencies.</li>
+<li><b>N_all</b>: Number of total dependencies.</li>
+<li><b>N_p</b>: Number of direct strong parents.</li>
+<li><b>MHP</b>: Max heaviness from parents.</li>
+<li><b>N_c</b>: Number of child packages.</li>
+<li><b>HC</b>: Heaviness on children.</li>
+<li><b>N_d</b>: Number of downstream packages.</li>
+<li><b>HD</b>: Heaviness on downstream.</li>
+<li><b>N_id</b>: Number of indirect downstream packages.</li>
+<li><b>HID</b>: Heaviness on indirect downstream.</li>
+</ul>
+</details>
+		"), html)
+
+		html = paste0(html, "<h3>Distribution of each metric</h3><p>", img(tmp_file, style="width:1000px"), "</p>",
+		"<script>
+		$('#selected_version').parent().parent().css('background', '#FFCECE');
+		$('#version-table a').click(function() {
+			load_version_change();
+		});
+		</script>"
+		)
+		file.remove(tmp_file)
+	}
+	response$write(html)
+}
 

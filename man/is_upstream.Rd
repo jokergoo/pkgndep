@@ -1,10 +1,10 @@
 \name{is_upstream}
 \alias{is_upstream}
 \title{
-Test upstream - downstream relationship
+Test upstream-downstream relationship
 }
 \description{
-Test upstream - downstream relationship
+Test upstream-downstream relationship
 }
 \usage{
 is_upstream(upstream, package, ...)

@@ -7,18 +7,16 @@ Package dependency analysis
 Package dependency analysis
 }
 \usage{
-pkgndep(package, load = FALSE, verbose = TRUE, online = TRUE)
+pkgndep(package, verbose = TRUE, online = TRUE, load = FALSE, parse_namespace = TRUE)
 }
 \arguments{
 
-  \item{package}{Package name. The value should be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.}
-  \item{load}{Check which other packages are loaded into R session (directly or indirectly) when loading \code{pkg}. }
+  \item{package}{Package name. The value can be 1. a CRAN/Bioconductor package, 2. an installed package, 3. a path of a local package, 4. URL of a GitHub repository.}
   \item{verbose}{Whether to show messages.}
-  \item{online}{If the value is \code{TRUE}, it will directly use the package database file from CRAN/Bioconductor. If the  value is \code{FALSE}, it uses the cached package database retrieved on 2021-10-28.}
+  \item{online}{If the value is \code{TRUE}, it will directly use the newest package database file from CRAN/Bioconductor. Note the default Bioconductor version is the one corresponding to the current R version. If you want to use a higher bioc version, you need to set the global option \code{pkgndep_opt$bioc_version}. If the value of \code{online} is \code{FALSE}, a snapshot of the CRAN/Bioconductor package database will be used. The version of the package database snapshot can be via the global option \code{\link{pkgndep_opt}}$heaviness_db_version.}
+  \item{load}{If the value is \code{TRUE}, the \code{package} is loaded into a fresh new R session and the function will check which upstream packages are also loaded into the R session. Note it is possible that an "Imports" package is not loaded or a "Suggests" package is loaded in the R session when loading \code{package}.}
+  \item{parse_namespace}{Whether to also parse the NAMESPACE file. It is only used internally.}
 
-}
-\details{
-The package database for dependency analysis is always directly retrieved from CRAN/Bioconductor.
 }
 \value{
 A \code{pkgndep} object.

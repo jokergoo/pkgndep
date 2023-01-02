@@ -10,7 +10,7 @@ The complete table of dependency heaviness for all CRAN/Bioconductor packages
 all_pkg_stat_snapshot()
 }
 \value{
-The columns are self-explanatory from the column names.
+The returned data frame is directly from \code{\link{load_pkg_stat_snapshot}}, but with only a subset of columns of heaviness metrics.
 }
 \examples{
 # There is no example

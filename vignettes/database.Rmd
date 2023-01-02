@@ -8,4 +8,4 @@ vignette: >
 ---
 
 
-Simply run the function `pkgndep::dependency_database()`.
+Simply run the function `pkgndep::heaviness_database()`.
