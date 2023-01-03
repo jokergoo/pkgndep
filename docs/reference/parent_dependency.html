@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -66,32 +69,34 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">parent_dependency</span><span class="op">(</span><span class="va">package</span>, fields <span class="op">=</span> <span class="cn">NULL</span>, snapshot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">parent_dependency</span><span class="op">(</span><span class="va">package</span>, fields <span class="op">=</span> <span class="cn">NULL</span>, online <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>package</dt>
 <dd><p>Package name.</p></dd>
-<dt>fields</dt>
-<dd><p>Which fields in DESCRIPTION? Values should be in <code>Depends</code>, <code>Imports</code>, <code>LinkingTo</code>, <code>Suggests</code> and <code>Enhances</code>.</p></dd>
-<dt>snapshot</dt>
-<dd><p>If it is <code>TRUE</code>, the package database generated on 2021-10-28 is used. If it is <code>FALSE</code>, the pakage database is directly retrieved from CRAN/Bioconductor.</p></dd>
+
+  <dt>fields</dt>
+<dd><p>Which fields in DESCRIPTION? Values should be in <code>Depends</code>, <code>Imports</code>, <code>LinkingTo</code>, <code>Suggests</code> and <code>Enhances</code>. The value can also be set to <code>strong</code> or <code>weak</code>.</p></dd>
+
+  <dt>online</dt>
+<dd><p>Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database?  The version of the pre-computated package database can be set via <code><a href="pkgndep_opt.html">pkgndep_opt</a></code>$heaviness_db_version.</p></dd>
+
+
 </dl></div>
-    <div id="details">
-    <h2>Details</h2>
-    <p>The dependency information is based on packages retrieved from CRAN/Bioconductor on 2021-10-28.</p>
-    </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with parent packages as well as their heaviness on <code>pacakge</code>. If <code>snapshot</code> is set to <code>FALSE</code>, heaviness on child packages
+    
+
+<p>A data frame with parent packages as well as their heaviness on <code>pacakge</code>. If <code>snapshot</code> is set to <code>FALSE</code>, heaviness on child packages
 is set to NA.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \dontrun{</span></span>
-<span class="r-in"><span class="fu">parent_dependency</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu">parent_dependency</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            parents       children dep_fields heaviness</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1          methods ComplexHeatmap    Depends         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2             grid ComplexHeatmap    Depends         0</span>
@@ -113,24 +118,24 @@ is set to NA.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18       codetools ComplexHeatmap    Imports         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19        testthat ComplexHeatmap   Suggests        30</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 20           knitr ComplexHeatmap   Suggests        10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21        markdown ComplexHeatmap   Suggests         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21        markdown ComplexHeatmap   Suggests         5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22        dendsort ComplexHeatmap   Suggests         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23            jpeg ComplexHeatmap   Suggests         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24            tiff ComplexHeatmap   Suggests         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25     fastcluster ComplexHeatmap   Suggests         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 26 EnrichedHeatmap ComplexHeatmap   Suggests        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27      dendextend ComplexHeatmap   Suggests        32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27      dendextend ComplexHeatmap   Suggests        31</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28        grImport ComplexHeatmap   Suggests         2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29       grImport2 ComplexHeatmap   Suggests         4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30            glue ComplexHeatmap   Suggests         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31   GenomicRanges ComplexHeatmap   Suggests         8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 32        gridtext ComplexHeatmap   Suggests        15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33        pheatmap ComplexHeatmap   Suggests        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33        pheatmap ComplexHeatmap   Suggests        12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34    gridGraphics ComplexHeatmap   Suggests         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 35          gplots ComplexHeatmap   Suggests         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36       rmarkdown ComplexHeatmap   Suggests        23</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36       rmarkdown ComplexHeatmap   Suggests        25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 37           Cairo ComplexHeatmap   Suggests         1</span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -145,7 +150,7 @@ is set to NA.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

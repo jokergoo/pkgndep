@@ -1,9 +1,18 @@
 
 <% df = load_pkg_stat_snapshot() 
 make_heaviness_plot()
+
+bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == pkgndep_opt$heaviness_db_version]
+lta = load_from_heaviness_db(qq("adjusted_heaviness_select_a_@{bioc_version}.rds"))
 %>
 
 <div style="width:1100px;">
+
+<% if(as.Date(pkgndep_opt$heaviness_db_version) < as.Date("2007-01-01")) { %>
+<div class="method"><p>Note: if the version of the heaviness database is too early, the heaviness analysis might make less sense due to the small size of the ecosystem.</p></div>
+
+<% } %>
+
 <br>
 <p>In this report, we study two questions on the package dependencies:</p>
 <ul>
@@ -23,8 +32,8 @@ would have more overlap (<i>i.e.</i>, dependencies from parent <i>A</i> overlap 
 <p>In the plot, we can see there are several packages far away from the cloud (highlighted in red and orange). These packages can be thought as those having extreamly heavy parents compared to most of the others. To
 capture these packages with heavy parents, we define <b>"adjusted max heaviness on parent packages"</b> as follows.</p>
 
-<div class="method"><p>For a package <i>P</i>, denote $h$ as the max heaviness from its parent packages. The adjusted heaviness is calculated as $ h^{adj} = h \cdot a $
-where $a$ is a zooming factor. $a$ is calculated as $a = (n+30)/n_{max}$ where $n$ is the number of parents for package <i>P</i> and $n_{max}$ is the maximal number of parents of all packages (<i>i.e.</i>, all CRAN/Bioconductor packages). The value of 30 is selected emperically to balance the zooming rate on different $n$.</p></div>
+<div class="method"><p>For a package <i>P</i>, denote $h$ as the max heaviness from its parent packages. The adjusted heaviness is calculated as $ h^\mathrm{adj} = h \cdot a $
+where $a$ is a zooming factor. $a$ is calculated as $a = (n+<%=lta$cutoff$max_heaviness_from_parents%>)/n_\mathrm{max}$ where $n$ is the number of parents for package <i>P</i> and $n_\mathrm{max}$ is the maximal number of parents of all packages (<i>i.e.</i>, all CRAN/Bioconductor packages). The value of <%=lta$cutoff$max_heaviness_from_parents%> is selected emperically to balance the zooming rate on different $n$.</p></div>
 
 <p>The zooming factor $a$ decreases the heaviness faster for small number of parents, thus, it actually transforms the original distribution of point cloud more horizontal so that it is easy to set a cutoff to mark extream points. The plot of adjusted heaviness verse number of parents can be seen by clicking the radio button <b>"Adjusted max heaviness verse number of parent packages"</b> below. 
 We simply mark a package as <span style="color:red">having highly heavy parents</span> if the adjusted heaviness larger than <%=CUTOFF$adjusted_max_heaviness_from_parents%>. The packages with highly heavy parents are listed
@@ -89,18 +98,18 @@ calculated as $h = \frac{1}{K} \sum_k^K(n_{1k} - n_{2k})$, which is the average 
 <p>Since the original heaviness is scaled by the number of children, it is possible that large $K$ generates a small heaviness. The heaviness on child package is adjusted by adding a small constant $a$ to $K$, so that heaviness for small $K$ decreases more quickly than large $K$.</p>
 
 <div class="method"><p>
-$h^{adj} = \frac{1}{K + a} \sum_k^K(n_{1k} - n_{2k})$
+$h^\mathrm{adj} = \frac{1}{K + a} \sum_k^K(n_{1k} - n_{2k})$
 </p></div> 
 
-<p>We emperically select 10 for $a$. Clicking on the following title to see how $a$ is selected.</p>
+<p>We emperically select <%=lta$cutoff$heaviness_on_children%> for $a$. Clicking on the following title to see how $a$ is selected.</p>
 
 <details><summary>How is <i>a</i> selected?</summary>
 
 <br>
-<p>It is easy to see that a decreases $h$ faster for smaller $K$ than larger $K$. To select an optimized value for $a$, we took $a$ as integers in the set {1, 2, …, 29, 30}; and for a specific package indexed as $k$ and a value of $a$, we calculated the adjusted heaviness on its child packages, denoted as $h_{k,a}^{adj}$ and the vector for all packages is denoted as $h_a^{adj}$. $a$ is selected as the value by which the ranking of adjusted heaviness of all packages becomes stable. To measure the stability of the ranking of $h_a^{adj}$ compared to $h_{a-1}^{adj}$, we calculate the stability score denoted as $s_a$ as $s_a=\frac{1}{N}\sum_k^NI(|R_{k,a}-R_{k,a-1}|\le50)$,
-where $N$ is the total number of packages in the ecosystem, $R_{k,a}$ and $R_{k,a-1}$ are the ranks of package $k$’s adjusted heaviness in $h_a^{adj}$ and $h_{a-1}^{adj}$ respectively, and $I()$ is the indicator function.</p>
+<p>It is easy to see that a decreases $h$ faster for smaller $K$ than larger $K$. To select an optimized value for $a$, we took $a$ as integers in the set {1, 2, …, 29, 30}; and for a specific package indexed as $k$ and a value of $a$, we calculated the adjusted heaviness on its child packages, denoted as $h_{k,a}^\mathrm{adj}$ and the vector for all packages is denoted as $h_a^\mathrm{adj}$. $a$ is selected as the value by which the ranking of adjusted heaviness of all packages becomes stable. To measure the stability of the ranking of $h_a^\mathrm{adj}$ compared to $h_{a-1}^\mathrm{adj}$, we calculate the stability score denoted as $s_a$ as $s_a=\frac{1}{N}\sum_k^NI(|R_{k,a}-R_{k,a-1}|\le<%=lta$children$rank_diff[1]%>)$,
+where $N$ is the total number of packages in the ecosystem, $R_{k,a}$ and $R_{k,a-1}$ are the ranks of package $k$’s adjusted heaviness in $h_a^\mathrm{adj}$ and $h_{a-1}^\mathrm{adj}$ respectively, and $I()$ is the indicator function.</p>
 
-<p>$s_a$, or its general denotation $s$, measures the proportion of packages whose ranking difference of adjusted heaviness is no larger than 50 in the two neighboring values of $a$ (50 is a small value compared to the total number of R packages in the ecosystem). When $s$ becomes stable with $a$, we can conclude increasing $a$ won't greatly change the ranking of $s$. Thus, based on the “knee” rule, $a$ was selected to 10.</p>
+<p>$s_a$, or its general denotation $s$, measures the proportion of packages whose ranking difference of adjusted heaviness is no larger than <%=lta$children$rank_diff[1]%> in the two neighboring values of $a$ (<%=lta$children$rank_diff[1]%> is a small value compared to the total number of R packages in the ecosystem). When $s$ becomes stable with $a$, we can conclude increasing $a$ won't greatly change the ranking of $s$. Thus, based on the “knee” rule, $a$ was selected to <%=lta$cutoff$heaviness_on_children%>.</p>
 
 <p><%= img(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-children.png"), style="height:500px")%></p>
 </details>
@@ -155,26 +164,26 @@ We also define <b>"adjusted heaviness on indirect downstream packages"</b>. The 
 <p>For a package <i>P</i>, assume it has $K$ downstream packages (also include child packages) and the $k^{th}$ downstream package is denoted
 as $B_k$. Denote $n_{1k}$ as the number of strong dependencies of package
 $B_k$. Since <i>P</i> can affect its downstream in an indirect manner, 
-we recalculate the global dependency relations for all packages by moving 
+we re-calculate the global dependency relations for all packages by moving 
 <i>P</i> to all its child packages' <code>Suggests</code>. Then we denote 
 $n_{2k}$ as the number of strong dependencies of $B_k$ in the modified dependency graph.
-Next we denote $S_c$ as the set of child packages of <i>P</i> and $K_c$ as the number of its child packages, thus $K \geq K_c$.
+Next we denote $S_\mathrm{c}$ as the set of child packages of <i>P</i> and $K_\mathrm{c}$ as the number of its child packages, thus $K \geq K_\mathrm{c}$.
 The adjusted heaviness of <i>P</i> on its indirect downstream packages (excluding child packages) denoted as $h$ is
-calculated as: $h = \frac{1}{K-K_c} \sum_{k}^K(n_{1k} - n_{2k}) \cdot I(B_{k} \notin S_c)$ where $I()$ is an indicator function. $h$ is set to 0 when $K = K_c$.
+calculated as: $h = \frac{1}{K-K_\mathrm{c}} \sum_{k}^K(n_{1k} - n_{2k}) \cdot I(B_{k} \notin S_\mathrm{c})$ where $I()$ is an indicator function. $h$ is set to 0 when $K = K_\mathrm{c}$.
 
 </div>
 
-<p>Then a small constant $a$ is added to $K - K_c$ to adjust the original heaviness:</p>
+<p>Then a small constant $a$ is added to $K - K_\mathrm{c}$ to adjust the original heaviness:</p>
 
 <div class="method"><p>
-$h^{adj} = \frac{1}{K-K_c + a} \sum_{k}^K(n_{1k} - n_{2k}) \cdot I(B_{k} \notin S_c)$</p>
+$h^\mathrm{adj} = \frac{1}{K-K_\mathrm{c} + a} \sum_{k}^K(n_{1k} - n_{2k}) \cdot I(B_{k} \notin S_\mathrm{c})$</p>
 </div> 
 
-<p>We emperically select 6 for $a$. Clicking on the following title to see how $a$ is selected.</p>
+<p>We emperically select <%=lta$cutoff$heaviness_on_indirect_downstream%> for $a$. Clicking on the following title to see how $a$ is selected.</p>
 
 <details><summary>How is <i>a</i> calculated?</summary>
 <br>
-<p>Similar method as in the section <b>Heaviness on child packages</b>. A value of 6 is taken as the optimized value of $a$.</p>
+<p>Similar method as in the section <b>Heaviness on child packages</b>. A value of <%=lta$cutoff$heaviness_on_indirect_downstream%> is taken as the optimized value of $a$.</p>
 
 <p><%= img(paste0(env$figure_dir, "/plot-select-a-adjusted-heaviness-downstream-no-children.png"), style="height:500px")%></p>
 </details>
@@ -212,7 +221,6 @@ We simply set a package <span style="color:red">having a highly heavy impact on 
 <p><%= img(paste0(env$figure_dir, "/plot-downstream-no-children-adjusted-heaviness.png"), style="height:500px")%></p>
 </div>
 
-<p>The figure shows CRAN packages have more affect on the dependencies of indirect downstream packages.</p>
 
 <h3>Why child packages are removed from downstream packages in the analysis?</h3>
 

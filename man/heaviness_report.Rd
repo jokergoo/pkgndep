@@ -21,6 +21,6 @@ The path of the HTML file of the report.
 \examples{
 if(interactive()) {
     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-    dependency_report(x)
+    heaviness_report(x)
 }
 }

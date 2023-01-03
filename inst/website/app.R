@@ -101,6 +101,14 @@ cat("- Load pre-calculated heaviness metrics of all packages.\n")
 CUTOFF = new.env()
 stat_df = load_pkg_stat_snapshot()
 
+cat("- Load DESCRIPTION and NAMESPACE of all packages.\n")
+load_pkg_description()
+load_pkg_namespace()
+
+load_heaviness_timeline()
+cat("- Load downstream dependency paths.\n")
+load_pkg_downstream_dependency_path_snapshot()
+
 v = stat_df$adjusted_max_heaviness_from_parents; v = v[v > 0]
 CUTOFF$adjusted_max_heaviness_from_parents = round(quantile(v, 1-min(25, length(v)*0.1)/length(v), na.rm = TRUE), 2)
 v = stat_df$adjusted_heaviness_on_children; v = v[v > 0]
@@ -411,6 +419,14 @@ httpd$add(name = "change_version",
 
 	cat("- Load pre-calculated heaviness metrics of all packages.\n")
 	stat_df = load_pkg_stat_snapshot()
+
+	cat("- Load DESCRIPTION and NAMESPACE of all packages.\n")
+	load_pkg_description()
+	load_pkg_namespace()
+
+	load_heaviness_timeline()
+	cat("- Load downstream dependency paths.\n")
+	load_pkg_downstream_dependency_path_snapshot()
 
 	v = stat_df$adjusted_max_heaviness_from_parents; v = v[v > 0]
 	CUTOFF$adjusted_max_heaviness_from_parents = round(quantile(v, 1-min(25, length(v)*0.1)/length(v), na.rm = TRUE), 2)

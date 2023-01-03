@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -66,23 +69,25 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">load_pkg_downstream_dependency_path_snapshot</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_pkg_downstream_dependency_path_snapshot</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="details">
     <h2>Details</h2>
-    <p>It loads the package dependency analysis for all CRAN/Biocondutor packages done on 2021-10-28.</p>
+    <p>It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via <code><a href="pkgndep_opt.html">pkgndep_opt</a></code>$heaviness_db_version.</p>
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list.</p>
+    
+
+<p>A list.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \dontrun{</span></span>
-<span class="r-in"><span class="va">downstream_path_list</span> <span class="op">=</span> <span class="fu">load_pkg_downstream_dependency_path_snapshot</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">downstream_path_list</span><span class="op">[[</span><span class="st">"ComplexHeatmap"</span><span class="op">]</span><span class="op">]</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">downstream_path_list</span> <span class="op">=</span> <span class="fu">load_pkg_downstream_dependency_path_snapshot</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">downstream_path_list</span><span class="op">[[</span><span class="st">"ComplexHeatmap"</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap"  "EnrichedHeatmap"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -108,48 +113,60 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap"        "GenomicSuperSignature"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[9]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "MKomics"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "IntLIM"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[10]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "MWASTools"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "MKomics"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[11]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "MatrixQCvis"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "MWASTools"     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[12]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap"      "TBSignatureProfiler"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "MatrixQCvis"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[13]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "armada"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "PeacoQC"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[14]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "conos"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap"      "TBSignatureProfiler"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[15]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "cytoKernel"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "armada"        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[16]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "gCrisprTools"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "conos"         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[17]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "iSEE"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "cytoKernel"    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[18]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "pkgndep"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "gCrisprTools"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[19]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "rKOMICS"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "iSEE"          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[20]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "tidyHeatmap"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "missoNet"      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[21]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "visxhclust"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "pkgndep"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[22]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "rKOMICS"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[23]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "tidyHeatmap"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[24]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "visxhclust"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[25]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "iSEE"           "iSEEhex"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[26]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ComplexHeatmap" "iSEE"           "iSEEu"         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -164,7 +181,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

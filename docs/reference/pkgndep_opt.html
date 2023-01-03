@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -66,37 +69,47 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">pkgndep_opt</span><span class="op">(</span><span class="va">...</span>, RESET <span class="op">=</span> <span class="cn">FALSE</span>, READ.ONLY <span class="op">=</span> <span class="cn">NULL</span>, LOCAL <span class="op">=</span> <span class="cn">FALSE</span>, ADD <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pkgndep_opt</span><span class="op">(</span><span class="va">...</span>, RESET <span class="op">=</span> <span class="cn">FALSE</span>, READ.ONLY <span class="op">=</span> <span class="cn">NULL</span>, LOCAL <span class="op">=</span> <span class="cn">FALSE</span>, ADD <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>...</dt>
 <dd><p>Arguments for the parameters, see "details" section</p></dd>
-<dt>RESET</dt>
+
+  <dt>RESET</dt>
 <dd><p>Reset to default values.</p></dd>
-<dt>READ.ONLY</dt>
+
+  <dt>READ.ONLY</dt>
 <dd><p>Please ignore.</p></dd>
-<dt>LOCAL</dt>
+
+  <dt>LOCAL</dt>
 <dd><p>Pllease ignore.</p></dd>
-<dt>ADD</dt>
+
+  <dt>ADD</dt>
 <dd><p>Please ignore.</p></dd>
+
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>There are following parameters:</p>
 <dl><dt><code>bioc_version</code></dt>
-<dd><p>The bioconductor version. By default it is the version corresponding to the R version under use.</p></dd>
+<dd><p>The bioconductor version. By default it is the version corresponding to the R version under use. Please note this option is only for switching between bioc release version and development version, while not for switching to very old bioc versions.</p></dd>
+
+  <dt><code>heaviness_db_version</code></dt>
+<dd><p>The version of the heaviness database. The value can be the corresponding bioc version, the R version or the corresponding date for the bioc release. All supported values are in the object <code><a href="ALL_BIOC_RELEASES.html">ALL_BIOC_RELEASES</a></code>.</p></dd>
 
 
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">pkgndep_opt</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Option       Value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ------------:-------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  bioc_version 3.15 </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">pkgndep_opt</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Option               Value     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  --------------------:------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  bioc_version         3.16      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  heaviness_db_version 2022-11-02</span>
 </code></pre></div>
     </div>
   </div>
@@ -111,7 +124,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

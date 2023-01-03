@@ -13,7 +13,7 @@
 # == example
 # if(interactive()) {
 #     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-#     dependency_report(x)
+#     heaviness_report(x)
 # }
 heaviness_report = function(pkg, file = NULL) {
 	
@@ -56,7 +56,14 @@ heaviness_report = function(pkg, file = NULL) {
 }
 
 
-
+# == title
+# HTML report for package dependency heaviness analysis
+#
+# == param
+# -... Pass to `heaviness_report`.
+#
+# == details
+# It is the same as `heaviness_report`.
 dependency_report = function(...) {
 	heaviness_report(...)
 }

@@ -195,8 +195,7 @@ load_pkg_db = function(lib = NULL, online = TRUE, db = NULL, verbose = TRUE) {
 	if(!is.null(db)) {
 		ENV$pkg_db = db
 		ENV$pkg_db_snapshot = db
-		ENV$pkg_db_snapshot_version =  pkgndep_opt$heaviness_db_version
-		pkgndep_opt$heaviness_db_version = "db_object"
+		ENV$pkg_db_snapshot_version = "db_object"
 		invisible(ENV$pkg_db)
 	} else {
 		if(online) {
@@ -241,5 +240,71 @@ load_heaviness_timeline = function() {
 	if(is.null(ENV$lt_history)) {
 		ENV$lt_history = load_from_heaviness_db("../lt_history.rds")
 	}
-	ENV$lt_history
+	invisible(ENV$lt_history)
 }
+
+
+# == title
+# Load DESCRIPTION files of all packages
+#
+# == details
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
+#
+# == value
+# A list of character vectors.
+#
+# == example
+# \dontrun{
+# lt = load_pkg_description()
+# lt[1:2]
+# }
+load_pkg_description = function() {
+	version = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
+	file = paste0("pkg_description_", bioc_version, ".rds")
+	if(is.null(ENV$pkg_description)) {
+		lt = load_from_heaviness_db(file)
+		ENV$pkg_description = lt
+		ENV$pkg_db_snapshot_version = version
+	} else {
+		if(ENV$pkg_db_snapshot_version != version) {
+			lt = load_from_heaviness_db(file)
+			ENV$pkg_description = lt
+			ENV$pkg_db_snapshot_version = version
+		}
+	}
+	invisible(ENV$pkg_description)
+}
+
+# == title
+# Load NAMESPACE files of all packages
+#
+# == details
+# It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via `pkgndep_opt`$heaviness_db_version.
+#
+# == value
+# A list of character vectors.
+#
+# == example
+# \dontrun{
+# lt = load_pkg_namespace()
+# lt[1:2]
+# }
+load_pkg_namespace = function() {
+	version = pkgndep_opt$heaviness_db_version
+	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
+	file = paste0("pkg_namespace_", bioc_version, ".rds")
+	if(is.null(ENV$pkg_description)) {
+		lt = load_from_heaviness_db(file)
+		ENV$pkg_description = lt
+		ENV$pkg_db_snapshot_version = version
+	} else {
+		if(ENV$pkg_db_snapshot_version != version) {
+			lt = load_from_heaviness_db(file)
+			ENV$pkg_description = lt
+			ENV$pkg_db_snapshot_version = version
+		}
+	}
+	invisible(ENV$pkg_description)
+}
+

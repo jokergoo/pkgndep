@@ -728,7 +728,7 @@ make_heaviness_plot = function() {
 	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
-		p = ggplot2::ggplot(df[df$n_parents > 0, , drop = FALSE], ggplot2::aes(n_parents, max_heaviness_from_parents, color = heaviness, 
+		p = ggplot2::ggplot(df[df$n_parents > 0, , drop = FALSE], ggplot2::aes(n_parents, adjusted_max_heaviness_from_parents, color = heaviness, 
 				label = ifelse(adjusted_max_heaviness_from_parents >= CUTOFF$adjusted_max_heaviness_from_parents, package, ""))) +
 			ggplot2::geom_point() + 
 			ggplot2::scale_color_manual(values = c("high" = "red", "median" = "orange", "low" = "grey")) +
@@ -879,7 +879,7 @@ add_transparency = function (col, transparency = 0) {
 html_show_description = function(response, package) {
 	date = pkgndep_opt$heaviness_db_version
 	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == date]
-	lt_desc = load_from_heaviness_db(qq("pkg_description_@{bioc_version}.rds"))
+	lt_desc = load_pkg_description()
 
 	lt = load_all_pkg_dep()
 	pkg = lt[[package]]
@@ -904,7 +904,7 @@ html_show_description = function(response, package) {
 html_show_namespace = function(response, package) {
 	date = pkgndep_opt$heaviness_db_version
 	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == date]
-	lt_desc = load_from_heaviness_db(qq("pkg_namespace_@{bioc_version}.rds"))
+	lt_desc = load_pkg_namespace()
 
 	lt = load_all_pkg_dep()
 	pkg = lt[[package]]

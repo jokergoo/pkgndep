@@ -328,7 +328,7 @@ saveRDS(df, file = qq("~/project/development/pkgndep.github.io/@{date}/pkg_stat_
 
 ### select a cutoff for adjusted heaviness
 
-select_a_for_adjusted_heaviness = function(which = "children", all_a = 0:30, rank_diff = min(50, max(length(lt)*0.002), 5)) {
+select_a_for_adjusted_heaviness = function(which = "children", all_a = 0:30, rank_diff = max(min(50, length(lt)*0.005), 5)) {
 
 	if(which == "children") {
 		xy = sapply(score, function(x) {
@@ -376,7 +376,7 @@ select_a_for_adjusted_heaviness = function(which = "children", all_a = 0:30, ran
 		d[i-1] = sum(rk > rank_diff)
 	}
 
-	return(data.frame(a = all_a[-1], v = d))
+	return(data.frame(a = all_a[-1], v = d, rank_diff = rank_diff))
 }
 
 d1 = select_a_for_adjusted_heaviness("children")

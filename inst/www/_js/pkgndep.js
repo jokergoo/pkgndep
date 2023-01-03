@@ -163,7 +163,7 @@ function show_namespace(package) {
 }
 
 function load_version_change() {
-	html = "<div id='desc_ns'><div id='desc_ns_inner'><p style='font-size:1.2em;'>loading the new version of the heaviness database...</p><ul><li>Load heaviness database.</li><li>Load pre-calculated dependency results of all packages.</li><li>Load pre-calculated heaviness metrics of all packages.</li></ul><p><div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div></p><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();'>Close</button></div></div>"
+	html = "<div id='desc_ns'><div id='desc_ns_inner'><p style='font-size:1.2em;'>loading the new version of the heaviness database...</p><ul><li>Load heaviness database.</li><li>Load pre-calculated dependency results of all packages.</li><li>Load pre-calculated heaviness metrics of all packages.</li><li>Load DESCRIPTION and NAMESPACE of all packages.</li><li>Load downstream dependency paths.</li></ul><p><div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div></p><button class='btn btn-default' type='submit' onclick='$(\"#desc_ns\").remove();'>Close</button></div></div>"
 	$("body").append(html);
 }
 

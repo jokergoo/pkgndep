@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -66,19 +69,24 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">load_pkg_db</span><span class="op">(</span>lib <span class="op">=</span> <span class="cn">NULL</span>, snapshot <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, online <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_pkg_db</span><span class="op">(</span>lib <span class="op">=</span> <span class="cn">NULL</span>, online <span class="op">=</span> <span class="cn">TRUE</span>, db <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>lib</dt>
 <dd><p>Local library path. If the value is <code>NA</code>, only remote package database is used.</p></dd>
-<dt>snapshot</dt>
-<dd><p>Internally used. If it is <code>TRUE</code>, the package database generated on 2021-10-28 is used.</p></dd>
-<dt>verbose</dt>
+
+  <dt>online</dt>
+<dd><p>If the value is <code>TRUE</code>, it will directly use the newest package database file from CRAN/Bioconductor. If the  value is <code>FALSE</code>, it uses the pre-computated package database on a specific CRAN/Bioconductor snapshot.  The version of the pre-computated package database can be set via <code><a href="pkgndep_opt.html">pkgndep_opt</a></code>$heaviness_db_version.</p></dd>
+
+  <dt>db</dt>
+<dd><p>A pre-computed <code>pkg_db</code> object.</p></dd>
+
+  <dt>verbose</dt>
 <dd><p>Whetehr to print messages.</p></dd>
-<dt>online</dt>
-<dd><p>If the value is <code>TRUE</code>, it will directly use the package database file from CRAN/Bioconductor. If the  value is <code>FALSE</code>, it uses the cached package database retrieved on 2021-10-28.</p></dd>
+
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -87,18 +95,24 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>pkg_db</code> class object.</p>
+    
+
+<p>A <code>pkg_db</code> class object. See <code><a href="reformat_db.html">reformat_db</a></code> for how to use the <code>pkg_db</code> object.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \dontrun{</span></span>
-<span class="r-in"><span class="va">pkg_db</span> <span class="op">=</span> <span class="fu">load_pkg_db</span><span class="op">(</span>lib <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pkg_db</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A package database of 22061 packages.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - 167 local / 21894 remote packages.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - 3438 Bioconductor / 18609 CRAN / 14 other packages.</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">pkg_db</span> <span class="op">=</span> <span class="fu">load_pkg_db</span><span class="op">(</span>lib <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> retrieve package database from CRAN/Bioconductor (3.16)...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - 22451 remote packages on CRAN/Bioconductor.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> prepare dependency table...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> prepare reverse dependency table...</span>
+<span class="r-in"><span><span class="va">pkg_db</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A package database of 22451 packages.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - 0 local / 22451 remote packages.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - 18961 CRAN / 3490 Bioconductor / 0 other packages.</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -113,7 +127,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

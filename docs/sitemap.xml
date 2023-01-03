@@ -10,6 +10,9 @@
     <loc>/articles/co_heaviness.html</loc>
   </url>
   <url>
+    <loc>/articles/database.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -25,6 +28,9 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/ALL_BIOC_RELEASES.html</loc>
+  </url>
+  <url>
     <loc>/reference/all_pkg_stat_snapshot.html</loc>
   </url>
   <url>
@@ -37,6 +43,12 @@
     <loc>/reference/co_heaviness.html</loc>
   </url>
   <url>
+    <loc>/reference/dependency_database.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dependency_heatmap.html</loc>
+  </url>
+  <url>
     <loc>/reference/dependency_report.html</loc>
   </url>
   <url>
@@ -46,10 +58,16 @@
     <loc>/reference/downstream_dependency.html</loc>
   </url>
   <url>
+    <loc>/reference/get_all_functions_imported_to_children.html</loc>
+  </url>
+  <url>
     <loc>/reference/gini_index.html</loc>
   </url>
   <url>
     <loc>/reference/heaviness.html</loc>
+  </url>
+  <url>
+    <loc>/reference/heaviness_database.html</loc>
   </url>
   <url>
     <loc>/reference/heaviness_from_upstream.html</loc>
@@ -59,6 +77,9 @@
   </url>
   <url>
     <loc>/reference/heaviness_on_downstream.html</loc>
+  </url>
+  <url>
+    <loc>/reference/heaviness_report.html</loc>
   </url>
   <url>
     <loc>/reference/html_report.html</loc>
@@ -76,13 +97,25 @@
     <loc>/reference/load_all_pkg_dep.html</loc>
   </url>
   <url>
+    <loc>/reference/load_from_heaviness_db.html</loc>
+  </url>
+  <url>
     <loc>/reference/load_from_pkgndep_db.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_heaviness_timeline.html</loc>
   </url>
   <url>
     <loc>/reference/load_pkg_db.html</loc>
   </url>
   <url>
+    <loc>/reference/load_pkg_description.html</loc>
+  </url>
+  <url>
     <loc>/reference/load_pkg_downstream_dependency_path_snapshot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/load_pkg_namespace.html</loc>
   </url>
   <url>
     <loc>/reference/load_pkg_stat_snapshot.html</loc>

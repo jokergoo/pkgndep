@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -66,53 +69,31 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for pkgndep</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, pkg_fontsize <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="va">cex</span>, title_fontsize <span class="op">=</span> <span class="fl">12</span><span class="op">*</span><span class="va">cex</span>,
-    legend_fontsize <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="va">cex</span>, fix_size <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.interactive.html" class="external-link">dev.interactive</a></span><span class="op">(</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">1</span>,
-    help <span class="op">=</span> <span class="cn">TRUE</span>, file <span class="op">=</span> <span class="cn">NULL</span>, res <span class="op">=</span> <span class="fl">144</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for pkgndep</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>An object from <code><a href="pkgndep.html">pkgndep</a></code>.</p></dd>
-<dt>pkg_fontsize</dt>
-<dd><p>Font size for the package names.</p></dd>
-<dt>title_fontsize</dt>
-<dd><p>Font size for the title.</p></dd>
-<dt>legend_fontsize</dt>
-<dd><p>Font size for the legends.</p></dd>
-<dt>fix_size</dt>
-<dd><p>Should the rows and columns in the heatmap have fixed size?</p></dd>
-<dt>cex</dt>
-<dd><p>A factor multiplicated to all font sizes.</p></dd>
-<dt>help</dt>
-<dd><p>Whether to print help message?</p></dd>
-<dt>file</dt>
-<dd><p>A path of the figure. The size of the figure is automatically calculated.</p></dd>
-<dt>res</dt>
-<dd><p>Resolution of the figure (only for png and jpeg).</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>Other arguments.</p></dd>
+
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>If <code>fix_size</code> is set to <code>TRUE</code>. The size of the whole plot can be obtained by:</p>
-<p></p><div class="sourceCode"><pre><code><span class="va">size</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, fix_size <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-
-<p>where <code>size</code> is a numeric vector of length two which are the width and height of the whole heatmap.
-If <code>file</code> argument is set, the size of the figure is automatically calculated.</p>
-<p>If there are no dependency packages stored in <code>x</code>, <code>NULL</code> is returned.</p>
-    </div>
-    <div id="value">
-    <h2>Value</h2>
-    <p>A vector of two numeric values (in inches) that correspond to the width and height of the plot.</p>
+    <p>Please use <code><a href="dependency_heatmap.html">dependency_heatmap</a></code> instead.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># See examples in `pkgndep()`.</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># There is no example</span></span></span>
+<span class="r-in"><span><span class="cn">NULL</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -127,7 +108,7 @@ If <code>file</code> argument is set, the size of the figure is automatically ca
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

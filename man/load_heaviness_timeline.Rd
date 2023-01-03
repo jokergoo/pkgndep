@@ -18,4 +18,5 @@ A list of data frames.
 \examples{
 # There is no example
 NULL
+
 }

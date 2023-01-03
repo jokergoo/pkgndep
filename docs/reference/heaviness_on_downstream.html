@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -66,23 +69,44 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">heaviness_on_downstream</span><span class="op">(</span><span class="va">package</span>, add_values_attr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">heaviness_on_downstream</span><span class="op">(</span><span class="va">package</span>, add_values_attr <span class="op">=</span> <span class="cn">FALSE</span>, via <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    total <span class="op">=</span> <span class="cn">FALSE</span>, internal <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>package</dt>
 <dd><p>A package name.</p></dd>
-<dt>add_values_attr</dt>
+
+  <dt>add_values_attr</dt>
 <dd><p>Whether to include "values" attribute? Internally used.</p></dd>
+
+  <dt>via</dt>
+<dd><p>Whether to only consider downstream packages via a intermediate package?</p></dd>
+
+  <dt>total</dt>
+<dd><p>Whether to return the total heaviness?</p></dd>
+
+  <dt>internal</dt>
+<dd><p>Whether to use internally calculated heaviness?</p></dd>
+
+
 </dl></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>It is calculated based on a specific CRAN/Bioconductor snapshot. The version is set via <code><a href="pkgndep_opt.html">pkgndep_opt</a></code>$heaviness_db_version.</p>
+    </div>
     <div id="value">
     <h2>Value</h2>
-    <p>The value is the mean heaviness of the package on all its downstream packages. Denote <code>n</code> as the number of all its downstream packages,
+    
+
+<p>The value is the mean heaviness of the package on all its downstream packages. Denote <code>n</code> as the number of all its downstream packages,
 <code>k_i</code> as the number of required packages for package i,
 <code>v_1</code> as the total number of required packages for all downstream packages, i.e. <code>v_1 = sum_i^n {k_i}</code>. Denote <code>p_i</code> as the number of required packages if moving <code>package</code> to <code>Suggests</code>,
-and <code>v_2</code> as the total number of required packages, i.e. <code>v_1 = sum_i^n {p_i}</code>. The final heaviniss on downstream packages is <code>(v_1 - v_2)/n</code>.
-Note since the interaction from <code>package</code> to its downstream packages may go through several intermediate packages, which means, the reduction of required packages
+and <code>v_2</code> as the total number of required packages, i.e. <code>v_1 = sum_i^n {p_i}</code>. The final heaviniss on downstream packages is <code>(v_1 - v_2)/n</code>.</p>
+
+
+<p>Note since the interaction from <code>package</code> to its downstream packages may go through several intermediate packages, which means, the reduction of required packages
 for a downstream package might be joint effects from all its upstream packages, thus, to properly calculate the heaviness of a package to its downstream packages, we first make 
 a copy of the package database and move <code>package</code> to <code>Suggests</code> for all packages which depends on <code>package</code>. Then for all downstream packages of <code>package</code>, dependency analysis
 by <code><a href="pkgndep.html">pkgndep</a></code> is redone with the modified package database. Finally, the heaviness on downstream packages is collected and the mean heaviness is calculated.</p>
@@ -90,12 +114,12 @@ by <code><a href="pkgndep.html">pkgndep</a></code> is redone with the modified p
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \dontrun{</span></span>
-<span class="r-in"><span class="fu">heaviness_on_downstream</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8.583333</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu">heaviness_on_downstream</span><span class="op">(</span><span class="st">"ComplexHeatmap"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8.933333</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"all_downstream_pkgs")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 84</span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 90</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -110,7 +134,7 @@ by <code><a href="pkgndep.html">pkgndep</a></code> is redone with the modified p
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

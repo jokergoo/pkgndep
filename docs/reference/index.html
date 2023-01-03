@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pkgndep</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.99.0</span>
       </span>
     </div>
 
@@ -36,6 +36,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/co_heaviness.html">Co-heaviness of two parent packages</a>
+    </li>
+    <li>
+      <a href="../articles/database.html">The database of heaviness analysis on the CRAN/Bioconductor ecosystem</a>
     </li>
     <li>
       <a href="../articles/suggestions.html">Suggestions for optimizing package dependencies</a>
@@ -64,6 +67,10 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="ALL_BIOC_RELEASES.html">ALL_BIOC_RELEASES</a></code> </p>
+        </td>
+        <td><p>All Bioconductor releases</p></td>
+      </tr><tr><td>
           <p><code><a href="all_pkg_stat_snapshot.html">all_pkg_stat_snapshot()</a></code> </p>
         </td>
         <td><p>The complete table of dependency heaviness for all CRAN/Bioconductor packages</p></td>
@@ -80,13 +87,29 @@
         </td>
         <td><p>Co-heaviness for pairs of parent packages</p></td>
       </tr><tr><td>
+          <p><code><a href="dependency_database.html">dependency_database()</a></code> </p>
+        </td>
+        <td><p>Database of package dependency heaviness of all R packages</p></td>
+      </tr><tr><td>
+          <p><code><a href="dependency_heatmap.html">dependency_heatmap()</a></code> </p>
+        </td>
+        <td><p>Make the dependency heatmap</p></td>
+      </tr><tr><td>
           <p><code><a href="dependency_report.html">dependency_report()</a></code> </p>
         </td>
-        <td><p>HTML report for package dependency analysis</p></td>
+        <td><p>HTML report for package dependency heaviness analysis</p></td>
+      </tr><tr><td>
+          <p><code><a href="dependency_website.html">dependency_website()</a></code> </p>
+        </td>
+        <td><p>Database of package dependency heaviness of all R packages</p></td>
       </tr><tr><td>
           <p><code><a href="downstream_dependency.html">downstream_dependency()</a></code> </p>
         </td>
         <td><p>Get downstream dependency for a package</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_all_functions_imported_to_children.html">get_all_functions_imported_to_children()</a></code> </p>
+        </td>
+        <td><p>Get functions that are imported to its child packages</p></td>
       </tr><tr><td>
           <p><code><a href="gini_index.html">gini_index()</a></code> </p>
         </td>
@@ -95,6 +118,10 @@
           <p><code><a href="heaviness.html">heaviness()</a></code> </p>
         </td>
         <td><p>Heaviness from parent packages</p></td>
+      </tr><tr><td>
+          <p><code><a href="heaviness_database.html">heaviness_database()</a></code> </p>
+        </td>
+        <td><p>Database of package dependency heaviness of all R packages</p></td>
       </tr><tr><td>
           <p><code><a href="heaviness_from_upstream.html">heaviness_from_upstream()</a></code> </p>
         </td>
@@ -108,29 +135,45 @@
         </td>
         <td><p>Heaviness on all downstream packages</p></td>
       </tr><tr><td>
+          <p><code><a href="heaviness_report.html">heaviness_report()</a></code> </p>
+        </td>
+        <td><p>HTML report for package dependency heaviness analysis</p></td>
+      </tr><tr><td>
           <p><code><a href="is_parent.html">is_parent()</a></code> </p>
         </td>
         <td><p>Test the parent-child relationship</p></td>
       </tr><tr><td>
           <p><code><a href="is_upstream.html">is_upstream()</a></code> </p>
         </td>
-        <td><p>Test upstream - downstream relationship</p></td>
+        <td><p>Test upstream-downstream relationship</p></td>
       </tr><tr><td>
           <p><code><a href="load_all_pkg_dep.html">load_all_pkg_dep()</a></code> </p>
         </td>
-        <td><p>Load dependency data of all packages</p></td>
+        <td><p>Load dependency analysis results of all packages</p></td>
       </tr><tr><td>
-          <p><code><a href="load_from_pkgndep_db.html">load_from_pkgndep_db()</a></code> </p>
+          <p><code><a href="load_from_heaviness_db.html">load_from_heaviness_db()</a></code> </p>
         </td>
-        <td><p>Load pre-computed results</p></td>
+        <td><p>Load pre-computed objects</p></td>
+      </tr><tr><td>
+          <p><code><a href="load_heaviness_timeline.html">load_heaviness_timeline()</a></code> </p>
+        </td>
+        <td><p>Load heaviness statistics at all time points</p></td>
       </tr><tr><td>
           <p><code><a href="load_pkg_db.html">load_pkg_db()</a></code> </p>
         </td>
         <td><p>Load package database</p></td>
       </tr><tr><td>
+          <p><code><a href="load_pkg_description.html">load_pkg_description()</a></code> </p>
+        </td>
+        <td><p>Load DESCRIPTION files of all packages</p></td>
+      </tr><tr><td>
           <p><code><a href="load_pkg_downstream_dependency_path_snapshot.html">load_pkg_downstream_dependency_path_snapshot()</a></code> </p>
         </td>
         <td><p>Load downstream dependency paths for all packages</p></td>
+      </tr><tr><td>
+          <p><code><a href="load_pkg_namespace.html">load_pkg_namespace()</a></code> </p>
+        </td>
+        <td><p>Load NAMESPACE files of all packages</p></td>
       </tr><tr><td>
           <p><code><a href="load_pkg_stat_snapshot.html">load_pkg_stat_snapshot()</a></code> </p>
         </td>
@@ -184,7 +227,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
