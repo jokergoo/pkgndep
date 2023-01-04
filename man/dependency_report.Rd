@@ -20,4 +20,5 @@ It is the same as \code{\link{heaviness_report}}.
 \examples{
 # There is no example
 NULL
+
 }

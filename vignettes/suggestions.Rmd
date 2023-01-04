@@ -27,7 +27,7 @@ Now let's assume the dependencies from heavy parents can be reduced. We give
 the following suggestions for reducing them:
 
 1. Re-implement the functions that were imported from heavy parents. Take
-   package **mapStats** as an example, an extremely heavy parent **Hmisc** can
+   package **mapStats** (version 2.4) as an example, an extremely heavy parent **Hmisc** can
    be observed where **Hmisc** has a heaviness of 49 which is almost 60% of
    the total number of required packages of **mapStats**. If moving **Hmisc**
    to “Suggests” of **mapStats**, the number of strong dependencies can be

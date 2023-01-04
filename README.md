@@ -39,7 +39,7 @@ As an example, I am developing a package called
 packages](https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION).
 The dependency heatmap looks like follows:
 
-![image](https://user-images.githubusercontent.com/449218/140655626-f2062b6e-c11f-4dc0-b6b9-d954feffc4ad.png)
+![](https://user-images.githubusercontent.com/449218/140655626-f2062b6e-c11f-4dc0-b6b9-d954feffc4ad.png)
 
 
 In the heatmap, rows are the packages listed in `Depends`, `Imports` and
@@ -107,11 +107,11 @@ pkg
 dependency_heatmap(pkg)
 ```
 
-![image](https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png)
+![](https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png)
 
 ## Heaviness database
 
-There is an integrated dependency heaviness database for all R packages for a lot of R/Bioc versions. The database can be obtained by:
+There is an integrated dependency heaviness database for all R packages for a lot of R/Bioc versions. The database can be accessed by:
 
 ```r
 heaviness_database()

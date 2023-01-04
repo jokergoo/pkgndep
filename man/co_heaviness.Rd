@@ -33,7 +33,8 @@ the set of dependencies imported by and only by two parent packages A and B. Thu
 }
 \examples{
 \dontrun{
-x = pkgndep("DESeq2")
+# DESeq version 1.36.0, the dependencies have been changed in later versions.
+x = readRDS(system.file("extdata", "DESeq2_dep.rds", package = "pkgndep"))
 hm = co_heaviness(x)
 ComplexHeatmap::Heatmap(hm)
 co_heaviness(x, jaccard = TRUE)

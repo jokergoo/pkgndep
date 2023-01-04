@@ -22,7 +22,7 @@ of the other parent packages. However, there are scenarios when multiple
 parents import similar sets of dependencies, which results in heaviness for
 individual parent being very small.
 
-We take the **DESeq2** package as an example. First we generate the dependency heatmap.
+We take the **DESeq2** package (version 1.36.0) as an example. First we generate the dependency heatmap.
 
 ```{r, eval = FALSE}
 library(pkgndep)
@@ -31,8 +31,7 @@ x = pkgndep("DESeq2")
 
 ```{r, echo = FALSE}
 library(pkgndep)
-lt = load_all_pkg_dep()
-x = lt[["DESeq2"]]
+x = readRDS(system.file("extdata", "DESeq2_dep.rds", package = "pkgndep"))
 ```
 
 ```{r, fig.width = 36.96, fig.height = 8.34, out.width="1200px"}
