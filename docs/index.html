@@ -104,9 +104,7 @@
 <p>There are also packages listed in <code>Suggests</code> and <code>Enhances</code> fields in DESCRIPTION file, but they are not enforced to be installed when installing your package. Of course, they also have “indirect dependency packages”. To get rid of the heavy packages that are not often used in your package, it is better to move them into the <code>Suggests</code>/<code>Enhances</code> fields and to load/install them only when they are needed.</p>
 <p>Here the <strong>pkgndep</strong> package checks the heaviness of the dependency packages of your package. For each package listed in the <code>Depends</code>, <code>Imports</code>, <code>LinkingTo</code> and <code>Suggests</code>/<code>Enhances</code> fields in the DESCRIPTION file, <strong>pkgndep</strong> checks how many additional packages your package requires. The summary of the dependency is visualized by a customized heatmap.</p>
 <p>As an example, I am developing a package called <a href="https://github.com/jokergoo/cola/" class="external-link"><strong>cola</strong></a> which depends on <a href="https://github.com/jokergoo/ComplexHeatmap/blob/master/DESCRIPTION" class="external-link">a lot of other packages</a>. The dependency heatmap looks like follows:</p>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/449218/140655626-f2062b6e-c11f-4dc0-b6b9-d954feffc4ad.png" alt=""><p class="caption">image</p>
-</div>
+<p><img src="https://user-images.githubusercontent.com/449218/140655626-f2062b6e-c11f-4dc0-b6b9-d954feffc4ad.png"></p>
 <p>In the heatmap, rows are the packages listed in <code>Depends</code>, <code>Imports</code> and <code>Suggests</code> fields, columns are the additional dependency packages required for each row package. The barplots on the right show the number of required package, the number of imported functions/methods/classes (parsed from NAMESPACE file) and the quantitative measure “heaviness” (the definition of heaviness will be introduced later).</p>
 <p>We can see if all the packages are put in the <code>Depends</code> or <code>Imports</code> field (i.e. movig all suggsted packages to <code>Imports</code>), in total 248 packages are required, which are really a lot. Actually some of the heavy packages such as <strong>WGCNA</strong>, <strong>clusterProfiler</strong> and <strong>ReactomePA</strong> (the last three packages in the heatmap rows) are not very frequently used in <strong>cola</strong>, moving them to <code>Suggests</code> field and using them only when they are needed greatly helps to reduce the heaviness of <strong>cola</strong>. Now the number of required packages are reduced to only 64.</p>
 <div class="section level2">
@@ -144,14 +142,12 @@
 <span><span class="co">## 117 additional packages are required if installing packages listed in all fields in DESCRIPTION</span></span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/dependency_heatmap.html">dependency_heatmap</a></span><span class="op">(</span><span class="va">pkg</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png" alt=""><p class="caption">image</p>
-</div>
+<p><img src="https://user-images.githubusercontent.com/449218/140655659-2ca142c5-067f-4f76-a0d2-00d0aea49c96.png"></p>
 </div>
 <div class="section level2">
 <h2 id="heaviness-database">Heaviness database<a class="anchor" aria-label="anchor" href="#heaviness-database"></a>
 </h2>
-<p>There is an integrated dependency heaviness database for all R packages for a lot of R/Bioc versions. The database can be obtained by:</p>
+<p>There is an integrated dependency heaviness database for all R packages for a lot of R/Bioc versions. The database can be accessed by:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/heaviness_database.html">heaviness_database</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
