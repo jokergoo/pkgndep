@@ -62,7 +62,7 @@ packages are reduced to only 64.
 
 Gu Z. et al., pkgndep: a tool for analyzing dependency heaviness of R packages. Bioinformatics 2022. https://doi.org/10.1093/bioinformatics/btac449
 
-Gu Z, On the Dependency Heaviness of CRAN/Bioconductor Ecosystem. arXiv 2022. https://doi.org/10.48550/arXiv.2208.11674
+Gu Z, On the Dependency Heaviness of CRAN/Bioconductor Ecosystem. Journal of Systems and Software 2023. https://doi.org/10.1016/j.jss.2023.111610
 
 ## Installation
 

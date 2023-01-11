@@ -8,9 +8,11 @@ CRAN page: https://CRAN.R-project.org/package=pkgndep
 Github page: https://github.com/jokergoo/pkgndep
 Documentation: https://jokergoo.github.io/pkgndep/
 
-If you use it in published research, please cite:
+If you use it in published research, please cite any of them:
 Gu, Z. Pkgndep: a tool for analyzing dependency heaviness 
   of R packages. Bioinformatics 2022.
+Gu, Z. On the dependency heaviness of CRAN/Bioconductor 
+  ecosystem. Journal of Systems and Software 2023.
 
 This message can be suppressed by:
   suppressPackageStartupMessages(library(pkgndep))

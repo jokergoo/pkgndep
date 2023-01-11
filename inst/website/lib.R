@@ -57,11 +57,7 @@ page_select2 = function(current_page, n_page, which_table, package, records_per_
 
 html_template = function(template, vars = list()) {
 
-	if(identical(unname(Sys.info()[c("sysname", "user")]), c("Darwin", "guz"))) {
-		template_dir = "~/project/development/pkgndep/inst/website/template"
-	} else {
-		template_dir = system.file("website", "template", package = "pkgndep")
-	}
+	template_dir = system.file("website", "template", package = "pkgndep")
 
 	f = tempfile()
 

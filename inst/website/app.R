@@ -71,6 +71,7 @@ suppressPackageStartupMessages(library(grid))
 
 # version = commandArgs(trailingOnly = TRUE)[1]
 version = ALL_BIOC_RELEASES$Release[1]
+r_version = ALL_BIOC_RELEASES$R[1]
 pkgndep_opt$heaviness_db_version = version
 # pkgndep_opt$db_file_template = function(file, version) paste0("~/project/development/pkgndep.github.io/", version, "/", file)
 
@@ -91,7 +92,7 @@ env$figure_dir = tempdir()
 source(system.file("website", "lib.R", package = "pkgndep"))
 
 
-qqcat("- Load heaviness database version @{version}.\n")
+qqcat("- Load heaviness database version @{r_version}.\n")
 load_pkg_db(online = FALSE, verbose = FALSE)
 
 cat("- Load pre-calculated dependency results of all packages.\n")
