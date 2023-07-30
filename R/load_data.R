@@ -16,7 +16,10 @@ load_from_heaviness_db = function(file) {
 	if(grepl("^http", file)) {
 		tmp_file = tempfile(fileext = ".rds")
 		on.exit(file.remove(tmp_file))
-		download.file(file, tmp_file, quiet = TRUE)
+		oe = try(download.file(file, tmp_file, quiet = TRUE), silent = TRUE)
+		if(inherits(oe, "try-error")) {
+			stop_wrap("The analysis depends on pre-calculated data objects hosted on GitHub. The link '@{file}' is not reachable.")
+		}
 		readRDS(tmp_file)
 	} else {
 		readRDS(file)

@@ -18,8 +18,7 @@ prepare_db = function(lib = NULL, bioc_version = pkgndep_opt$bioc_version, verbo
 	
 	cran_repo = getOption("repos")[["CRAN"]]
 	if(!grepl("http", cran_repo, ignore.case = TRUE)) {
-		chooseCRANmirror(ind = 1)
-		cran_repo = getOption("repos")[["CRAN"]]
+		cran_repo = "https://cran.rstudio.com/"
 	}
 	bioc_repo = get_bioc_repo(bioc_version)
 	repos = c(cran_repo, bioc_repo)
