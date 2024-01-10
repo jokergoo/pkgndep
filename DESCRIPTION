@@ -21,6 +21,6 @@ Description: A new metric named 'dependency heaviness' is proposed that measures
     The systematic analysis on the CRAN/Bioconductor ecosystem is described in 
     <doi:10.1016/j.jss.2023.111610>. From 'pkgndep' version 2.0.0, the heaviness 
     database includes snapshots of the CRAN/Bioconductor ecosystems for many old R versions.
-URL: https://github.com/jokergoo/pkgndep
+URL: https://github.com/jokergoo/pkgndep, https://jokergoo.github.io/pkgndep/
 VignetteBuilder: knitr
 License: MIT + file LICENSE
