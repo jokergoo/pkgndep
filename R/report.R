@@ -1,27 +1,24 @@
 
 
-# == title
-# HTML report for package dependency heaviness analysis
-#
-# == param
-# -pkg An object from `pkgndep`.
-# -file The path of the html file. If it is not specified, the report will be automatically opened in the web browser.
-#
-# == value
-# The path of the HTML file of the report.
-#
-# == example
-# if(interactive()) {
-#     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-#     heaviness_report(x)
-# }
+#' HTML report for package dependency heaviness analysis
+#'
+#' @param pkg An object from `pkgndep`.
+#' @param file The path of the html file. If it is not specified, the report will be automatically opened in the web browser.
+#'
+#' @return The path of the HTML file of the report.
+#' @importFrom utils browseURL
+#' @export
+#' @rdname heaviness_report
+#' @examples
+#' if(interactive()) {
+#'     x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+#'     heaviness_report(x)
+#' }
 heaviness_report = function(pkg, file = NULL) {
 	
 	template_file = system.file("extdata", "package_report.html", package = "pkgndep")
 
-	if(!requireNamespace("base64", quietly = TRUE)) {
-		stop("Please install base64 package.")
-	}
+	check_pkg("base64", bioc = FALSE)
 
 	open_browser = FALSE
 	if(is.null(file)) {
@@ -34,7 +31,7 @@ heaviness_report = function(pkg, file = NULL) {
 
 	if(n_total > 0) {
 
-		required_pkgs = rowSums(pkg$dep_mat)
+		required_pkgs = base::rowSums(pkg$dep_mat)
 		row_order = order(factor(pkg$dep_fields, levels = FIELDS), -pkg$heaviness)
 		tb = as.data.frame(pkg$df_imports)
 		tb = cbind(field = pkg$dep_fields, tb)
@@ -56,14 +53,8 @@ heaviness_report = function(pkg, file = NULL) {
 }
 
 
-# == title
-# HTML report for package dependency heaviness analysis
-#
-# == param
-# -... Pass to `heaviness_report`.
-#
-# == details
-# It is the same as `heaviness_report`.
-dependency_report = function(...) {
-	heaviness_report(...)
+#' @rdname heaviness_report.
+#' @export
+dependency_report = function(pkg, file = NULL) {
+	heaviness_report(pkg, file)
 }

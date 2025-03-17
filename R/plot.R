@@ -1,48 +1,44 @@
 
-# == title
-# Make the dependency heatmap
-#
-# == param
-# -x An object from `pkgndep`.
-# -... Other arguments.
-#
-# == details
-# Please use `dependency_heatmap` instead.
-#
+`.
+#' @param ... Other arguments pass to `dependency_heatmap()`.
+#'
+#' @export
+#' @rdname dependency_heatmap
 plot.pkgndep = function(x, ...) {
 	dependency_heatmap(x, ...)
 }
 
-# == title
-# Make the dependency heatmap
-#
-# == param
-# -x An object from `pkgndep`.
-# -pkg_fontsize Font size for the package names.
-# -title_fontsize Font size for the title.
-# -legend_fontsize Font size for the legends.
-# -fix_size Should the rows and columns in the heatmap have fixed size?
-# -cex A factor multiplicated to all font sizes.
-# -help Whether to print help message?
-# -file A path of the figure. The size of the figure is automatically calculated.
-# -res Resolution of the figure (only for png and jpeg).
-#
-# == details
-# If ``fix_size`` is set to ``TRUE``. The size of the whole plot can be obtained by:
-#
-#     size = dependency_heatmap(x, fix_size = TRUE)
-#
-# where ``size`` is a numeric vector of length two which are the width and height of the whole heatmap.
-# If ``file`` argument is set, the size of the figure is automatically calculated.
-#
-# If there are no dependency packages stored in ``x``, ``NULL`` is returned.
-# 
-# == value
-# A vector of two numeric values (in inches) that correspond to the width and height of the plot.
-#
-# == example
-# # See examples in `pkgndep()`.
-#
+#' Make the dependency heatmap
+#' 
+#' @param x An object from [pkgndep()].
+#' @param pkg_fontsize Font size for the package names.
+#' @param title_fontsize Font size for the title.
+#' @param legend_fontsize Font size for the legends.
+#' @param fix_size Should the rows and columns in the heatmap have fixed size?
+#' @param cex A factor multiplicated to all font sizes.
+#' @param help Whether to print help message?
+#' @param file A path of the figure. The size of the figure is automatically calculated.
+#' @param res Resolution of the figure (only for png and jpeg).
+#' 
+#' @details
+#' If `fix_size` is set to `TRUE`. The size of the whole plot can be obtained by:
+#'
+#' ```r
+#' size = dependency_heatmap(x, fix_size = TRUE)
+#' ```
+#' 
+#' where `size` is a numeric vector of length two which are the width and height of the whole heatmap.
+#' If `file` argument is set, the size of the figure is automatically calculated.
+#'
+#' If there are no dependency packages stored in `x`, `NULL` is returned.
+#' 
+#' @return
+#' A vector of two numeric values (in inches) that correspond to the width and height of the plot.
+#'
+#' @export
+#' @examples
+#' x = pkgndep("ComplexHeatmap")
+#' dependency_heatmap(x)
 dependency_heatmap = function(x, pkg_fontsize = 10*cex, title_fontsize = 12*cex, 
 	legend_fontsize = 10*cex, fix_size = !dev.interactive(), cex = 1, 
 	help = TRUE, file = NULL, res = 144) {

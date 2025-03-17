@@ -628,7 +628,7 @@ make_heaviness_plot = function() {
 	# cat("  - generate plots for heaviness on child packages.\n")
 	png(paste0(env$figure_dir, "/plot-child-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	df$heaviness = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, "high", "low")
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+	repo = ifelse(grepl("bioconductor", df$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
 		p = ggplot2::ggplot(df[df$n_children > 0, , drop = FALSE], ggplot2::aes(n_children, heaviness_on_children, color = heaviness, 
@@ -646,7 +646,7 @@ make_heaviness_plot = function() {
 
 	png(paste0(env$figure_dir, "/plot-child-adjusted-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	df$heaviness = ifelse(df$adjusted_heaviness_on_children >= CUTOFF$adjusted_heaviness_on_children, "high", "low")
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+	repo = ifelse(grepl("bioconductor", df$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
 		p = ggplot2::ggplot(df[df$n_children > 0, , drop = FALSE], ggplot2::aes(n_children, adjusted_heaviness_on_children, color = heaviness, 
@@ -665,7 +665,7 @@ make_heaviness_plot = function() {
 	# cat("  - generate plots for heaviness on downstream packages.\n")
 	png(paste0(env$figure_dir, "/plot-downstream-no-children-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	df$heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, "high", "low")
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+	repo = ifelse(grepl("bioconductor", df$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
 		p = ggplot2::ggplot(df[df$n_indirect_downstream > 0, , drop = FALSE], ggplot2::aes(n_indirect_downstream, heaviness_on_indirect_downstream, color = heaviness, 
@@ -683,7 +683,7 @@ make_heaviness_plot = function() {
 
 	png(paste0(env$figure_dir, "/plot-downstream-no-children-adjusted-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	df$heaviness = ifelse(df$adjusted_heaviness_on_indirect_downstream >= CUTOFF$adjusted_heaviness_on_indirect_downstream, "high", "low")
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+	repo = ifelse(grepl("bioconductor", df$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
 		p = ggplot2::ggplot(df[df$n_indirect_downstream > 0, , drop = FALSE], ggplot2::aes(n_indirect_downstream, adjusted_heaviness_on_indirect_downstream, color = heaviness, 
@@ -703,7 +703,7 @@ make_heaviness_plot = function() {
 	png(paste0(env$figure_dir, "/plot-parent-max-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	v = df$adjusted_max_heaviness_from_parents
 	df$heaviness = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents, "high", "low")
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+	repo = ifelse(grepl("bioconductor", df$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
 		p = ggplot2::ggplot(df[df$n_parents > 0, , drop = FALSE], ggplot2::aes(n_parents, max_heaviness_from_parents, color = heaviness, 
@@ -721,7 +721,7 @@ make_heaviness_plot = function() {
 	png(paste0(env$figure_dir, "/plot-parent-adjusted-max-heaviness.png"), width = 1000*1.5, height = 500*1.5, res = 72*2)
 	v = df$adjusted_max_heaviness_from_parents
 	df$heaviness = ifelse(v >= CUTOFF$adjusted_max_heaviness_from_parents, "high", "low")
-	repo = ifelse(grepl("bioconductor", df$repository), "Bioconductor", "CRAN")
+	repo = ifelse(grepl("bioconductor", df$repository, ignore.case = TRUE), "Bioconductor", "CRAN")
 	df$repo = factor(repo, levels = c("CRAN", "Bioconductor"))
 	suppressWarnings({
 		p = ggplot2::ggplot(df[df$n_parents > 0, , drop = FALSE], ggplot2::aes(n_parents, adjusted_max_heaviness_from_parents, color = heaviness, 

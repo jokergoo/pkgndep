@@ -294,17 +294,17 @@ load_pkg_namespace = function() {
 	version = pkgndep_opt$heaviness_db_version
 	bioc_version = ALL_BIOC_RELEASES$Release[ALL_BIOC_RELEASES$Date == version]
 	file = paste0("pkg_namespace_", bioc_version, ".rds")
-	if(is.null(ENV$pkg_description)) {
+	if(is.null(ENV$pkg_namespace)) {
 		lt = load_from_heaviness_db(file)
-		ENV$pkg_description = lt
+		ENV$pkg_namespace = lt
 		ENV$pkg_db_snapshot_version = version
 	} else {
 		if(ENV$pkg_db_snapshot_version != version) {
 			lt = load_from_heaviness_db(file)
-			ENV$pkg_description = lt
+			ENV$pkg_namespace = lt
 			ENV$pkg_db_snapshot_version = version
 		}
 	}
-	invisible(ENV$pkg_description)
+	invisible(ENV$pkg_namespace)
 }
 

@@ -1,7 +1,7 @@
 Package: pkgndep
 Type: Package
 Title: Analyze Dependency Heaviness of R Packages
-Version: 1.99.0
+Version: 2.0.0
 Date: 2023-01-11
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))
@@ -20,7 +20,7 @@ Description: A new metric named 'dependency heaviness' is proposed that measures
     which provides comprehensive tools for querying dependencies of individual R packages. 
     The systematic analysis on the CRAN/Bioconductor ecosystem is described in 
     <doi:10.1016/j.jss.2023.111610>. From 'pkgndep' version 2.0.0, the heaviness 
-    database includes snapshots of the CRAN/Bioconductor ecosystems for many old R versions.
+    database includes snapshots of the CRAN/Bioconductor ecosystems for most of the old R versions.
 URL: https://github.com/jokergoo/pkgndep
 VignetteBuilder: knitr
 License: MIT + file LICENSE

@@ -2,12 +2,24 @@
 
 ENV = new.env()
 
+
+
+BASE_PKGS = c("base", "compiler", "datasets", "grDevices", "graphics", "grid",
+    "methods", "parallel", "splines", "stats", "stats4", "tcltk",
+    "tools", "utils")
+
+RECOMMENDED_PKGS = c("MASS", "Matrix", "boot", "cluster", "foreign", "mgcv", "nlme",
+    "nnet", "rpart", "survival", "KernSmooth", "MASS", "Matrix",
+    "boot", "class", "cluster", "codetools", "foreign", "lattice",
+    "mgcv", "nlme", "nnet", "rpart", "spatial", "survival")
+
 DEFAULT_LOADED_BASE_PKGS = c("base", "stats", "graphics", "grDevices", "utils", "datasets", "methods")
 
 FIELDS = c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")
+STRONG_FIELDS = c("Depends", "Imports", "LinkingTo")
+MOST_FIELDS = c("Depends", "Imports", "LinkingTo", "Suggests")
 
-
-if(grepl("devel", R.version$status)) {  # only for CRAN check on R-devel where BiocManager::version() throws error 
+if(grepl("devel", R.version$status)) {  # only for CRAN check on R-devel where BiocManager::version() throws an error 
     bioc_version = packageVersion("BiocVersion")[, 1:2]
     bioc_version = as.character(bioc_version)
 } else {
@@ -17,16 +29,25 @@ if(grepl("devel", R.version$status)) {  # only for CRAN check on R-devel where B
 
 
 
-# == title (variable:ALL_BIOC_RELEASES)
-# All Bioconductor releases 
-#
-# == value
-# A data frame
-#
-# == example
-# ALL_BIOC_RELEASES
+#' All Bioconductor releases 
+#'
+#' @details
+#' The data frame contains all time points of different Bioconductor versions (before v1.4) as well as
+#' the corresponding R versions, the dates of the Bioc release and the URLs. For each time point,
+#' the snapshot of CRAN/Bioconductor package database is created and saved in the **pkgndep.db** package.
+#' The package database will be used in querying package dependencies in the ecosystem.
+#' 
+#' The data frame as well as the package database will be updated shortly after each Bioconductor release.
+#' 
+#' @seealso http://bioconductor.org/about/release-announcements/#release-versions
+#'
+#' @return A data frame.
+#' @export
+#' @examples
+#' ALL_BIOC_RELEASES
 ALL_BIOC_RELEASES = read.table(textConnection(
 "Release;Date;Software packages;R;URL
+3.17;2023-04-26;2230;4.3.0;https://bioconductor.org/packages/3.17/
 3.16;2022-11-02;2183;4.2.2;https://bioconductor.org/packages/3.16/
 3.15;2022-04-27;2140;4.2.0;https://bioconductor.org/packages/3.15/
 3.14;2021-10-27;2083;4.1.2;https://bioconductor.org/packages/3.14/
@@ -73,27 +94,25 @@ ALL_BIOC_RELEASES = read.table(textConnection(
 
 
 
-# == title
-# Global parameters for pkgndep
-#
-# == param
-# -... Arguments for the parameters, see "details" section
-# -RESET Reset to default values.
-# -READ.ONLY Please ignore.
-# -LOCAL Pllease ignore.
-# -ADD Please ignore.
-# 
-# == details
-# There are following parameters:
-# 
-# -``bioc_version`` The bioconductor version. By default it is the version corresponding to the R version under use. Please note this option
-#     is only for switching between bioc release version and development version, while not for switching to very old bioc versions.
-# -``heaviness_db_version`` The version of the heaviness database. The value can be the corresponding bioc version, the R version or the corresponding date for the bioc release. All supported values are in the object `ALL_BIOC_RELEASES`.
-#
-# == example
-# pkgndep_opt
-pkgndep_opt = function(..., RESET = FALSE, READ.ONLY = NULL, LOCAL = FALSE, ADD = FALSE) {}
-
+#' Global parameters
+#'
+#' @param ... Parameters, see the "Details" section.
+#' @param RESET Reset to default values.
+#' @param READ.ONLY Please ignore.
+#' @param LOCAL Pllease ignore.
+#' @param ADD Please ignore.
+#' 
+#' @details
+#' There are the following parameters:
+#' 
+#' -`bioc_version` The Bioconductor version. By default it is the version corresponding to 
+#'        the R version under use. Please note this option is only for switching between 
+#'        recent bioc release versions (>= 2.5) and the devel version, while not for very old bioc versions.
+#' -`heaviness_db_version` The version of the heaviness database. The value can be the corresponding bioc version, the R version or the corresponding date for the bioc release. All supported values are in the object `ALL_BIOC_RELEASES`.
+#'
+#' @export
+#' @examples
+#' pkgndep_opt
 pkgndep_opt = setGlobalOptions(
     tmp_dir = list(.value = ".", .visible = FALSE),
     add_link = list(.value = FALSE, .visible = FALSE),
@@ -121,5 +140,3 @@ pkgndep_opt = setGlobalOptions(
         .visible = FALSE
     )
 )
-
-

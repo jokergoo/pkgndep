@@ -1,29 +1,28 @@
 
-# == title
-# Heaviness from parent packages
-#
-# == param
-# -x An object returned by `pkgndep`.
-# -rel Whether to return the absolute measure or the relative measure.
-# -a A constant added for calculating the relative measure.
-# -only_strong_dep Whether to only return the heaviness for strong parents.
-#
-# == details
-# The heaviness from a parent package is calculated as follows: If package B is in the ``Depends``/``Imports``/``LinkingTo`` fields of package A,
-# which means, package B is necessary for package A, denote ``v1`` as the total numbers of packages required for package A,
-# and ``v2`` as the total number of required packages if moving package B to ``Suggests`` (which means, now B is not necessary for A).
-# The absolute measure is simply ``v1 -  v2`` and relative measure is ``(v1 + a)/(v2 + a)``. 
-#
-# In the second scenario, if B is in the ``Suggests``/``Enhances`` fields of package A, now ``v2`` is the total number of required packages if moving
-# B to ``Imports``, the absolute measure is ``v2 - v1`` and relative measure is ``(v2 + a)/(v1 + a)``.
-#
-# == value
-# A numeric vector.
-#
-# == example
-# x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-# heaviness(x)
-# heaviness(x, rel = TRUE)
+#' @Heaviness from parent packages
+#'
+#' @param x An object returned by `pkgndep`.
+#' @param rel Whether to return the absolute measure or the relative measure.
+#' @param a A constant added for calculating the relative measure.
+#' @param only_strong_dep Whether to only return the heaviness for strong parents.
+#'
+#' @details
+#' The heaviness from a parent package is calculated as follows: If package B is in the ``Depends``/``Imports``/``LinkingTo`` fields of package A,
+#' which means, package B is necessary for package A, denote ``v1`` as the total numbers of packages required for package A,
+#' and ``v2`` as the total number of required packages if moving package B to ``Suggests`` (which means, now B is not necessary for A).
+#' The absolute measure is simply ``v1 -  v2`` and relative measure is ``(v1 + a)/(v2 + a)``. 
+#'
+#' In the second scenario, if B is in the ``Suggests``/``Enhances`` fields of package A, now ``v2`` is the total number of required packages if moving
+#' B to ``Imports``, the absolute measure is ``v2 - v1`` and relative measure is ``(v2 + a)/(v1 + a)``.
+#'
+#' @return A numeric vector.
+#' @export
+#' @rdname heaviness
+#'
+#' @examples
+#' x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+#' heaviness(x)
+#' heaviness(x, rel = TRUE)
 heaviness = function(x, rel = FALSE, a = 10, only_strong_dep = FALSE) {
 
 	if(is.character(x)) {
@@ -108,37 +107,32 @@ heaviness_by_pair = function(x, i, j, rel = FALSE, a = 10, jaccard = FALSE) {
 	v
 }
 
-# == title
-# Co-heaviness for pairs of parent packages
-#
-# == param
-# -x An object returned by `pkgndep`.
-# -rel Whether to return the absolute measure or the relative measure.
-# -a A constant added for calculating the relative measure.
-# -jaccard Whether to return Jaccard coeffcient?
-#
-# == details
-# Denote a package as P and its two strong parent packages as A and B, i.e., parent packages in "Depends", "Imports" and "LinkingTo", 
-# the co-heaviness for A and B is calculated as follows.
-#
-# Denote S_A as the set of reduced dependency packages when only moving A to "Suggests" of P, and denote S_B as the set of reduced dependency
-# packages when only moving B to "Suggests" of P, denote S_AB as the set of reduced dependency packages when moving A and B together to "Suggests" of P,
-# the co-heaviness of A, B on P is calculatd as ``length(setdiff(S_AB, union(S_A, S_B)))``, which is the number of reduced package only caused by co-action of A and B.
-#
-# Note the co-heaviness is only calculated for parent packages in "Depends", "Imports" and "LinkingTo".
-#
-# When ``jaccard`` is set to ``TRUE``, the function returns jaccard coeffcient. ``setdiff(S_AB, union(S_A, S_B))`` is actually
-# the set of dependencies imported by and only by two parent packages A and B. Thus the jaccard coeffcient is calculated as
-# ``length(setdiff(S_AB, union(S_A, S_B)))/length(S_AB)``.
-#
-# == example
-# \dontrun{
-# # DESeq version 1.36.0, the dependencies have been changed in later versions.
-# x = readRDS(system.file("extdata", "DESeq2_dep.rds", package = "pkgndep"))
-# hm = co_heaviness(x)
-# ComplexHeatmap::Heatmap(hm)
-# co_heaviness(x, jaccard = TRUE)
-# }
+#' @param jaccard Whether to return Jaccard coeffcient?
+#'
+#' @details
+#' 
+#' ### co-heaviness
+#' Denote a package as P and its two strong parent packages as A and B, i.e., parent packages in "Depends", "Imports" and "LinkingTo", 
+#' the co-heaviness for A and B is calculated as follows.
+#'
+#' Denote S_A as the set of reduced dependency packages when only moving A to "Suggests" of P, and denote S_B as the set of reduced dependency
+#' packages when only moving B to "Suggests" of P, denote S_AB as the set of reduced dependency packages when moving A and B together to "Suggests" of P,
+#' the co-heaviness of A, B on P is calculatd as ``length(setdiff(S_AB, union(S_A, S_B)))``, which is the number of reduced package only caused by co-action of A and B.
+#'
+#' Note the co-heaviness is only calculated for parent packages in "Depends", "Imports" and "LinkingTo".
+#'
+#' When ``jaccard`` is set to ``TRUE``, the function returns jaccard coeffcient. ``setdiff(S_AB, union(S_A, S_B))`` is actually
+#' the set of dependencies imported by and only by two parent packages A and B. Thus the jaccard coeffcient is calculated as
+#' ``length(setdiff(S_AB, union(S_A, S_B)))/length(S_AB)``.
+#'
+#' @examples
+#' \dontrun{
+#' # DESeq version 1.36.0, the dependencies have been changed in later versions.
+#' x = readRDS(system.file("extdata", "DESeq2_dep.rds", package = "pkgndep"))
+#' hm = co_heaviness(x)
+#' ComplexHeatmap::Heatmap(hm)
+#' co_heaviness(x, jaccard = TRUE)
+#' }
 co_heaviness = function(x, rel = FALSE, a = 10, jaccard = FALSE) {
 
 	nr = nrow(x$dep_mat)
@@ -259,6 +253,15 @@ heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL,
 		load_pkg_db(online = FALSE)
 		load_all_pkg_dep()
 
+		# only rerun for downstrema packages
+		lt = ENV$all_pkg_dep
+		tb = downstream_dependency(package)
+
+		if(nrow(tb) == 0) {
+			if(interactive()) qqcat("no downstream dependency found for @{package}.\n")
+			return(structure(0, all_downstream_pkgs = 0))
+		}
+
 		pkg_db = ENV$pkg_db_snapshot$copy()
 
 		pkg_db$dependency = lapply(pkg_db$dependency, function(db) {
@@ -268,15 +271,6 @@ heaviness_on_downstream = function(package, add_values_attr = FALSE, via = NULL,
 			}
 			db
 		})
-
-		# only rerun for downstrema packages
-		lt = ENV$all_pkg_dep
-		tb = downstream_dependency(package)
-
-		if(nrow(tb) == 0) {
-			if(interactive()) qqcat("no downstream dependency found for @{package}.\n")
-			return(structure(0, all_downstream_pkgs = 0))
-		}
 
 		pkg = unique(tb[, "children"])
 
@@ -363,15 +357,15 @@ heaviness_from_upstream = function(package) {
 }
 
 
-# == title
-# Gini index
-#
-# == param
-# -v A numeric vector.
-#
-# == example
-# x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
-# gini_index(x$heaviness[x$which_required])
+#' Gini index
+#'
+#' @param v A numeric vector.
+#' 
+#' @return A numeric scalar.
+#' @export
+#' @examples
+#' x = readRDS(system.file("extdata", "ComplexHeatmap_dep.rds", package = "pkgndep"))
+#' gini_index(x$heaviness[x$which_required])
 gini_index = function(v) {
 
 	if(inherits(v, "pkgndep")) {

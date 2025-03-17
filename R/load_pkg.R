@@ -1,26 +1,24 @@
 
 
-# == title
-# Loaded packages 
-#
-# == param
-# -pkg A package name.
-# -verbose Whether to print messages.
-#
-# == details
-# It loads ``pkg`` into a new R session and collects which other packages are loaded by parsing the output from `utils::sessionInfo`.
-#
-# == value
-# A data frame.
-#
-# == example
-# loaded_packages("ComplexHeatmap")
+#' Loaded packages 
+#'
+#' @param pkg A package name.
+#' @param verbose Whether to print messages.
+#' 
+#' @details
+#' It loads ``pkg`` into a new R session and collects which other packages are 
+#' loaded by parsing the output from `utils::sessionInfo`.
+#'
+#' @return
+#' A data frame of dependency packages.
+#' @export
+#' 
+#' @examples
+#' loaded_packages("ComplexHeatmap")
 loaded_packages = function(pkg, verbose = TRUE) {
 	if(verbose) qqcat("Loading @{pkg} to a new R session... ")
 
-	if(!requireNamespace("callr", quietly = TRUE)) {
-		stop("You need to install 'callr' package.")
-	}
+	check_pkg("callr", bioc = FALSE)
 		
 	tb = callr::r(load_pkg_freshly, args = list(pkg = pkg), user_profile = FALSE)
 	if(is.null(tb)) {

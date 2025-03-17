@@ -1,23 +1,42 @@
 
 
-# == title
-# Get parent dependency for a package
-#
-# == param
-# -package Package name.
-# -fields Which fields in DESCRIPTION? Values should be in ``Depends``, ``Imports``, ``LinkingTo``, ``Suggests`` and ``Enhances``. The value can also be
-#     set to ``strong`` or ``weak``.
-# -online Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database? 
-#     The version of the pre-computated package database can be set via `pkgndep_opt`$heaviness_db_version.
-#
-# == value
-# A data frame with parent packages as well as their heaviness on ``pacakge``. If ``snapshot`` is set to ``FALSE``, heaviness on child packages
-# is set to NA.
-#
-# == example
-# \dontrun{
-# parent_dependency("ComplexHeatmap")
-# }
+#' Get parent/child/upstream/downstream dependency of a package
+#'
+#' @param package A single package name.
+#' @param fields Which dependency relations? The value should be a vector with values in `"Depends"`, `"Imports"`, 
+#'               `"LinkingTo"`, `"Suggests"` and `"Enhances"`. The value can also be
+#'               set to `"strong"` or `"weak"`, meaning storng or weak dependency relations.
+#'               This argument only works for querying direct dependency relations with `parent_dependency()`
+#'               and `child_dependency()`. If the value is `NULL`, all five dependency relations are included. 
+#'               For remote dependency relations, only the strong dependency relations are included.
+#' @parma online The query on dependency relations in the package ecosystem depends on a specific snapshot
+#'               of the "package database". The function can use the newest package database directly obtained 
+#'               from CRAN/Bioconductor by setting `online = TRUE`, or it uses the pre-computated package database
+#'               which correspond to various R/Bioconductor versions. The version of the pre-computated package 
+#'               database can be set via `pkgndep_opt`$heaviness_db_version`.
+#'
+#' @return
+#' A data frame with four columns:
+#' - parents Parent packages.
+#' - children Child packages.
+#' - dep_fields Dependency category.
+#' - heaviness Heaviness from the parent to the child package.
+#' 
+#' For `upstream_dependency()` and `downstream_dependency()`, dependency relations are 
+#' representated as a list of parent-child relations in the rows of the returned data frame, where
+#' the heaviness column corresponds to the local heaviness from the parent to the child package.
+#' 
+#' @export
+#' @rdname parent_dependency
+#' @examples
+#' \dontrun{
+#' parent_dependency("ComplexHeatmap")
+#' parent_dependency("ComplexHeatmap", online = TRUE)
+#' parent_dependency("ComplexHeatmap", field = "strong")
+#' child_dependency("ComplexHeatmap")
+#' upstream_dependency("ComplexHeatmap")
+#' downstream_dependency("ComplexHeatmap")
+#' }
 parent_dependency = function(package, fields = NULL, online = FALSE) {
 
 	if(!online) {
@@ -73,24 +92,8 @@ parent_dependency = function(package, fields = NULL, online = FALSE) {
 	tb
 }
 
-# == title
-# Get child dependency for a package
-#
-# == param
-# -package Package name.
-# -fields Which fields in DESCRIPTION? Values should be in ``Depends``, ``Imports``, ``LinkingTo``, ``Suggests`` and ``Enhances``. The value can also be
-#     set to ``strong`` or ``weak``.
-# -online Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database? 
-#     The version of the pre-computated package database can be set via `pkgndep_opt`$heaviness_db_version.
-#
-# == value
-# A data frame with child packages as well as its heaviness on its child packages. If ``snapshot`` is set to ``FALSE``, heaviness on child packages
-# is set to NA.
-#
-# == example
-# \dontrun{
-# child_dependency("ComplexHeatmap")
-# }
+#' @export
+#' @rdname parent_dependency
 child_dependency = function(package, fields = NULL, online = FALSE) {
 
 	if(!online) {
@@ -150,24 +153,10 @@ child_dependency = function(package, fields = NULL, online = FALSE) {
 	tb
 }
 
-# == title
-# Get upstream dependency for a package
-#
-# == param
-# -package Package name.
-# -online Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database? 
-#     The version of the pre-computated package database can be set via `pkgndep_opt`$heaviness_db_version.
-#
-# == details
-# Upstream packages with relations of "Depends", "Imports" and "LinkingTo" are retrieved.
-#
-# == value
-# A data frame with all upstream packages.
-#
-# == example
-# \dontrun{
-# upstream_dependency("ComplexHeatmap")
-# }
+
+
+#' @export
+#' @rdname parent_dependency
 upstream_dependency = function(package, online = FALSE) {
 
 	tb = parent_dependency(package, fields = c("Depends", "Imports", "LinkingTo"), online = online)
@@ -193,24 +182,10 @@ upstream_dependency = function(package, online = FALSE) {
 	tb
 }
 
-# == title
-# Get downstream dependency for a package
-#
-# == param
-# -package Package name.
-# -online Whether use the newest package database directly from CRAN/Bioconductor or the pre-computated package database? 
-#     The version of the pre-computated package database can be set via `pkgndep_opt`$heaviness_db_version.
-#
-# == details
-# Downstream packages with relations of ``Depends``, ``Imports`` and ``LinkingTo`` are retrieved.
-#
-# == value
-# A data frame with all downstream packages.
-#
-# == example
-# \dontrun{
-# downstream_dependency("ComplexHeatmap")
-# }
+
+
+#' @export
+#' @rdname parent_dependency
 downstream_dependency = function(package, online = FALSE) {
 
 	tb = child_dependency(package, fields = c("Depends", "Imports", "LinkingTo"), online = online)
@@ -244,31 +219,32 @@ nrow = function(x) {
 	}
 }
 
-# == title
-# Test the parent-child relationship
-#
-# == param
-# -parent A vector of package names.
-# -child A single package name.
-# -... Pass to `parent_dependency`.
-#
-# == value
-# A logical vector.
-is_parent = function(parent, child, ...) {
-	df = parent_dependency(child, ...)
+#' Test the parent-child/upstream-downstream relationship
+#'
+#' @param parent A vector of package names.
+#' @param package A single package name.
+#' @param ... Pass to [`parent_dependency()`] or [`upstream_dependency()`].
+#'
+#' @return A logical vector.
+#' @export
+#' @rdname is_parent
+#' @examples
+#' \dontrun{
+#' is_parent(c("grid", "colorspace"), "ComplexHeatmap")
+#' }
+is_parent = function(parent, package, ...) {
+	df = parent_dependency(package, ...)
 	parent %in% df$parents 
 }
 
-# == title
-# Test upstream-downstream relationship
-#
-# == param
-# -upstream A vector of package names.
-# -package A single package name.
-# -... Pass to `upstream_dependency`.
-#
-# == value
-# A logical vector.
+
+#' @param upstream A vector of package names.
+#' @export
+#' @rdname is_parent
+#' @examples
+#' \dontrun{
+#' is_upstream("testthat", "RTCGA")
+#' }
 is_upstream = function(upstream, package, ...) {
 	df = upstream_dependency(package, ...)
 	upstream %in% df$parents

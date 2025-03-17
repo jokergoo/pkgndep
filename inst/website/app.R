@@ -1,4 +1,6 @@
 
+options(timeout = 99999)
+
 cat("- Load packages for building website.\n")
 
 # suppressPackageStartupMessages(library(pkgndep))
